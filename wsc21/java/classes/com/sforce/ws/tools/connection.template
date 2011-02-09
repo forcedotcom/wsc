@@ -1,0 +1,140 @@
+package <%=gen.packageName%>;
+
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
+import com.sforce.ws.bind.XMLizable;
+import com.sforce.ws.bind.TypeMapper;
+
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
+/**
+ * Generated class, please do not edit.
+ */
+public class <%=gen.className%> {
+
+  private TypeMapper __typeMapper = new TypeMapper();
+  private ConnectorConfig __config;
+  private HashMap<QName, XMLizable> __extraHeaders = new HashMap<QName, XMLizable>();
+
+  public ConnectorConfig getConfig() {
+    return __config;
+  }
+
+  <% for (hit = gen.headers(); hit.hasNext();){ header = hit.next();%>
+  private <%=gen.headerType(header)%> __<%=gen.headerName(header)%>;
+
+  public void set<%=gen.headerName(header)%>(<%=gen.headerArgs(header)%>) {
+    __<%=gen.headerName(header)%> = new <%=gen.headerType(header)%>();
+     <% for (ait = gen.headerElements(header); ait.hasNext();){ ael = ait.next();%>
+       __<%=gen.headerName(header)%>.<%=gen.argSetMethod(ael)%>(<%=gen.argName(ael)%>);<%}/**end for headerElements...*/%>
+  }
+
+  public void clear<%=gen.headerName(header)%>() {
+    __<%=gen.headerName(header)%> = null;
+  }
+
+  public <%=gen.headerType(header)%> get<%=gen.headerName(header)%>() {
+    return  __<%=gen.headerName(header)%>;
+  }
+
+  public void __set<%=gen.headerName(header)%>(<%=gen.headerType(header)%> __header) {
+    __<%=gen.headerName(header)%> = __header ;
+  }
+
+  <%}/**end for headers ...*/%>
+
+  public <%=gen.className%>(ConnectorConfig config) throws ConnectionException {
+    this.__config = config;
+    this.__typeMapper.setPackagePrefix(<%=gen.getPackagePrefix()%>);
+    this.__typeMapper.setConfig(config);
+
+    <% if (gen.hasLoginCall()) { %>
+    config.<%=gen.verifyEndpoint()%>();
+    if (!config.isManualLogin()) {
+      if (config.getSessionId()==null) {
+        config.setServiceEndpoint(config.getAuthEndpoint());
+        <%=gen.loginResult()%> result = login(config.getUsername(), config.getPassword());
+        config.setSessionId(result.getSessionId());
+        config.setServiceEndpoint(result.getServerUrl());
+      } else {
+        if (config.getServiceEndpoint() == null) {
+          throw new com.sforce.ws.ConnectionException("Please set ServiceEndpoint");
+        }
+      }
+    }
+    <% } %>
+
+    <% if (gen.hasSessionHeader()) {%>
+      __SessionHeader = new SessionHeader_element();
+      __SessionHeader.setSessionId(config.getSessionId());
+    <% } %>
+  }
+
+  private com.sforce.ws.transport.SoapConnection newConnection() {
+      com.sforce.ws.transport.SoapConnection __c   = new com.sforce.ws.transport.SoapConnection(
+           __config.getServiceEndpoint(), <%=gen.sobjectNamespace()%>, __typeMapper, __config);
+
+      __c.setConnection(this);
+      __c.setKnownHeaders(knownHeaders);
+      return __c;
+   }
+
+  <% for (oit = gen.operations; oit.hasNext();){ op = oit.next();%>
+  public <%=gen.returnType(op)%> <%=gen.getOperationName(op)%>(<%=gen.getArgs(op)%>)
+       throws com.sforce.ws.ConnectionException {
+    com.sforce.ws.transport.SoapConnection __connection = newConnection();
+    <%=gen.requestType(op)%> __request = new <%=gen.requestType(op)%>();
+    <%=gen.responseType(op)%> __response = new <%=gen.responseType(op)%>();
+
+  <% for (ait = gen.argElements(op); ait.hasNext();){ ael = ait.next();%>
+    __request.<%=gen.argSetMethod(ael)%>(<%=gen.argName(ael)%>);<%}/**end for argElements...*/%>
+
+    <% for (hit = gen.headersFor(op); hit.hasNext();){ header = hit.next();%>
+    if (__<%=gen.headerName(header)%> != null) __connection.addHeader(<%=gen.headerElement(header)%>, __<%=gen.headerName(header)%>);
+    <%}/**end for headers ...*/%>
+
+    addHeaders(__connection);
+
+    __response = (<%=gen.responseType(op)%>) __connection.send(<%=gen.soapAction(op)%>,
+       <%=gen.requestName(op)%>, __request, <%=gen.responseName(op)%>,
+       <%=gen.responseType(op)%>.class);
+
+    <%=gen.getResultCall(op)%>
+  }
+  <%}/**end for operations...*/%>
+
+
+  private void addHeaders(com.sforce.ws.transport.SoapConnection __connection) {
+    for(java.util.Map.Entry<QName, XMLizable> entry : __extraHeaders.entrySet()) {
+      __connection.addHeader(entry.getKey(), entry.getValue());
+    }
+  }
+
+  public void addExtraHeader(QName __headerName, XMLizable __value) {
+    __extraHeaders.put(__headerName, __value);
+  }
+
+	public void removeExtraHeader(QName __headerName) {
+		__extraHeaders.remove(__headerName);
+	}
+
+	public XMLizable getExtraHeader(QName __headerName) {
+		return __extraHeaders.get(__headerName);
+	}
+	
+	public void clearExtraHeaders() {
+		__extraHeaders = new HashMap<QName, XMLizable>();
+	}
+
+
+<%=gen.dumpQNames()%>
+
+  private static HashMap<QName, java.lang.Class> knownHeaders = new HashMap<QName, java.lang.Class>();
+
+  static {
+
+<%=gen.dumpKnownHeaders()%>
+  }
+}

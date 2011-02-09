@@ -1,0 +1,93 @@
+package <%=gen.packageName%>;
+
+/**
+ * Generated class, please do not edit.
+ */
+public class <%=gen.className%> <%=gen.baseClass()%> {
+
+  /**
+   * Constructor
+   */
+  public <%=gen.className%>() {
+  }
+    
+  <% for (elementIt = gen.elements; elementIt.hasNext();){ el = elementIt.next();%>
+  /**
+   * element  : <%=gen.elementDoc(el)%>
+   * java type: <%=gen.javaType(el)%>
+   */
+  private static final com.sforce.ws.bind.TypeInfo <%=gen.fieldName(el)%>__typeInfo =
+    new com.sforce.ws.bind.TypeInfo(<%=gen.typeInfo(el)%>);
+
+  private boolean <%=gen.fieldName(el)%>__is_set = false;
+
+  private <%=gen.javaType(el)%> <%=gen.fieldName(el)%><%=gen.initArray(el)%>;
+
+  public <%=gen.javaType(el)%> <%=gen.getMethod(el)%>() {
+    return <%=gen.fieldName(el)%>;
+  }
+
+  <% if("boolean".equals(gen.javaType(el))) { %>
+
+  public <%=gen.javaType(el)%> <%=gen.booleanGetMethod(el)%>() {
+    return <%=gen.fieldName(el)%>;
+  }
+
+  <%}/**end if()*/%>
+
+  public void <%=gen.setMethod(el)%>(<%=gen.javaType(el)%> <%=gen.fieldName(el)%>) {
+    this.<%=gen.fieldName(el)%> = <%=gen.fieldName(el)%>;
+    <%=gen.fieldName(el)%>__is_set = true;
+  }
+  <%}/**end for()*/%>
+
+  /**
+   */
+  public void write(javax.xml.namespace.QName __element,
+      com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper)
+      throws java.io.IOException {
+    __out.writeStartTag(__element.getNamespaceURI(), __element.getLocalPart());
+    <%=gen.xsiType()%>
+    writeFields(__out, __typeMapper);
+    __out.writeEndTag(__element.getNamespaceURI(), __element.getLocalPart());
+  }
+
+  protected void writeFields(com.sforce.ws.parser.XmlOutputStream __out,
+      com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+   <%=gen.superWrite()%>
+<% for (elementIt = gen.elements; elementIt.hasNext();){ el = elementIt.next();%>
+    __typeMapper.<%=gen.writeMethod(el)%>(__out, <%=gen.fieldName(el)%>__typeInfo, <%=gen.fieldName(el)%>, <%=gen.fieldName(el)%>__is_set);
+<%}/**end for()*/%>
+  }
+
+
+  public void load(com.sforce.ws.parser.XmlInputStream __in,
+      com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+    __typeMapper.consumeStartTag(__in);
+    loadFields(__in, __typeMapper);
+    __typeMapper.consumeEndTag(__in);
+  }
+
+  protected void loadFields(com.sforce.ws.parser.XmlInputStream __in,
+      com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+   <%=gen.superLoad()%>
+<% for (elementIt = gen.elements; elementIt.hasNext();){ el = elementIt.next();%>
+    __in.peekTag();
+    if (__typeMapper.<%=gen.loadType(el)%>(__in, <%=gen.fieldName(el)%>__typeInfo)) {
+      <%=gen.setMethod(el)%>((<%=gen.javaType(el)%>)__typeMapper.<%=gen.loadMethod(el)%>(__in, <%=gen.fieldName(el)%>__typeInfo, <%=gen.javaType(el)%>.class));
+    }
+<%}/**end for()*/%>
+  }
+
+  public String toString() {
+    java.lang.StringBuilder sb = new java.lang.StringBuilder();
+    sb.append("[<%=gen.className%> ");
+    <%=gen.superToString()%>
+<% for (elementIt = gen.elements; elementIt.hasNext();){ el = elementIt.next();%>
+    sb.append(" <%=gen.fieldName(el)%>=");
+    sb.append("'"+com.sforce.ws.util.Verbose.toString(<%=gen.fieldName(el)%>)+"'\\n");
+<%}/**end for()*/%>
+    sb.append("]\\n");
+    return sb.toString();
+  }
+}

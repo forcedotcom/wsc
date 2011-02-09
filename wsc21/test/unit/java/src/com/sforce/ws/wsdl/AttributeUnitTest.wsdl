@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:s="http://www.w3.org/2001/XMLSchema"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:tns="http://doc.sample.com/docSample"
+  xmlns:po="http://www.w3.org/purchaseOrder"
+  targetNamespace="http://doc.sample.com/docSample"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+
+      <!-- this schema is taken from: http://www.w3.org/TR/xmlschema-0/ -->
+      <xsd:schema targetNamespace="http://www.w3.org/purchaseOrder" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+        <xsd:annotation>
+          <xsd:documentation xml:lang="en">
+           Purchase order schema for Example.com.
+           Copyright 2000 Example.com. All rights reserved.
+          </xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:element name="purchaseOrder" type="po:PurchaseOrderType"/>
+
+        <xsd:element name="comment" type="xsd:string"/>
+
+        <xsd:complexType name="PurchaseOrderType">
+          <xsd:sequence>
+            <xsd:element name="shipTo" type="po:USAddress"/>
+            <xsd:element name="billTo" type="po:USAddress"/>
+            <xsd:element ref="po:comment" minOccurs="0"/>
+            <xsd:element name="items"  type="po:Items"/>
+          </xsd:sequence>
+          <xsd:attribute name="orderDate" type="xsd:date"/>
+        </xsd:complexType>
+
+        <xsd:complexType name="USAddress">
+          <xsd:sequence>
+            <xsd:element name="name"   type="xsd:string"/>
+            <xsd:element name="street" type="xsd:string"/>
+            <xsd:element name="city"   type="xsd:string"/>
+            <xsd:element name="state"  type="xsd:string"/>
+            <xsd:element name="zip"    type="xsd:decimal"/>
+          </xsd:sequence>
+          <xsd:attribute name="country" type="xsd:string"
+                         fixed="US"/>
+        </xsd:complexType>
+
+        <xsd:complexType name="Items">
+          <xsd:sequence>
+            <xsd:element name="item" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="productName" type="xsd:string"/>
+                  <xsd:element name="quantity">
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:maxExclusive value="100"/>
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+                  <xsd:element name="USPrice"  type="xsd:decimal"/>
+                  <xsd:element ref="po:comment"   minOccurs="0"/>
+                  <xsd:element name="shipDate" type="xsd:date" minOccurs="0"/>
+                </xsd:sequence>
+                <xsd:attribute name="partNum" type="po:SKU" use="required"/>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+
+        <!-- Stock Keeping Unit, a code for identifying products -->
+        <xsd:simpleType name="SKU">
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{3}-[A-Z]{2}"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+
+      </xsd:schema>
+
+
+    <s:schema elementFormDefault="qualified" targetNamespace="http://doc.sample.com/docSample">
+
+      <s:element name="output">
+         <s:complexType>
+          <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="one" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="two" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="three" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" ref="po:purchaseOrder" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <s:element name="EchoString">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" ref="po:purchaseOrder" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EchoStringResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" ref="tns:output" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="EchoStringSoapIn">
+    <wsdl:part name="parameters" element="tns:EchoString" />
+  </wsdl:message>
+  <wsdl:message name="EchoStringSoapOut">
+    <wsdl:part name="parameters" element="tns:EchoStringResponse" />
+  </wsdl:message>
+  <wsdl:portType name="DocSamplePortType">
+    <wsdl:operation name="EchoString">
+      <wsdl:input message="tns:EchoStringSoapIn" />
+      <wsdl:output message="tns:EchoStringSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DocSampleBinding" type="tns:DocSamplePortType">
+    <wsdl:operation name="EchoString">
+      <soap:operation soapAction="urn:dotnet.callouttest.soap.sforce.com/EchoString" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DocSample">
+    <wsdl:port name="DocSamplePort" binding="tns:DocSampleBinding">
+      <soap:address location="http://www.qaresponder.info/WebServices/DocSample.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,12 @@
+Update this file to regenerate wsc stubs.
+
+-changes:
+
+changed isNillable check for arrray init
+Add getId and setId methods to AggregateResult template
+Support AggregateResult in enterprise wsdl
+Adding support for element->ref in wsdl schema
+Check for complexType in choise|all|any|sequance
+
+
+

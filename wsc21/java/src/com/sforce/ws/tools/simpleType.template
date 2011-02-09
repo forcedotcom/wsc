@@ -1,0 +1,14 @@
+package <%=gen.packageName%>;
+
+/**
+ * Generated enum, please do not edit.
+ */
+public enum <%=gen.className%> {
+
+  <% for (enumeration = gen.getEnumeration(); enumeration.hasNext();){ en = enumeration.next();%>
+  /**
+   * Enumeration  : <%=gen.javaName(en)%>
+   */
+   <%=gen.javaName(en)%>,
+  <%}/**end for()*/%>
+}
