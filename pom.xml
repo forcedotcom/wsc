@@ -4,7 +4,7 @@
     <groupId>com.force.api</groupId>
     <artifactId>force-wsc</artifactId>
     <packaging>jar</packaging>
-    <version>21.0.0</version>
+    <version>22.0.0</version>
     <name>force-wsc</name>
     <description>Force.com Web Service Connector</description>
     <licenses>
@@ -35,6 +35,12 @@
     </scm>
 
         <dependencies>
+	    <dependency>
+	      <groupId>com.google.code.gson</groupId>
+	      <artifactId>gson</artifactId>
+	      <version>1.7.1</version>
+	      <scope>compile</scope>
+	    </dependency>
             <dependency>
                 <groupId>rhino</groupId>
                 <artifactId>js</artifactId>

@@ -72,19 +72,19 @@ public final class SObject {
         if (depth > MAX_DEPTH) throw new IllegalStateException(
                 "foreign key reference exceeded the maximum allowed depth of " + MAX_DEPTH);
         
-        out.writeStartTag(RestConnection.NAMESPACE, "sObject");
+        out.writeStartTag(BulkConnection.NAMESPACE, "sObject");
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String name = entry.getKey();
             String value = entry.getValue();
-            out.writeStringElement(RestConnection.NAMESPACE, name, value);
+            out.writeStringElement(BulkConnection.NAMESPACE, name, value);
         }
         for (Map.Entry<String, SObject> entry : fkRefs.entrySet()) {
             String relationshipName = entry.getKey();
             SObject ref = entry.getValue();
-            out.writeStartTag(RestConnection.NAMESPACE, relationshipName);
+            out.writeStartTag(BulkConnection.NAMESPACE, relationshipName);
             ref.write(out, depth++);
-            out.writeEndTag(RestConnection.NAMESPACE, relationshipName);
+            out.writeEndTag(BulkConnection.NAMESPACE, relationshipName);
         }
-        out.writeEndTag(RestConnection.NAMESPACE, "sObject");
+        out.writeEndTag(BulkConnection.NAMESPACE, "sObject");
     }
 }
