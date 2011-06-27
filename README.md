@@ -14,6 +14,7 @@ The Force.com Web Service Connector (WSC) is a high performing web service clien
 
 ## Write Application Code
 The following sample illustrates creating a connection and creating a new Account SObject.  Login is automatically handled by the Connector.
+
 ```java
     import com.sforce.soap.partner.*;
     import com.sforce.soap.partner.sobject.*;
