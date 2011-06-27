@@ -7,3 +7,26 @@ The Force.com Web Service Connector (WSC) is a high performing web service clien
     mvn install -DskipTests
 
 ## Generating Stubs From WSDLs
+    java -classpath target/force-wsc-22.0.0-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
+
+* `inputwsdlfile` is the name of the WSDL to generate stubs for.
+* `outputjarfile` is the name of the jar file to create from the WSDL.
+
+## Write Application Code
+
+```java
+    import com.sforce.soap.partner.*;
+    import com.sforce.soap.partner.sobject.*;
+    import com.sforce.ws.*;
+
+    public static void main(String args) {
+        ConnectorConfig config = new ConnectorConfig();
+        config.setUsername("username");
+        config.setPassword("password");
+
+        PartnerConnection connection = Connector.newConnection(config);
+        SObject account = new SObject();
+        account.setType("Account");
+        account.setField("Name", "My Account");
+        connection.create(new SObject[]{account});
+    }
