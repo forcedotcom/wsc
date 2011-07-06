@@ -113,8 +113,14 @@ public class NameMapper {
             packageName = new StringBuilder(targetNamespace.substring(4));
             packageName = reverse(packageName);
         } else if (targetNamespace.startsWith("http://") || targetNamespace.startsWith("https://") ){
-           packageName = new StringBuilder(24).append("com.sforce.soap.").append(
-                    targetNamespace.substring(targetNamespace.lastIndexOf('/')+1));
+           packageName = new StringBuilder(24).append("com.sforce.soap.");
+	   int slashpos = targetNamespace.lastIndexOf('/');
+	   String nsSub = targetNamespace.substring(slashpos+1);
+	   if(nsSub == null || "".equals(nsSub)) {
+	       String tns = targetNamespace.substring(0, slashpos);
+	       nsSub = tns.substring(tns.lastIndexOf('/')+1);
+	   }
+	   packageName.append(nsSub);
             /*
             try {
                 URI uri = new URI(targetNamespace);

@@ -29,7 +29,7 @@ public class BatchResult implements com.sforce.ws.bind.XMLizable {
    * java type: com.sforce.soap.partner.wsc.SaveResult[]
    */
   private static final com.sforce.ws.bind.TypeInfo result__typeInfo =
-    new com.sforce.ws.bind.TypeInfo(RestConnection.NAMESPACE,"result",RestConnection.NAMESPACE,"SaveResult",0,-1,true);
+    new com.sforce.ws.bind.TypeInfo(BulkConnection.NAMESPACE,"result", BulkConnection.NAMESPACE,"SaveResult",0,-1,true);
 
   private boolean result__is_set = false;
 

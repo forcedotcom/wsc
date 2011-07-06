@@ -31,7 +31,7 @@ public class BatchRequest {
         this.transport = transport;
         xmlStream = new AsyncXmlOutputStream(out, false);
         xmlStream.setPrefix("xsi", Constants.SCHEMA_INSTANCE_NS);
-        xmlStream.writeStartTag(RestConnection.NAMESPACE, "sObjects");
+        xmlStream.writeStartTag(BulkConnection.NAMESPACE, "sObjects");
     }
 
     public void addSObject(SObject object) throws AsyncApiException {
@@ -50,7 +50,7 @@ public class BatchRequest {
 
     public BatchInfo completeRequest() throws AsyncApiException {
         try {
-            xmlStream.writeEndTag(RestConnection.NAMESPACE, "sObjects");
+            xmlStream.writeEndTag(BulkConnection.NAMESPACE, "sObjects");
             xmlStream.endDocument();
             xmlStream.close();
             InputStream in = transport.getContent();
@@ -58,7 +58,7 @@ public class BatchRequest {
             if (transport.isSuccessful()) {
                 return loadBatchInfo(in);
             } else {
-                RestConnection.parseAndThrowException(in);
+                BulkConnection.parseAndThrowException(in);
             }
         } catch(IOException e) {
             throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);
@@ -74,7 +74,7 @@ public class BatchRequest {
         BatchInfo info = new BatchInfo();
         XmlInputStream xin = new XmlInputStream();
         xin.setInput(in, "UTF-8");
-        info.load(xin, RestConnection.typeMapper);
+        info.load(xin, BulkConnection.typeMapper);
         return info;
     }
 }

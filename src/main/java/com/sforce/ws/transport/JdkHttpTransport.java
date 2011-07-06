@@ -138,7 +138,7 @@ public class JdkHttpTransport implements Transport {
         return createConnection(config, url, httpHeaders, true);
     }
 
-    private static HttpURLConnection createConnection(ConnectorConfig config, URL url,
+    public static HttpURLConnection createConnection(ConnectorConfig config, URL url,
             HashMap<String, String> httpHeaders, boolean enableCompression) throws IOException {
 
         if (config.isTraceMessage()) {

@@ -23,7 +23,7 @@ import com.sforce.ws.util.FileUtil;
  * @author mcheenath
  * @since 160
  */
-public class RestConnection {
+public class BulkConnection {
 
     public static final String NAMESPACE = "http://www.force.com/2009/06/asyncapi/dataload";
     public static final String SESSION_ID = "X-SFDC-Session";
@@ -41,16 +41,22 @@ public class RestConnection {
     private HashMap<String, String> headers = new HashMap<String, String>();
     public static final TypeMapper typeMapper = new TypeMapper();
 
-    public RestConnection(ConnectorConfig config) throws AsyncApiException {
-        if (config == null) { throw new AsyncApiException("config can not be null", AsyncExceptionCode.ClientInputError); }
+    public BulkConnection(ConnectorConfig config) throws AsyncApiException {
+        if (config == null) {
+            throw new AsyncApiException("config can not be null", AsyncExceptionCode.ClientInputError);
+        }
 
-        if (config.getRestEndpoint() == null) { throw new AsyncApiException("rest endpoint cannot be null",
-                AsyncExceptionCode.ClientInputError); }
+        if (config.getRestEndpoint() == null) {
+            throw new AsyncApiException("rest endpoint cannot be null",
+                AsyncExceptionCode.ClientInputError);
+        }
 
         this.config = config;
 
-        if (config.getSessionId() == null) { throw new AsyncApiException("session ID not found",
-                AsyncExceptionCode.ClientInputError); }
+        if (config.getSessionId() == null) {
+            throw new AsyncApiException("session ID not found",
+                AsyncExceptionCode.ClientInputError);
+        }
     }
 
     public JobInfo createJob(String object, String operation) throws AsyncApiException {

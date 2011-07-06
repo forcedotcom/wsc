@@ -4,7 +4,7 @@
     <groupId>com.force.api</groupId>
     <artifactId>force-wsc</artifactId>
     <packaging>jar</packaging>
-    <version>21.0.0</version>
+    <version>22.0.0</version>
     <name>force-wsc</name>
     <description>Force.com Web Service Connector</description>
     <licenses>
@@ -35,18 +35,22 @@
     </scm>
 
         <dependencies>
+	    <dependency>
+	      <groupId>com.google.code.gson</groupId>
+	      <artifactId>gson</artifactId>
+	      <version>1.7.1</version>
+	    </dependency>
             <dependency>
                 <groupId>rhino</groupId>
                 <artifactId>js</artifactId>
                 <version>1.7R2</version>
-                <scope>compile</scope>
             </dependency>
-                <dependency>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                        <version>4.8.2</version>
-                        <scope>test</scope>
-                </dependency>
+	    <dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.8.2</version>
+		<scope>test</scope>
+	    </dependency>
         </dependencies>
 
     <build>
@@ -64,6 +68,22 @@
         </resources>
 
         <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
