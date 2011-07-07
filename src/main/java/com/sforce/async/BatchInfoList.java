@@ -17,7 +17,7 @@ public class BatchInfoList implements com.sforce.ws.bind.XMLizable {
     public BatchInfoList() {
     }
 
-    private static final String NAMESPACE = RestConnection.NAMESPACE;
+    private static final String NAMESPACE = BulkConnection.NAMESPACE;
 
     /**
      * element  : batchInfo of type {urn:partner.soap.sforce.com}Error

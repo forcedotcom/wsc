@@ -16,6 +16,6 @@ public class AsyncXmlOutputStream extends XmlOutputStream {
     public AsyncXmlOutputStream(OutputStream out, boolean prettyPrint) throws IOException {
         super(out, prettyPrint);
         startDocument();
-        setPrefix("", RestConnection.NAMESPACE);
+        setPrefix("", BulkConnection.NAMESPACE);
     }
 }

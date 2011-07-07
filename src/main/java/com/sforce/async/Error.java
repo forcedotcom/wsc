@@ -21,7 +21,7 @@ public class Error implements com.sforce.ws.bind.XMLizable {
    * java type: java.lang.String[]
    */
   private static final com.sforce.ws.bind.TypeInfo fields__typeInfo =
-    new com.sforce.ws.bind.TypeInfo(RestConnection.NAMESPACE,"fields","http://www.w3.org/2001/XMLSchema","string",0,-1,true);
+    new com.sforce.ws.bind.TypeInfo(BulkConnection.NAMESPACE,"fields","http://www.w3.org/2001/XMLSchema","string",0,-1,true);
 
   private boolean fields__is_set = false;
 
@@ -43,7 +43,7 @@ public class Error implements com.sforce.ws.bind.XMLizable {
    * java type: java.lang.String
    */
   private static final com.sforce.ws.bind.TypeInfo message__typeInfo =
-    new com.sforce.ws.bind.TypeInfo(RestConnection.NAMESPACE,"message","http://www.w3.org/2001/XMLSchema","string",1,1,true);
+    new com.sforce.ws.bind.TypeInfo(BulkConnection.NAMESPACE,"message","http://www.w3.org/2001/XMLSchema","string",1,1,true);
 
   private boolean message__is_set = false;
 
@@ -65,7 +65,7 @@ public class Error implements com.sforce.ws.bind.XMLizable {
    * java type: com.sforce.soap.partner.wsc.StatusCode
    */
   private static final com.sforce.ws.bind.TypeInfo statusCode__typeInfo =
-    new com.sforce.ws.bind.TypeInfo(RestConnection.NAMESPACE,"statusCode",RestConnection.NAMESPACE,"StatusCode",1,1,true);
+    new com.sforce.ws.bind.TypeInfo(BulkConnection.NAMESPACE,"statusCode", BulkConnection.NAMESPACE,"StatusCode",1,1,true);
 
   private boolean statusCode__is_set = false;
 

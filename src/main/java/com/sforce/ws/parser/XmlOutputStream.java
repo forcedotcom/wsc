@@ -50,6 +50,12 @@ public class XmlOutputStream {
             serializer.setProperty(serializer.PROPERTY_SERIALIZER_INDENTATION, " ");
         }
     }
+    
+    public XmlOutputStream(OutputStream out, String prettyPrintIndentation) throws IOException {
+        this.out = out;
+        serializer.setOutput(out, "UTF-8");
+        serializer.setProperty(serializer.PROPERTY_SERIALIZER_INDENTATION, prettyPrintIndentation);
+    }    
 
     public String getPrefix(String namespace) {
         return serializer.getPrefix(namespace, false);

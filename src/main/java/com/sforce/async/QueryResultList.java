@@ -17,7 +17,7 @@ public class QueryResultList implements com.sforce.ws.bind.XMLizable {
     public QueryResultList() {
     }
 
-    private static final String NAMESPACE = RestConnection.NAMESPACE;
+    private static final String NAMESPACE = BulkConnection.NAMESPACE;
 
     private static final TypeInfo result__typeInfo =
             new TypeInfo(NAMESPACE, "result", "http://www.w3.org/2001/XMLSchema","string", 0, -1, true);

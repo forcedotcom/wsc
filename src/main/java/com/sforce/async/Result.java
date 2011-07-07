@@ -6,7 +6,7 @@ package com.sforce.async;
  */
 public class Result implements com.sforce.ws.bind.XMLizable {
 
-    private static final String NAMESPACE = RestConnection.NAMESPACE;
+    private static final String NAMESPACE = BulkConnection.NAMESPACE;
 
     /**
      * element  : errors of type {urn:partner.soap.sforce.com}Error
