@@ -1,5 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.force.api</groupId>
     <artifactId>force-wsc</artifactId>
@@ -7,6 +12,7 @@
     <version>22.0.0</version>
     <name>force-wsc</name>
     <description>Force.com Web Service Connector</description>
+    <url>http://www.force.com</url>
     <licenses>
         <license>
             <name>BSD License (FreeBSD)</name>
@@ -15,24 +21,21 @@
             <comments>A business-friendly OSS license</comments>
         </license>
     </licenses>
-
-    <distributionManagement>
-        <repository>
-            <id>force.repo</id>
-            <name>Force.com Repository</name>
-            <url>${force.repo.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>force.repo.snapshot</id>
-            <name>Force.com Snapshot Repository</name>
-            <url>${force.repo.snapshot.url}</url>
-        </snapshotRepository>
-    </distributionManagement>
     <scm>
         <connection>scm:git:git://github.com/forcedotcom/wsc.git</connection>
         <developerConnection>scm:git:git://github.com/forcedotcom/wsc.git</developerConnection>
         <url>http://github.com/forcedotcom/wsc</url>
     </scm>
+    <developers><!-- see mailing list --></developers>
+    <mailingLists>
+        <mailingList>
+            <name>Database.com SDK for Java Issues</name>
+            <archive>https://github.com/forcedotcom/java-sdk/issues?state=closed</archive>
+            <subscribe>https://github.com/forcedotcom/java-sdk/toggle_watch</subscribe>
+            <unsubscribe>https://github.com/forcedotcom/java-sdk/toggle_watch</unsubscribe>
+            <post>https://github.com/forcedotcom/java-sdk/issues/new</post>
+        </mailingList>
+    </mailingLists>
 
         <dependencies>
 	    <dependency>
