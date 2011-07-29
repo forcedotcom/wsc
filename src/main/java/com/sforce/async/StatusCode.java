@@ -8,6 +8,8 @@ package com.sforce.async;
  */
 public enum StatusCode {
 
+   ALL_OR_NONE_OPERATION_ROLLED_BACK,
+
 
   /**
    * Enumeration  : ALREADY_IN_PROCESS
@@ -738,5 +740,6 @@ public enum StatusCode {
    * Enumeration  : WRONG_CONTROLLER_TYPE
    */
    WRONG_CONTROLLER_TYPE,
+
 
 }

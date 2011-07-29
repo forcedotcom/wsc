@@ -85,7 +85,7 @@ public final class Base64 {
 
     }
 
-    static boolean isBase64(String isValidString) {
+    public static boolean isBase64(String isValidString) {
         return (isArrayByteBase64(isValidString.getBytes()));
     }
 

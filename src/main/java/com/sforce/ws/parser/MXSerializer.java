@@ -419,8 +419,6 @@ public class MXSerializer {
             prefix = prefix.intern(); //will throw NPE if prefix==null
         } else if(checkNamesInterned) {
             checkInterning(prefix);
-        } else if(prefix == null) {
-            throw new IllegalArgumentException("prefix must be not null"+getLocation());
         }
 
         //check that prefix is not duplicated ...

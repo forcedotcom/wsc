@@ -18,7 +18,6 @@ public class UpdateResultStream {
     private StreamHandler handler;
     private BatchInfo[] batchList;
     private int batchIndex = -1;
-    private int recordIndex = 0;
     private CSVReader resultReader;
 
     public UpdateResultStream(StreamHandler handler, BulkConnection bulkConnection, JobInfo job)
@@ -65,7 +64,6 @@ public class UpdateResultStream {
                 return null;
             }
 
-            recordIndex++;
             return new UpdateResult(valueAt(record,0), booleanAt(record, 1), booleanAt(record, 2), valueAt(record, 3));
         } catch (IOException e) {
             throw new StreamException("Failed to read next record", e);
