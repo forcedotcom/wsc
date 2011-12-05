@@ -249,10 +249,11 @@ public class RestConnectionImpl implements RestConnection {
             while ((bytesRead = bin.read(buffer)) != -1) {
             	responseBuilder.append(new String(buffer, 0, bytesRead));
             }
-            
+            bin.close();
         } else {
         	throw new IllegalStateException("Unknown content type on HTTP GET.");
         }
+
         in.close();
         
         //send back the server response
@@ -297,6 +298,7 @@ public class RestConnectionImpl implements RestConnection {
         while ((bytesRead = bin.read(buffer)) != -1) {
             responseBuilder.append(new String(buffer, 0, bytesRead));
         }
+        bin.close();
         String serverResponse = responseBuilder.toString();
         System.out.print(serverResponse + "\r\n");
         

@@ -64,6 +64,8 @@ public class wsdlc {
     public wsdlc(String wsdlFile, String jarFile, String temp)
             throws ToolsException, WsdlParseException, IOException, TemplateException {
 
+        long start = System.currentTimeMillis();
+
         checkTargetFile(jarFile);
         createTempDir(temp);
         Verbose.log("Created temp dir: " + tempDir.getAbsolutePath());
@@ -93,6 +95,8 @@ public class wsdlc {
             Verbose.log("Set system property del-temp-dir=false to not delete temp dir.");
             FileUtil.deleteDir(tempDir);
         }
+
+        Verbose.log("Completed " + wsdlFile + " in (ms) " + (System.currentTimeMillis()-start));
     }
 
     private void createTempDir(String temp) throws IOException {
