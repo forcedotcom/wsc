@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.force.api</groupId>
     <artifactId>force-wsc</artifactId>
@@ -16,103 +14,142 @@
     <description>Force.com Web Service Connector</description>
     <url>http://www.force.com</url>
     <licenses>
-        <license>
-            <name>BSD License (FreeBSD)</name>
-            <url>LICENSE.md</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
+      <license>
+        <name>BSD License (FreeBSD)</name>
+        <url>LICENSE.md</url>
+        <distribution>repo</distribution>
+        <comments>A business-friendly OSS license</comments>
+      </license>
     </licenses>
     <scm>
-        <connection>scm:git:git://github.com/forcedotcom/wsc.git</connection>
-        <developerConnection>scm:git:git://github.com/forcedotcom/wsc.git</developerConnection>
-        <url>http://github.com/forcedotcom/wsc</url>
+      <connection>scm:git:git://github.com/forcedotcom/wsc.git</connection>
+      <developerConnection>scm:git:git://github.com/forcedotcom/wsc.git</developerConnection>
+      <url>http://github.com/forcedotcom/wsc</url>
     </scm>
-    <developers><!-- see mailing list --></developers>
+    <developers>
+      <!-- see mailing list -->
+    </developers>
     <mailingLists>
-        <mailingList>
-            <name>Database.com SDK for Java Issues</name>
-            <archive>https://github.com/forcedotcom/java-sdk/issues?state=closed</archive>
-            <subscribe>https://github.com/forcedotcom/java-sdk/toggle_watch</subscribe>
-            <unsubscribe>https://github.com/forcedotcom/java-sdk/toggle_watch</unsubscribe>
-            <post>https://github.com/forcedotcom/java-sdk/issues/new</post>
-        </mailingList>
+      <mailingList>
+        <name>Database.com SDK for Java Issues</name>
+        <archive>https://github.com/forcedotcom/java-sdk/issues?state=closed</archive>
+        <subscribe>https://github.com/forcedotcom/java-sdk/toggle_watch</subscribe>
+        <unsubscribe>https://github.com/forcedotcom/java-sdk/toggle_watch</unsubscribe>
+        <post>https://github.com/forcedotcom/java-sdk/issues/new</post>
+      </mailingList>
     </mailingLists>
-
-        <dependencies>
-	    <dependency>
-	      <groupId>com.google.code.gson</groupId>
-	      <artifactId>gson</artifactId>
-	      <version>1.7.1</version>
-	    </dependency>
-            <dependency>
-                <groupId>rhino</groupId>
-                <artifactId>js</artifactId>
-                <version>1.7R2</version>
-            </dependency>
-	    <dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.8.2</version>
-		<scope>test</scope>
-	    </dependency>
-        </dependencies>
-
+    <dependencies>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>1.7.1</version>
+      </dependency>
+      <dependency>
+        <groupId>rhino</groupId>
+        <artifactId>js</artifactId>
+        <version>1.7R2</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.8.2</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
     <build>
-        <resources>
-            <resource>
-                <filtering>false</filtering>
-                <directory>${basedir}/src/main/java</directory>
-                <includes>
-                    <include>**</include>
-                </includes>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
-        <configuration>
-	    <includes><include>**</include></includes>
-        </configuration>
-</plugin>
-        </plugins>
+      <resources>
+        <resource>
+          <filtering>false</filtering>
+          <directory>${basedir}/src/main/java</directory>
+          <includes>
+            <include>**</include>
+          </includes>
+          <excludes>
+            <exclude>**/*.java</exclude>
+          </excludes>
+        </resource>
+      </resources>
+      <plugins>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <configuration>
+            <descriptorRefs>
+              <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.1</version>
+          <configuration>
+            <includes>
+              <include>**</include>
+            </includes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.1.2</version>
+          <executions>
+            <execution>
+              <id>attach-source</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.7</version>
+          <executions>
+            <execution>
+              <id>attach-javadoc</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.2</version>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>package</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
     </build>
 </project>
