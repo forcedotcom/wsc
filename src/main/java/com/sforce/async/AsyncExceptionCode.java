@@ -25,5 +25,6 @@ public enum AsyncExceptionCode {
     TooManyLockFailure,
     InvalidVersion,
     HttpsRequired,
-    UnsupportedContentType
+    UnsupportedContentType,
+    InvalidEntity
 }

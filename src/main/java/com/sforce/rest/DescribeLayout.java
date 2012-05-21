@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * This class represents a JSON response from /services/data/v{version}/sobjects/{sobjectName}/describe It has all of
  * the fields for a particular sobject, and metadata about those fields.
- * 
+ *
  * @author gwester
  * @since 172
  */
@@ -66,18 +66,18 @@ public class DescribeLayout {
     public Set<Field> getAllFields() {
         return fields;
     }
-    
+
     /**
-     * 
+     *
      * @return A map keyed child entities (e.g. Opportunity), with value of relationship name (e.g. childOpportunities).
      */
     public Map<String, String> getChildEntities() {
         Map<String, String> children = new HashMap<String, String>();
-        
+
         for(ChildEntity child : childRelationships) {
             //skip parents
             if(child.getField().equals("AccountId")) {
-                if(child.getRelationshipName() != null) {       
+                if(child.getRelationshipName() != null) {
                     children.put(child.getChildSObject(), child.getRelationshipName());
                 }
                 else {
@@ -119,7 +119,7 @@ public class DescribeLayout {
         }
         return optional;
     }
-    
+
     /**
      * Parent entity references.
      * @return
@@ -135,14 +135,14 @@ public class DescribeLayout {
         }
         return parentReference;
     }
-    
+
     /**
      * @return Name of the sobject.
      */
     public String getName() {
         return name;
     }
-    
+
     public String getLabel() {
         return label;
     }
@@ -222,10 +222,10 @@ public class DescribeLayout {
     public Boolean isSearchable() {
         return searchable;
     }
-    
+
     /**
      * This class represents part of a JSON response from /services/data/v{version}/sobjects/{sobjectName}/describe
-     * 
+     *
      * @author gwester
      * @since 170
      */
@@ -262,6 +262,8 @@ public class DescribeLayout {
         private Boolean dependentPicklist;
         private Boolean writeRequiresMasterRead;
         private Boolean sortable;
+        // Location field specific
+        private Boolean displayLocationInDecimal;
 
         public Integer getLength() {
             return length;
@@ -346,7 +348,7 @@ public class DescribeLayout {
         public String getRelationshipName() {
             return relationshipName;
         }
-        
+
         public List<String> getReferenceToEntity() {
             return referenceTo;
         }
@@ -378,10 +380,14 @@ public class DescribeLayout {
         public Boolean isSortable() {
             return sortable;
         }
+
+        public Boolean isDisplayLocationInDecimal() {
+            return displayLocationInDecimal;
+        }
     }
-    
+
     /**
-     * 
+     *
      * Child Relationships.
      *
      * @author gwester
@@ -393,23 +399,23 @@ public class DescribeLayout {
         private String relationshipName;
         private Boolean deprecatedAndHidden;
         private Boolean cascadeDelete;
-        
+
         public String getField() {
             return field;
         }
-        
+
         public String getChildSObject() {
             return childSObject;
         }
-        
+
         public String getRelationshipName() {
             return relationshipName;
         }
-        
+
         public Boolean isDeprecatedAndHidden() {
             return deprecatedAndHidden;
         }
-        
+
         public Boolean isCascadeDelete() {
             return cascadeDelete;
         }

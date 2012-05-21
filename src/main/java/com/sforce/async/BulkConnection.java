@@ -4,8 +4,7 @@
 package com.sforce.async;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -18,7 +17,7 @@ import com.sforce.ws.transport.JdkHttpTransport;
 import com.sforce.ws.util.FileUtil;
 
 /**
- * RestConnection
+ * BulkConnection
  * 
  * @author mcheenath
  * @since 160
@@ -281,6 +280,14 @@ public class BulkConnection {
             newMap.put(entry.getKey(), entry.getValue());
         }
 
+        /* 05-Apr-2012, tsaloranta: This is incorrect, as the content type for request
+         *   should indicate type of request payload and NOT the expected response
+         *   payload type (which would be indicated with "Accept" header).
+         *   See [https://gus.salesforce.com/a07B0000000Lp8A] for more details.
+         *   So ideally we would change header to use here; alas, it is bit of risky
+         *   change right, so leaving code as is
+         *   with just a note saying "that ain't working -- that's the way to do it!"
+         */
         newMap.put("Content-Type", contentType);
         newMap.put(SESSION_ID, config.getSessionId());
         return newMap;
@@ -344,9 +351,7 @@ public class BulkConnection {
 
     public BatchResult getBatchResult(String jobId, String batchId) throws AsyncApiException {
         try {
-            String endpoint = getRestEndpoint() + "job/" + jobId + "/batch/" + batchId + "/result";
-            URL url = new URL(endpoint);
-            InputStream stream = doHttpGet(url);
+            InputStream stream = doHttpGet(buildBatchResultURL(jobId, batchId));
 
             XmlInputStream xin = new XmlInputStream();
             xin.setInput(stream, "UTF-8");
@@ -372,6 +377,15 @@ public class BulkConnection {
         }
     }
 
+    public URL buildBatchResultURL(String jobId, String batchId) throws AsyncApiException {
+        try {
+            return new URL(getRestEndpoint() + "job/" + jobId + "/batch/" + batchId + "/result");
+        } catch (MalformedURLException e) {
+            throw new AsyncApiException("Failed to construct URL for getting batch results: "+e.getMessage(),
+                    AsyncExceptionCode.ClientInputError, e);
+        }
+    }
+    
     public InputStream getBatchRequestInputStream(String jobId, String batchId) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint() + "job/" + jobId + "/batch/" + batchId + "/request";
@@ -402,14 +416,20 @@ public class BulkConnection {
 
     public InputStream getQueryResultStream(String jobId, String batchId, String resultId) throws AsyncApiException {
         try {
-            String endpoint = getRestEndpoint() + "job/" + jobId + "/batch/" + batchId + "/result" + "/" + resultId;
-            URL url = new URL(endpoint);
-            return doHttpGet(url);
+            return doHttpGet(buildQueryResultURL(jobId, batchId, resultId));
         } catch (IOException e) {
             throw new AsyncApiException("Failed to get result ", AsyncExceptionCode.ClientInputError, e);
         }
     }
     
+    public URL buildQueryResultURL(String jobId, String batchId, String resultId) throws AsyncApiException {
+        try {
+            return new URL(getRestEndpoint() + "job/" + jobId + "/batch/" + batchId + "/result" + "/" + resultId);
+        } catch (MalformedURLException e) {
+            throw new AsyncApiException("Failed to construct URL for getting query result: "+e.getMessage(),
+                    AsyncExceptionCode.ClientInputError, e);
+        }
+    }
 
     private InputStream doHttpGet(URL url) throws IOException, AsyncApiException {
         HttpURLConnection connection = JdkHttpTransport.createConnection(config, url, null);
@@ -478,7 +498,7 @@ public class BulkConnection {
     public JobInfo getJobStatus(String jobId) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
-            endpoint += "/job/" + jobId;
+            endpoint += "job/" + jobId;
             URL url = new URL(endpoint);
 
             InputStream in = doHttpGet(url);
@@ -512,7 +532,7 @@ public class BulkConnection {
 
     public JobInfo updateJob(JobInfo job) throws AsyncApiException {
         String endpoint = getRestEndpoint();
-        endpoint += "/job/" + job.getId();
+        endpoint += "job/" + job.getId();
         return createOrUpdateJob(job, endpoint);
     }
 
