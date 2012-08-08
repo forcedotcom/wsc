@@ -64,10 +64,12 @@ public class JdkHttpTransport implements Transport {
         this.config = config;
     }
 
+    @Override
     public OutputStream connect(String uri, HashMap<String, String> httpHeaders) throws IOException {
         return connectLocal(uri, httpHeaders, true);
     }
 
+    @Override
     public OutputStream connect(String uri, HashMap<String, String> httpHeaders, boolean enableCompression)
             throws IOException {
         return connectLocal(uri, httpHeaders, enableCompression);
@@ -108,7 +110,7 @@ public class JdkHttpTransport implements Transport {
         }
 
         if (config.isTraceMessage()) {
-            output = new TeeOutputStream(output);
+            output = config.teeOutputStream(output);
         }
 
         if (config.hasMessageHandlers()) {
@@ -236,7 +238,7 @@ public class JdkHttpTransport implements Transport {
                     config.getTraceStream().println(header.getValue());
                 }
                 
-                new TeeInputStream(config, bytes);
+                config.teeInputStream(bytes);
             }
         }
 
@@ -246,54 +248,6 @@ public class JdkHttpTransport implements Transport {
     @Override
     public boolean isSuccessful() {
         return successful;
-    }
-
-    public static class TeeInputStream {
-        private int level = 0;
-        private ConnectorConfig config;
-
-        public TeeInputStream(ConnectorConfig config, byte[] bytes) {
-            this.config = config;
-            config.getTraceStream().println("------------ Response start ----------");
-
-            if (config.isPrettyPrintXml()) {
-                prettyPrint(bytes);
-            } else {
-                config.getTraceStream().print(new String(bytes));
-            }
-
-            config.getTraceStream().println();
-            config.getTraceStream().println("------------ Response end   ----------");
-        }
-
-        private void prettyPrint(byte[] bytes) {
-            boolean newLine = true;
-            for (int i = 0; i < bytes.length; i++) {
-                if (bytes[i] == '<') {
-                    if (i + 1 < bytes.length) {
-                        if (bytes[i + 1] == '/') {
-                            level--;
-                        } else {
-                            level++;
-                        }
-                    }
-                    for (int j = 0; newLine && j < level; j++) {
-                        config.getTraceStream().print("  ");
-                    }
-                }
-
-                config.getTraceStream().write(bytes[i]);
-
-                if (bytes[i] == '>') {
-                    if (i + 1 < bytes.length && bytes[i + 1] == '<') {
-                        config.getTraceStream().println();
-                        newLine = true;
-                    } else {
-                        newLine = false;
-                    }
-                }
-            }
-        }
     }
 
     public class MessageHandlerOutputStream extends OutputStream {
@@ -463,41 +417,6 @@ public class JdkHttpTransport implements Transport {
         @Override
         public void close() throws IOException {
             out.close();
-        }
-    }
-
-    public class TeeOutputStream extends OutputStream {
-        private OutputStream out;
-
-        public TeeOutputStream(OutputStream out) {
-            config.getTraceStream().println("------------ Request start   ----------");
-            this.out = out;
-        }
-
-        @Override
-        public void write(int b) throws IOException {
-            config.getTraceStream().write((char) b);
-            out.write(b);
-        }
-
-        @Override
-        public void write(byte b[]) throws IOException {
-            config.getTraceStream().write(b);
-            out.write(b);
-        }
-
-        @Override
-        public void write(byte b[], int off, int len) throws IOException {
-            config.getTraceStream().write(b, off, len);
-            out.write(b, off, len);
-        }
-
-        @Override
-        public void close() throws IOException {
-            config.getTraceStream().println();
-            config.getTraceStream().flush();
-            out.close();
-            config.getTraceStream().println("------------ Request end   ----------");
         }
     }
 

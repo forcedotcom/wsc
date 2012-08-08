@@ -28,18 +28,104 @@ package com.sforce.ws;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.Map.Entry;
 
+import com.sforce.ws.tools.VersionInfo;
 import com.sforce.ws.transport.JdkHttpTransport;
+import com.sforce.ws.transport.Transport;
+import com.sforce.ws.util.Base64;
 import com.sforce.ws.util.Verbose;
 
 /**
  * This class contains a set of configuration properties
- *
+ * 
  * @author http://cheenath.com
  * @version 1.0
- * @since 1.0  Dec 19, 2005
+ * @since 1.0 Dec 19, 2005
  */
 public class ConnectorConfig {
+    public class TeeInputStream {
+        private int level = 0;
+
+        private TeeInputStream(byte[] bytes) {
+            getTraceStream().println("------------ Response start ----------");
+
+            if (isPrettyPrintXml()) {
+                prettyPrint(bytes);
+            } else {
+                getTraceStream().print(new String(bytes));
+            }
+
+            getTraceStream().println();
+            getTraceStream().println("------------ Response end   ----------");
+        }
+
+        private void prettyPrint(byte[] bytes) {
+            boolean newLine = true;
+            for (int i = 0; i < bytes.length; i++) {
+                if (bytes[i] == '<') {
+                    if (i + 1 < bytes.length) {
+                        if (bytes[i + 1] == '/') {
+                            level--;
+                        } else {
+                            level++;
+                        }
+                    }
+                    for (int j = 0; newLine && j < level; j++) {
+                        getTraceStream().print("  ");
+                    }
+                }
+
+                getTraceStream().write(bytes[i]);
+
+                if (bytes[i] == '>') {
+                    if (i + 1 < bytes.length && bytes[i + 1] == '<') {
+                        getTraceStream().println();
+                        newLine = true;
+                    } else {
+                        newLine = false;
+                    }
+                }
+            }
+        }
+    }
+
+
+    public class TeeOutputStream extends OutputStream {
+        private OutputStream out;
+
+        private TeeOutputStream(OutputStream out) {
+            getTraceStream().println("------------ Request start   ----------");
+            this.out = out;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            getTraceStream().write((char) b);
+            out.write(b);
+        }
+
+        @Override
+        public void write(byte b[]) throws IOException {
+            getTraceStream().write(b);
+            out.write(b);
+        }
+
+        @Override
+        public void write(byte b[], int off, int len) throws IOException {
+            getTraceStream().write(b, off, len);
+            out.write(b, off, len);
+        }
+
+        @Override
+        public void close() throws IOException {
+            getTraceStream().println();
+            getTraceStream().flush();
+            out.close();
+            getTraceStream().println("------------ Request end   ----------");
+        }
+    }
+    
     private int readTimeout;
     private int connectionTimeout;
     private boolean traceMessage;
@@ -338,5 +424,79 @@ public class ConnectorConfig {
     
     public void setSessionRenewer(SessionRenewer sessionRenewer) {
         this.sessionRenewer = sessionRenewer;
+    }
+
+    public Transport createTransport() throws ConnectionException {
+        try {
+            Transport t = (Transport)getTransport().newInstance();
+            t.setConfig(this);
+            return t;
+        } catch (InstantiationException e) {
+            throw new ConnectionException("Failed to create new Transport " + getTransport());
+        } catch (IllegalAccessException e) {
+            throw new ConnectionException("Failed to create new Transport " + getTransport());
+        }
+    }
+
+    public HttpURLConnection createConnection(URL url,
+            HashMap<String, String> httpHeaders) throws IOException {
+        return createConnection(url, httpHeaders, true);
+    }
+    
+    public void teeInputStream(byte[] bytes) {
+        new TeeInputStream(bytes);
+    }
+    
+    public OutputStream teeOutputStream(OutputStream os) {
+        return new TeeOutputStream(os);
+    }
+
+    public HttpURLConnection createConnection(URL url,
+            HashMap<String, String> httpHeaders, boolean enableCompression) throws IOException {
+
+        if (isTraceMessage()) {
+            getTraceStream().println( "WSC: Creating a new connection to " + url + " Proxy = " +
+                    getProxy() + " username " + getProxyUsername());
+        }
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection(getProxy());
+        connection.addRequestProperty("User-Agent", VersionInfo.info());
+
+        /*
+         * Add all the client specific headers here
+         */
+        if (getHeaders() != null) {
+            for (Entry<String, String> ent : getHeaders().entrySet()) {
+                connection.setRequestProperty(ent.getKey(), ent.getValue());
+            }
+        }
+
+        if (enableCompression && isCompression()) {
+            connection.addRequestProperty("Content-Encoding", "gzip");
+            connection.addRequestProperty("Accept-Encoding", "gzip");
+        }
+
+        if (getProxyUsername() != null) {
+            String token = getProxyUsername() + ":" + getProxyPassword();
+            String auth = "Basic " + new String(Base64.encode(token.getBytes()));
+            connection.addRequestProperty("Proxy-Authorization", auth);
+            connection.addRequestProperty("Https-Proxy-Authorization", auth);
+        }
+
+        if (httpHeaders != null) {
+            for (Map.Entry<String, String> entry : httpHeaders.entrySet()) {
+                connection.addRequestProperty(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (getReadTimeout() != 0) {
+            connection.setReadTimeout(getReadTimeout());
+        }
+
+        if (getConnectionTimeout() != 0) {
+            connection.setConnectTimeout(getConnectionTimeout());
+        }
+
+        return connection;
     }
 }
