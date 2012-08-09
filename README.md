@@ -7,7 +7,7 @@ The Force.com Web Service Connector (WSC) is a high performing web service clien
     mvn install -DskipTests
 
 ## Generating Stubs From WSDLs
-    java -classpath target/force-wsc-25.0.0-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
+    java -classpath target/force-wsc-25.0.1-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.
