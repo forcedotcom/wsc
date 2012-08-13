@@ -151,6 +151,7 @@ public class ConnectorConfig {
     private boolean validateSchema = true;
     private Class transport = JdkHttpTransport.class;
     private SessionRenewer sessionRenewer;
+    private String ntlmDomain;
 
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
 
@@ -163,11 +164,16 @@ public class ConnectorConfig {
     }
 
     public void setNtlmDomain(String domain) {
+    	this.ntlmDomain = domain;
         if (System.getProperty("http.auth.ntlm.domain") == null) {
             System.setProperty("http.auth.ntlm.domain", domain);
         } else {
             Verbose.log("http.auth.ntlm.domain already set");
         }
+    }
+    
+    public String getNtlmDomain() {
+    	return ntlmDomain;
     }
 
     public boolean isValidateSchema() {
