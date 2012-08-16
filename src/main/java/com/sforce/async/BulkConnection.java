@@ -13,7 +13,7 @@ import javax.xml.namespace.QName;
 import com.sforce.ws.*;
 import com.sforce.ws.bind.TypeMapper;
 import com.sforce.ws.parser.*;
-import com.sforce.ws.transport.JdkHttpTransport;
+import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
 
 /**
@@ -73,7 +73,7 @@ public class BulkConnection {
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint) throws AsyncApiException {
         try {
-            JdkHttpTransport transport = new JdkHttpTransport(config);
+            Transport transport = config.createTransport();
             OutputStream out = transport.connect(endpoint, getHeaders(XML_CONTENT_TYPE));
             XmlOutputStream xout = new AsyncXmlOutputStream(out, true);
             job.write(JOB_QNAME, xout, typeMapper);
@@ -138,7 +138,7 @@ public class BulkConnection {
             throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
-            JdkHttpTransport transport = new JdkHttpTransport(config);
+            Transport transport = config.createTransport();
             endpoint = endpoint + "job/" + jobInfo.getId() + "/batch";
             String contentType = getContentTypeString(jobInfo.getContentType(), isZip);
             HashMap<String, String> httpHeaders = getHeaders(contentType);
@@ -218,7 +218,7 @@ public class BulkConnection {
         try {
             String endpoint = getRestEndpoint();
             endpoint = endpoint + "job/" + jobInfo.getId() + "/batch";
-            JdkHttpTransport transport = new JdkHttpTransport(config);
+            Transport transport = config.createTransport();
             ZipOutputStream zipOut = new ZipOutputStream(transport.connect(endpoint, getHeaders(getContentTypeString(
                     jobInfo.getContentType(), true)), false));
 
@@ -296,7 +296,7 @@ public class BulkConnection {
     public BatchRequest createBatch(JobInfo job) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
-            JdkHttpTransport transport = new JdkHttpTransport(config);
+            Transport transport = config.createTransport();
             endpoint = endpoint + "job/" + job.getId() + "/batch";
             ContentType ct = job.getContentType();
             if (ct != null && ct != ContentType.XML) { throw new AsyncApiException(
@@ -306,6 +306,8 @@ public class BulkConnection {
             return new BatchRequest(transport, out);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException x) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, x);
         }
     }
 
@@ -432,7 +434,7 @@ public class BulkConnection {
     }
 
     private InputStream doHttpGet(URL url) throws IOException, AsyncApiException {
-        HttpURLConnection connection = JdkHttpTransport.createConnection(config, url, null);
+        HttpURLConnection connection = config.createConnection(url, null);
         connection.setRequestProperty(SESSION_ID, config.getSessionId());
 
         boolean success = true;
@@ -484,7 +486,7 @@ public class BulkConnection {
                     config.getTraceStream().println(entry.getKey() + ": " + sb.toString());
                 }
 
-                new JdkHttpTransport.TeeInputStream(config, bytes);
+                config.teeInputStream(bytes);
             }
         }
 

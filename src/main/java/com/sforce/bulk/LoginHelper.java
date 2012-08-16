@@ -1,6 +1,7 @@
 package com.sforce.bulk;
 
-import com.sforce.ws.transport.JdkHttpTransport;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
 
 import java.io.IOException;
@@ -41,7 +42,12 @@ public class LoginHelper {
                 "</env:Body>" +
                 "</env:Envelope>";
 
-        JdkHttpTransport transport = new JdkHttpTransport(handler.getConfig());
+        Transport transport;
+        try {
+            transport = handler.getConfig().createTransport();
+        } catch (ConnectionException x) {
+            throw new IOException(String.format("Cannot create transport %s", handler.getConfig().getTransport()), x);
+        }
         OutputStream out = transport.connect(handler.getConfig().getAuthEndpoint(), "");
         out.write(request.getBytes());
         out.close();

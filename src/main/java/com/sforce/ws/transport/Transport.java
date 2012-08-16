@@ -30,6 +30,7 @@ import com.sforce.ws.ConnectorConfig;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * This interface defines a Transport.
@@ -66,4 +67,8 @@ public interface Transport {
      * @return true if the call was successful
      */
     boolean isSuccessful();
+
+    OutputStream connect(String endpoint, HashMap<String, String> headers) throws IOException;
+
+    OutputStream connect(String endpoint, HashMap<String, String> httpHeaders, boolean b) throws IOException;
 }
