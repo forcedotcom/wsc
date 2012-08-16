@@ -9,7 +9,7 @@ import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.PullParserException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
-import com.sforce.ws.transport.JdkHttpTransport;
+import com.sforce.ws.transport.Transport;
 import com.sforce.ws.wsdl.Constants;
 
 import java.io.IOException;
@@ -25,9 +25,9 @@ import java.io.OutputStream;
 public class BatchRequest {
 
     private XmlOutputStream xmlStream;
-    private JdkHttpTransport transport;
+    private Transport transport;
 
-    public BatchRequest(JdkHttpTransport transport, OutputStream out) throws IOException {
+    public BatchRequest(Transport transport, OutputStream out) throws IOException {
         this.transport = transport;
         xmlStream = new AsyncXmlOutputStream(out, false);
         xmlStream.setPrefix("xsi", Constants.SCHEMA_INSTANCE_NS);
