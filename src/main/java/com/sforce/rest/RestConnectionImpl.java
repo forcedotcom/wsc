@@ -33,7 +33,6 @@ import java.util.HashMap;
 import com.google.gson.Gson;
 import com.sforce.rest.pojo.SObject;
 import com.sforce.ws.ConnectorConfig;
-import com.sforce.ws.transport.JdkHttpTransport;
 
 /**
  * RestConnection
@@ -227,7 +226,7 @@ public class RestConnectionImpl implements RestConnection {
 	 */
     private String doHttpGet(URL url) throws IOException, RestApiException {
         System.out.println("GET " + url.toString());
-        HttpURLConnection connection = JdkHttpTransport.createConnection(config, url, headers, false);
+        HttpURLConnection connection = config.createConnection(url, headers, false);
     	connection.setInstanceFollowRedirects(true);
 
     	InputStream in;
@@ -269,7 +268,7 @@ public class RestConnectionImpl implements RestConnection {
      */
     private String doHttpPost(URL url, String body) throws IOException {		
         System.out.println("POST " + url.toString() + " " + body);
-        HttpURLConnection connection = JdkHttpTransport.createConnection(config, url, headers, false);
+        HttpURLConnection connection = config.createConnection(url, headers, false);
         connection.setInstanceFollowRedirects(true);
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
