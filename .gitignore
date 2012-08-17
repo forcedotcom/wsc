@@ -7,3 +7,4 @@ target
 *.iws
 *.wsdl
 *.swp
+.DS_Store
