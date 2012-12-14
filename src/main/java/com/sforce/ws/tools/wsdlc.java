@@ -122,8 +122,12 @@ public class wsdlc {
 
         File parentDir = jf.getParentFile();
 
-        if (parentDir != null && !parentDir.exists() && !parentDir.mkdirs()) {
-            throw new ToolsException("<jar-file> path does not exist");
+        // !parentDir.exists() is in here twice, before and after the mkdirs, since the mkdirs can return false in
+        // the case that some other process (typically, another parallel wsdlc process) comes in and makes the 
+        // directory between the first exists() check and the mkdirs().  We still want to catch unusual failures,
+        // other than that case, so we do a second exists() if mkdirs fails
+        if (parentDir != null && !parentDir.exists() && !parentDir.mkdirs() && !parentDir.exists()) {
+            throw new ToolsException("<jar-file> failed while creating parent directory " + parentDir.getPath());
         }
     }
 

@@ -149,7 +149,9 @@ public class JdkHttpTransport implements Transport {
         }
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection(config.getProxy());
-        connection.addRequestProperty("User-Agent", VersionInfo.info());
+        if (httpHeaders == null || (httpHeaders.get("User-Agent") == null && httpHeaders.get("user-agent") == null)) {
+            connection.addRequestProperty("User-Agent", VersionInfo.info());
+        }
 
         /*
          * Add all the client specific headers here
