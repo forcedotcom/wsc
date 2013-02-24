@@ -38,6 +38,34 @@
         <post>https://github.com/forcedotcom/java-sdk/issues/new</post>
       </mailingList>
     </mailingLists>
+    <profiles>
+      <profile>
+        <id>release-signed-artifacts</id>
+        <activation>
+          <property>
+            <name>release</name>
+            <value>true</value>
+          </property>
+        </activation>
+        <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-gpg-plugin</artifactId>
+              <version>1.2</version>
+              <executions>
+                <execution>
+                  <id>sign-artifacts</id>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>sign</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+    </profiles>
     <dependencies>
       <dependency>
         <groupId>com.google.code.gson</groupId>
@@ -133,19 +161,6 @@
               <phase>package</phase>
               <goals>
                 <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.2</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>package</phase>
-              <goals>
-                <goal>sign</goal>
               </goals>
             </execution>
           </executions>
