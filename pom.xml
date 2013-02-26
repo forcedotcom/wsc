@@ -55,6 +55,12 @@
         <version>4.8.2</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>com.google.appengine</groupId>
+        <artifactId>appengine-api-1.0-sdk</artifactId>
+        <version>1.7.3</version>
+        <scope>provided</scope>
+      </dependency>
     </dependencies>
     <build>
       <resources>
