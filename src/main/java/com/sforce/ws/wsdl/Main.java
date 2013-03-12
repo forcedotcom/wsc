@@ -25,9 +25,12 @@
  */
 package com.sforce.ws.wsdl;
 
-import com.sforce.ws.util.Verbose;
-
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
+
+import com.sforce.ws.util.Verbose;
 
 /**
  * A util class that can be used to test WSDL parser.
@@ -38,22 +41,18 @@ import java.util.Iterator;
  */
 public class Main {
 
-  public static void main(String[] args) throws WsdlParseException {
-    Definitions definitions = WsdlFactory.create(args[0]);
+  public static void main(String[] args) throws WsdlParseException, MalformedURLException, IOException {
+    Definitions definitions = WsdlFactory.create(new URL(args[0]));
     Verbose.log(definitions.toString());
 
     Types types = definitions.getTypes();
 
     System.out.println("types");
 
-    for(Iterator<Schema> it = types.getSchemas(); it.hasNext();) {
-      Schema schema = it.next();
-      System.out.println("  schema " + schema.getTargetNamespace());
+    for(Schema schema: types.getSchemas() ) { 
+      System.out.println("  schema " + schema.getTargetNamespace()); 
 
-      Iterator<ComplexType> complexTypes = schema.getComplexTypes();
-
-      while(complexTypes.hasNext()) {
-        ComplexType type = complexTypes.next();
+      for(ComplexType type: schema.getComplexTypes()) { 
         System.out.println("    " + type.getName() + " extends " + type.getBase());
         Collection sequence = type.getContent();
 

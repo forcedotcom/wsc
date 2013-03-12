@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,29 +23,31 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.sforce.rest;
+package com.sforce.ws.codegen.metadata;
 
 /**
- * RestExceptionCode
- *
- * @author gwester
- * @since 172
+ * @author btoal 
+ * @author hhildebrand
+ * @since 184
  */
-public enum RestExceptionCode {
-    Unknown,
-    InvalidSessionId,
-    InvalidOperation,
-    InvalidUrl,
-    InvalidUser,
-    InvalidXml,
-    FeatureNotEnabled,
-    ExceededQuota,
-    InternalServerError,
-    ClientInputError,
-    Timeout,
-    InvalidVersion,
-    HttpsRequired,
-    UnsupportedContentType;
+public class ElementMetadata {
+    private final String setMethod;
+    private final String name;
     
-    //TODO: add the rest of the messages
+    public ElementMetadata(final String setMethod, final String name) {
+        this.setMethod = setMethod;
+        this.name = name;
+    }
+
+    public static ElementMetadata newInstance(final String setMethod, final String name) {
+        return new ElementMetadata(setMethod, name);
+    }
+
+    public String getSetMethod() {
+        return setMethod;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

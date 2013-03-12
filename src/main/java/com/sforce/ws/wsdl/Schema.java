@@ -66,12 +66,12 @@ public class Schema implements Constants {
         simpleTypes.put(type.getName(), type);
     }
 
-    public Iterator<ComplexType> getComplexTypes() {
-        return complexTypes.values().iterator();
+    public java.util.Collection<ComplexType> getComplexTypes() {
+        return complexTypes.values();
     }
 
-    public Iterator<SimpleType> getSimpleTypes() {
-        return simpleTypes.values().iterator();
+    public java.util.Collection<SimpleType> getSimpleTypes() {
+        return simpleTypes.values();
     }
 
     public ComplexType getComplexType(String type) {

@@ -1,32 +1,5 @@
-/*
- * Copyright (c) 2005, salesforce.com, inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided
- * that the following conditions are met:
- *
- *    Redistributions of source code must retain the above copyright notice, this list of conditions and the
- *    following disclaimer.
- *
- *    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
- *    the following disclaimer in the documentation and/or other materials provided with the distribution.
- *
- *    Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
- *    promote products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
- * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-package com.sforce.ws.tools;
+package com.sforce.ws.codegen;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import javax.xml.namespace.QName;
@@ -34,36 +7,79 @@ import javax.xml.namespace.QName;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.bind.NameMapper;
 import com.sforce.ws.bind.TypeMapper;
-import com.sforce.ws.template.Template;
-import com.sforce.ws.template.TemplateException;
+import com.sforce.ws.codegen.metadata.*;
+import com.sforce.ws.codegen.metadata.HeaderMetadata.HeaderElementMetadata;
 import com.sforce.ws.util.FileUtil;
 import com.sforce.ws.wsdl.*;
 import com.sforce.ws.wsdl.Collection;
 
 /**
- * ConnectionGenerator
- *
- * @author http://cheenath.com
- * @version 1.0
- * @since 1.0  Jan 18, 2006
+ * @author hhildebrand
+ * @since 184
  */
-public class ConnectionGenerator {
-    private String packageName;
-    private String className;
-    private File tempDir;
+public class ConnectionMetadataConstructor {
+    private final String className;
+    private final String packageName;
+    private final Definitions definitions;
+    private final TypeMapper typeMapper;
 
-    private static final String CONNECTION_TEMPLATE = "com/sforce/ws/tools/connection.template";
-    private static final String CONNECTOR_TEMPLATE = "com/sforce/ws/tools/connector.template";
-    private Definitions definitions;
-    private TypeMapper typeMapper;
-
-    public ConnectionGenerator(Definitions definitions, File tempDir,
-                               TypeMapper typeMapper, String packagePrefix) {
+    public ConnectionMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix) {
         this.definitions = definitions;
-        this.tempDir = tempDir;
         this.typeMapper = typeMapper;
-        packageName = NameMapper.getPackageName(definitions.getTargetNamespace(), packagePrefix);
-        className = (definitions.getApiType() != null ? definitions.getApiType().name() : "Soap") + "Connection";
+        this.className = (definitions.getApiType() != null ? definitions.getApiType().name() : "Soap") + "Connection";
+        this.packageName = NameMapper.getPackageName(definitions.getTargetNamespace(), packagePrefix);
+    }
+
+    public ConnectionClassMetadata getConnectionClassMetadata() {
+        try {
+            List<HeaderMetadata> headers = new ArrayList<HeaderMetadata>();
+            List<OperationMetadata> operations = new ArrayList<OperationMetadata>();
+
+            for (Iterator<Part> i = headers(); i.hasNext();) {
+                Part header = i.next();
+                List<HeaderElementMetadata> elements = new ArrayList<HeaderMetadata.HeaderElementMetadata>();
+                for (Iterator<Element> j = headerElements(header); j.hasNext();) {
+                    Element element = j.next();
+                    elements.add(HeaderElementMetadata.newInstance(argSetMethod(element), argName(element)));
+                }
+                headers.add(HeaderMetadata.newInstance(headerType(header), headerName(header), headerArgs(header),
+                        headerElement(header), elements));
+            }
+
+            for (Iterator<Operation> i = getOperations(); i.hasNext();) {
+                Operation operation = i.next();
+
+                List<ElementMetadata> elements = new ArrayList<ElementMetadata>();
+                for (Iterator<Element> j = argElements(operation); j.hasNext();) {
+                    Element element = j.next();
+                    elements.add(ElementMetadata.newInstance(argSetMethod(element), argName(element)));
+                }
+
+                List<HeaderMetadata> operationHeaders = new ArrayList<HeaderMetadata>();
+                for (Iterator<Part> j = headersFor(operation); j.hasNext();) {
+                    Part part = j.next();
+                    operationHeaders.add(HeaderMetadata.newInstance(null, headerName(part), null, headerElement(part),
+                            null));
+                }
+
+                operations.add(OperationMetadata.newInstance(returnType(operation), getOperationName(operation),
+                        requestType(operation), responseType(operation), getArgs(operation), soapAction(operation),
+                        requestName(operation), responseName(operation), getResultCall(operation), elements,
+                        operationHeaders));
+            }
+
+            ConnectionClassMetadata connectionClassMetadata = ConnectionClassMetadata.newInstance(getPackagePrefix(),
+                    packageName, className, hasLoginCall(), hasLoginCall() == true ? loginResult() : null,
+                    verifyEndpoint(), hasSessionHeader(), sobjectNamespace(), dumpQNames(), dumpKnownHeaders(),
+                    headers, operations);
+            return connectionClassMetadata;
+        } catch (ConnectionException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public String getPackageName() {
+        return packageName;
     }
 
     public String endpoint() {
@@ -74,17 +90,9 @@ public class ConnectionGenerator {
         return definitions.getApiType() == null ? null : definitions.getApiType().getVerifyEndpoint();
     }
 
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
     public String getPackagePrefix() {
         String prefix = typeMapper.getPackagePrefix();
-        return (prefix == null) ? "null" : "\""+prefix+"\"";
+        return (prefix == null) ? "null" : "\"" + prefix + "\"";
     }
 
     public String getTargetNamespace() {
@@ -92,8 +100,7 @@ public class ConnectionGenerator {
     }
 
     public String sobjectNamespace() {
-    	return definitions.getApiType() == null ? "null" :
-               "\"" + definitions.getApiType().getSobjectNamespace() + "\"";
+        return definitions.getApiType() == null ? "null" : "\"" + definitions.getApiType().getSobjectNamespace() + "\"";
     }
 
     public String dumpQNames() throws ConnectionException {
@@ -130,68 +137,10 @@ public class ConnectionGenerator {
         return sb.toString();
     }
 
-    private String qname(String str) {
-        return str + "_qname";
-    }
-
-    public boolean hasSessionHeader() throws ConnectionException {
-        Iterator<Part> it = headers();
-        while(it.hasNext()) {
-            Part part = it.next();
-            if (part.getName().equals("SessionHeader")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Iterator<Part> headersFor(Operation operation) throws ConnectionException {
-        BindingOperation bop = definitions.getBinding().getOperation(operation.getName());
-        ArrayList<Part> parts = new ArrayList<Part>();
-        Iterator<SoapHeader> hit = bop.getInput().getHeaders();
-        while(hit.hasNext()) {
-            SoapHeader sh = hit.next();
-            parts.add(definitions.getMessage(sh.getMessage()).getPart(sh.getPart()));
-        }
-        return parts.iterator();
-    }
-
-    public Iterator<Part> headers() throws ConnectionException {
-        return definitions.getBinding().getAllHeaders();
-       /*
-        Message headers;
-        try {
-          headers = definitions.getMessage(new QName(definitions.getTargetNamespace(), "Header"));
-        } catch (ConnectionException e) {
-            Verbose.log("FIXME: header not found");
-            return new ArrayList<Part>().iterator();
-        }
-        return headers.getParts();
-        */
-    }
-
-    public String headerType(Part header) throws ConnectionException {
-        //Types types = definitions.getTypes();
-        //Element element = types.getElement(header.getElement());
-        //QName t = element.getType();
-        //if (typeMapper.isWellKnownType(t.getNamespaceURI(), t.getLocalPart())) {
-            //return "java.lang.String";
-        //}
-        if (isSimpleType(header)) {
-            return "java.lang.String";
-        } else {
-            ComplexType type = getType(header);
-            QName qn = new QName(type.getSchema().getTargetNamespace(), type.getName());
-            return typeMapper.getJavaClassName(qn, definitions.getTypes(), false);
-        }
-    }
-
     private boolean isSimpleType(Part header) throws ConnectionException {
         Types types = definitions.getTypes();
         Element element = types.getElement(header.getElement());
-        if (!element.isComplexType()) {
-            return true;
-        }
+        if (!element.isComplexType()) { return true; }
         return typeMapper.isWellKnownType(element.getType().getNamespaceURI(), element.getType().getLocalPart());
     }
 
@@ -214,12 +163,52 @@ public class ConnectionGenerator {
         sb.append(FileUtil.EOL);
     }
 
-    public String getResultCall(Operation operation) throws ConnectionException {
-        //return "void".equals(returnType(operation)) ? "" : "return __response.getResult();";
-        Element el = getResponseElement(operation);
-        if (el == null) {
-            return "";
+    public boolean hasLoginCall() {
+        return definitions.getApiType() != null && definitions.getApiType().hasLoginCall();
+    }
+
+    private String qname(String str) {
+        return str + "_qname";
+    }
+
+    public boolean hasSessionHeader() throws ConnectionException {
+        Iterator<Part> it = headers();
+        while (it.hasNext()) {
+            Part part = it.next();
+            if (part.getName().equals("SessionHeader")) { return true; }
         }
+        return false;
+    }
+
+    public Iterator<Part> headersFor(Operation operation) throws ConnectionException {
+        BindingOperation bop = definitions.getBinding().getOperation(operation.getName());
+        ArrayList<Part> parts = new ArrayList<Part>();
+        Iterator<SoapHeader> hit = bop.getInput().getHeaders();
+        while (hit.hasNext()) {
+            SoapHeader sh = hit.next();
+            parts.add(definitions.getMessage(sh.getMessage()).getPart(sh.getPart()));
+        }
+        return parts.iterator();
+    }
+
+    public Iterator<Part> headers() throws ConnectionException {
+        return definitions.getBinding().getAllHeaders();
+    }
+
+    public String headerType(Part header) throws ConnectionException {
+        if (isSimpleType(header)) {
+            return "java.lang.String";
+        } else {
+            ComplexType type = getType(header);
+            QName qn = new QName(type.getSchema().getTargetNamespace(), type.getName());
+            return typeMapper.getJavaClassName(qn, definitions.getTypes(), false);
+        }
+    }
+
+    public String getResultCall(Operation operation) throws ConnectionException {
+        // return "void".equals(returnType(operation)) ? "" : "return __response.getResult();";
+        Element el = getResponseElement(operation);
+        if (el == null) { return ""; }
 
         return "return __response.get" + NameMapper.getMethodName(el.getName()) + "();";
     }
@@ -232,38 +221,14 @@ public class ConnectionGenerator {
 
     public String returnType(Operation operation) throws ConnectionException {
         Element el = getResponseElement(operation);
-        if (el == null) {
-            return "void";
-        }
+        if (el == null) { return "void"; }
         return getJavaClassName(el);
-
-        /*
-        ComplexType ct = getType(operation.getOutput());
-        Collection sequence = ct.getContent();
-        if (sequence == null) { //  <complexType/>
-            return "void";
-        }
-        Iterator<Element> eit = sequence.getElements();
-        String clazz;
-
-        if (eit.hasNext()) {
-            Element el = eit.next();
-            clazz = getJavaClassName(el);
-            if (eit.hasNext()) {
-                throw new IllegalArgumentException("Operation.output got more than one element:" + operation);
-            }
-        } else {
-            clazz = "void"; // <complexType><sequence/><complexType>
-        }
-
-        return clazz;
-        */
     }
 
     public Element getResponseElement(Operation operation) throws ConnectionException {
         ComplexType ct = getType(operation.getOutput());
         Collection sequence = ct.getContent();
-        if (sequence == null) { //  <complexType/>
+        if (sequence == null) { // <complexType/>
             return null;
         }
         Iterator<Element> eit = sequence.getElements();
@@ -271,9 +236,8 @@ public class ConnectionGenerator {
         Element result;
         if (eit.hasNext()) {
             result = eit.next();
-            if (eit.hasNext()) {
-                throw new IllegalArgumentException("Operation.output got more than one element:" + operation);
-            }
+            if (eit.hasNext()) { throw new IllegalArgumentException("Operation.output got more than one element:"
+                    + operation); }
         } else {
             result = null; // <complexType><sequence/><complexType>
         }
@@ -365,9 +329,8 @@ public class ConnectionGenerator {
 
     private ComplexType getType(Message message) throws ConnectionException {
         Iterator<Part> it = message.getParts();
-        if (!it.hasNext()) {
-            throw new IllegalArgumentException("Input for operation " + message + " does not have a part");
-        }
+        if (!it.hasNext()) { throw new IllegalArgumentException("Input for operation " + message
+                + " does not have a part"); }
         Part part = it.next();
         if (it.hasNext()) throw new IllegalArgumentException("Found more than one part for operation " + message);
         return getType(part);
@@ -386,29 +349,5 @@ public class ConnectionGenerator {
 
     public String getOperationName(Operation operation) {
         return operation.getName().getLocalPart();
-    }
-
-    public String generateConnector() throws IOException, TemplateException {
-        return generate(CONNECTOR_TEMPLATE, "Connector");
-    }
-
-    public boolean hasLoginCall() {
-        return definitions.getApiType() != null && definitions.getApiType().hasLoginCall();
-    }
-
-    public String generateConnection() throws IOException, TemplateException {
-        //return generate(definitions.getApiType() != null && definitions.getApiType().hasLoginCall() ?
-        		//CONNECTION_TEMPLATE : NON_SOBJECT_TEMPLATE, className);
-
-        return generate(CONNECTION_TEMPLATE, className);
-    }
-
-    public String generate(String templateFile, String className) throws IOException, TemplateException {
-        File dir = FileUtil.mkdirs(packageName, tempDir);
-        Template template = new Template();
-        template.setProperty("gen", this);
-        File javaFile = new File(dir, className + ".java");
-        template.exec(templateFile, javaFile.getAbsolutePath());
-        return javaFile.getAbsolutePath();
     }
 }

@@ -25,19 +25,12 @@
  */
 package com.sforce.ws.wsdl;
 
-import com.sforce.ws.parser.XmlInputStream;
-
+import java.io.*;
 import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.ByteArrayInputStream;
 
+import com.sforce.ws.parser.XmlInputStream;
 /**
- * Use this factory to create WSDL data model.
- *
- * @author http://cheenath.com
+ * @author cheenath.com
  * @version 1.0
  * @since 1.0   Nov 5, 2005
  */
@@ -47,20 +40,27 @@ public class WsdlFactory {
      * @param url url of the wsdl
      * @return parsed definitions
      * @throws WsdlParseException failed to parse wsdl
+     * @throws  
      */
-    public static Definitions create(String url) throws WsdlParseException {
-        InputStream in;
-
+    public static Definitions create(URL url) throws WsdlParseException, IOException {
+        InputStream in = url.openStream();
         try {
-          try {
-              in = new URL(url).openStream();
-          } catch (MalformedURLException e) {
-              in = new FileInputStream(url);
-          }
-        }catch (IOException e) {
-            throw new WsdlParseException(e);
+            return createFromInputStream(in);
+        } finally {
+            closeQuietly(in);
         }
+    }
 
+    public static Definitions createFromString(String wsdl) throws WsdlParseException {
+        ByteArrayInputStream in = new ByteArrayInputStream(wsdl.getBytes());
+        try {
+            return createFromInputStream(in);
+        } finally {
+            closeQuietly(in);
+        }
+    }
+
+    private static Definitions createFromInputStream(InputStream in) throws WsdlParseException {
         XmlInputStream parser = new XmlInputStream();
         WsdlParser wsdlParser = new WsdlParser(parser);
         Definitions definitions = new Definitions();
@@ -69,13 +69,13 @@ public class WsdlFactory {
         return definitions;
     }
 
-    public static Definitions createFromString(String wsdl) throws WsdlParseException {
-        XmlInputStream parser = new XmlInputStream();
-        WsdlParser wsdlParser = new WsdlParser(parser);
-        Definitions definitions = new Definitions();
-        ByteArrayInputStream bio = new ByteArrayInputStream(wsdl.getBytes());
-        wsdlParser.setInput(bio, "UTF-8");
-        definitions.read(wsdlParser);
-        return definitions;
-     }
+    private static void closeQuietly(InputStream in) {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException ignored) {
+                // ignore IOException while closing stream
+            }
+        }
+    }
 }

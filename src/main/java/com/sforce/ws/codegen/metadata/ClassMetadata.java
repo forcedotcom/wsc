@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,36 +23,32 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.sforce.rest;
-
-import java.io.IOException;
-
-import com.sforce.rest.pojo.SObject;
+package com.sforce.ws.codegen.metadata;
 
 /**
- * 
- * @author gwester
- * @since 172
+ * @author btoal 
+ * @author hhildebrand
+ * @since 184
  */
-public interface RestConnection {
+public class ClassMetadata {
+    protected final String className;
+    protected final String packageName;
+    
+    public static ClassMetadata newInstance(String packageName, String className) {
+        return new ClassMetadata(packageName, className);
+    }
 
-	public DescribeGlobal describeGlobal() throws IOException, RestApiException;
-	
-	public DescribeSobject describeSobject(String sobjectName) throws IOException, RestApiException;
-	
-	public DescribeLayout describeLayout(String sobjectName) throws IOException, RestApiException;
-	
-	public SObjectResult create(SObject sobject) throws IOException, RestApiException;
-	
-	public SObjectResult update(SObject sobject, String id) throws IOException, RestApiException;
-	
-	public SObjectResult delete(Class<? extends SObject> clazz, String id) throws IOException, RestApiException;
-	
-	public <T extends SObject> T get(Class<T> clazz, String id) throws IOException, RestApiException;
-	
-	public QueryResult query(String query) throws IOException, RestApiException;
-	
-	public SearchResult search(String search) throws IOException, RestApiException;
-	
-	public SearchResult recent() throws IOException, RestApiException;
+    public ClassMetadata(String packageName, String className) {
+        this.packageName = packageName;
+        this.className = className;
+    }
+
+    public String getClassName() {
+        return this.className;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
 }

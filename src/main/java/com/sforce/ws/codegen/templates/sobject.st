@@ -1,5 +1,6 @@
+sobject(gen) ::= <<
 /*
- * Copyright (c) 2011, salesforce.com, inc.
+ * Copyright (c) 2005-2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,53 +24,56 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.sforce.rest;
+package $gen.packageName$;
 
-import java.util.Set;
+import com.sforce.ws.bind.XmlObject;
+import com.sforce.ws.wsdl.Constants;
+import com.sforce.ws.parser.XmlInputStream;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
- * This is the response from the server when you perform an create, update, delete operation on a single record.
- * 
- * @author gwester
- * @since 172
  */
-public class SObjectResult {
-    private String id;
-    private Boolean success;
-    private Set<String> errors;
+public class SObject extends XmlObject {
+
+    /**
+     * Constructor
+     */
+    public SObject() {
+    }
+
+    public String getType() {
+        return (String)getField("type");
+    }
+
+    public void setType(String type) {
+        setField("type", type);
+    }
+
+    public String[] getFieldsToNull() {
+        Iterator<XmlObject> it = getChildren("fieldsToNull");
+        ArrayList<String> result = new ArrayList<String>();
+        while(it.hasNext()) {
+          result.add((String)it.next().getValue());
+        }
+        return (String[]) result.toArray(new String[0]);
+    }
+
+    public void setFieldsToNull(String[] fieldsToNull) {
+        for (int i=0; i<fieldsToNull.length; i++) {
+          addField("fieldsToNull", fieldsToNull[i]);
+        }
+    }
 
     public String getId() {
-        return id;
+        return (String)getField("Id");
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
-    }
-
-    public Set<String> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(Set<String> errors) {
-        this.errors = errors;
-    }
-
-    public String getErrorsFormatted() {
-        StringBuilder builder = new StringBuilder();
-        int count = 0;
-        int size = errors.size();
-        builder.append(String.valueOf(size) + " errors found! ");
-        for (String error : errors) {
-            builder.append("Error #" + String.valueOf(count++) + ") " + error);
-        }
-        return builder.toString();
+    public void setId(String Id) {
+        setField("Id", Id);
     }
 }
+
+>>
