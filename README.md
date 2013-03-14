@@ -4,7 +4,7 @@ The Force.com Web Service Connector (WSC) is a high performing web service clien
 
 ## Building WSC
     git clone git@github.com:forcedotcom/wsc.git
-    mvn install -DskipTests
+    mvn install -DskipTests -Dgpg.skip=true
 
 ## Generating Stubs From WSDLs
     java -classpath target/force-wsc-27.0.0-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
