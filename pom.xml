@@ -55,6 +55,13 @@
       <resources>
         <resource>
           <filtering>false</filtering>
+          <directory>${basedir}</directory>
+          <includes>
+            <include>LICENSE.md</include>
+          </includes>
+        </resource>
+        <resource>
+          <filtering>false</filtering>
           <directory>${basedir}/src/main/java</directory>
           <includes>
             <include>**</include>
