@@ -4,10 +4,14 @@ The Force.com Web Service Connector (WSC) is a high performing web service clien
 
 ## Building WSC
     git clone git@github.com:forcedotcom/wsc.git
-    mvn install -DskipTests
+    mvn clean package
+    
+To skip the gpg signing, run the following command
+
+    mvn clean package -Dgpg.skip
 
 ## Generating Stubs From WSDLs
-    java -classpath target/force-wsc-27.0.0-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
+    java -classpath target/force-wsc-28.0.0-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.

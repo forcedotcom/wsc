@@ -441,6 +441,11 @@ public enum StatusCode {
     */
    INVALID_SIGNUP_COUNTRY,
    
+   /**
+    * Enumeration : INVALID_OAUTH_URL
+    */
+   INVALID_OAUTH_URL,
+   
   /**
    * Enumeration  : INVALID_STATUS
    */

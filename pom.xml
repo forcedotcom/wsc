@@ -9,7 +9,7 @@
     <groupId>com.force.api</groupId>
     <artifactId>force-wsc</artifactId>
     <packaging>jar</packaging>
-    <version>27.0.0</version>
+    <version>28.0.0</version>
     <name>force-wsc</name>
     <description>Force.com Web Service Connector</description>
     <url>http://www.force.com</url>
@@ -40,14 +40,9 @@
     </mailingLists>
     <dependencies>
       <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>1.7.1</version>
-      </dependency>
-      <dependency>
-        <groupId>rhino</groupId>
-        <artifactId>js</artifactId>
-        <version>1.7R2</version>
+        <groupId>org.antlr</groupId>
+        <artifactId>ST4</artifactId>
+        <version>4.0.7</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -58,6 +53,13 @@
     </dependencies>
     <build>
       <resources>
+        <resource>
+          <filtering>false</filtering>
+          <directory>${basedir}</directory>
+          <includes>
+            <include>LICENSE.md</include>
+          </includes>
+        </resource>
         <resource>
           <filtering>false</filtering>
           <directory>${basedir}/src/main/java</directory>

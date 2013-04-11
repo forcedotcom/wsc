@@ -39,6 +39,7 @@ import java.io.*;
  */
 public class PostMain {
 
+    @SuppressWarnings("resource")
     private PostMain(String url, String file, String tempDir) throws IOException {
         FileInputStream fio = new FileInputStream(file);
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();

@@ -39,7 +39,7 @@ import com.sforce.ws.parser.XmlInputStream;
  * @version 1.0
  * @since 1.0  Nov 9, 2005
  */
-public class Restriction implements Constants {
+public class Restriction implements Constants, Iterable<Enumeration> {
 
     private ArrayList<Enumeration> enumerations = new ArrayList<Enumeration>();
     private QName base;
@@ -50,6 +50,11 @@ public class Restriction implements Constants {
     }
 
     public Iterator<Enumeration> getElements() {
+        return enumerations.iterator();
+    }
+
+    @Override
+    public Iterator<Enumeration> iterator() {
         return enumerations.iterator();
     }
 

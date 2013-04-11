@@ -1,0 +1,236 @@
+package com.sforce.ws.codegen;
+
+import java.io.File;
+import java.util.*;
+
+import javax.xml.namespace.QName;
+
+import com.sforce.ws.bind.NameMapper;
+import com.sforce.ws.bind.TypeMapper;
+import com.sforce.ws.codegen.metadata.ComplexClassMetadata;
+import com.sforce.ws.codegen.metadata.MemberMetadata;
+import com.sforce.ws.wsdl.*;
+import com.sforce.ws.wsdl.Collection;
+
+/**
+ * @author hhildebrand
+ * @since 184
+ */
+public class TypeMetadataConstructor {
+    private static class JavaType {
+        String loadMethod;
+        String writeMethod;
+
+        public JavaType(String loadMethod, String writeMethod) {
+            this.loadMethod = loadMethod;
+            this.writeMethod = writeMethod;
+        }
+    }
+
+    private static class JavaTypeMap {
+        private HashMap<String, TypeMetadataConstructor.JavaType> map = new HashMap<String, TypeMetadataConstructor.JavaType>();
+        private TypeMetadataConstructor.JavaType defaultType = new JavaType("readObject", "writeObject");
+
+        public TypeMetadataConstructor.JavaType get(String key) {
+            TypeMetadataConstructor.JavaType o = map.get(key);
+            if (o == null) {
+                o = defaultType;
+            }
+            return o;
+        }
+
+        public void put(String s, TypeMetadataConstructor.JavaType javaType) {
+            map.put(s, javaType);
+        }
+    }
+
+    private static final String LAX_MINOCCURS = "lax-minoccurs-checking";
+    private static final TypeMetadataConstructor.JavaTypeMap javaTypeMap = javaTypeMap();
+
+    private static TypeMetadataConstructor.JavaTypeMap javaTypeMap() {
+        TypeMetadataConstructor.JavaTypeMap map = new JavaTypeMap();
+        map.put("java.lang.String", new JavaType("readString", "writeString"));
+        map.put("int", new JavaType("readInt", "writeInt"));
+        map.put("boolean", new JavaType("readBoolean", "writeBoolean"));
+        map.put("double", new JavaType("readDouble", "writeDouble"));
+        map.put("long", new JavaType("readLong", "writeLong"));
+        map.put("float", new JavaType("readFloat", "writeFloat"));
+        return map;
+    }
+
+    protected final ComplexType complexType;
+    private final boolean laxMinOccursMode;
+    protected final String className;
+
+    private final Types types;
+
+    private final TypeMapper mapper;
+
+    private final String packageName;
+
+    public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
+            TypeMapper typeMapper) {
+        this.packageName = NameMapper.getPackageName(schema.getTargetNamespace(), typeMapper.getPackagePrefix());
+        this.types = types;
+        this.mapper = typeMapper;
+        this.complexType = complexType;
+        this.className = NameMapper.getClassName(complexType.getName());
+        this.laxMinOccursMode = System.getProperty(LAX_MINOCCURS) != null;
+    }
+
+    public String baseClass() {
+        StringBuilder sb = new StringBuilder();
+
+        if (complexType.getBase() == null) {
+            if (complexType.isHeader()) {
+                sb.append("extends com.sforce.ws.bind.SoapHeaderObject ");
+            } else if (className.endsWith("Fault")) {
+                sb.append("extends com.sforce.ws.SoapFaultException ");
+            }
+            sb.append("implements com.sforce.ws.bind.XMLizable");
+        } else {
+            sb.append("extends ").append(localJavaType(complexType.getBase(), 1, false));
+        }
+        return sb.toString();
+    }
+
+    public String booleanGetMethod(Element element) {
+        return "is" + NameMapper.getMethodName(element.getName());
+    }
+
+    public String elementDoc(Element element) {
+        return element.getName() + " of type " + element.getType();
+    }
+
+    public String fieldName(Element element) {
+        return NameMapper.getFieldName(element.getName());
+    }
+
+    public ComplexClassMetadata generateMetadata() {
+
+        List<MemberMetadata> memberMetadataList = new ArrayList<MemberMetadata>();
+        Iterator<Element> itr = getElements();
+        while (itr.hasNext()) {
+            Element e = itr.next();
+            // TODO Get rid of the second javaType, it will always be boolean
+            memberMetadataList.add(MemberMetadata.newInstance(elementDoc(e), javaType(e), fieldName(e), typeInfo(e),
+                    initArray(e), getMethod(e), javaType(e), booleanGetMethod(e), setMethod(e), writeMethod(e),
+                    loadType(e), loadMethod(e)));
+        }
+
+        return new ComplexClassMetadata(packageName, className, baseClass(), xsiType(), superWrite(), superLoad(),
+                superToString(), memberMetadataList);
+    }
+
+    public Iterator<Element> getElements() {
+        Collection sequence = complexType.getContent();
+        Iterator<Element> it;
+
+        if (sequence == null) {
+            it = Collections.<Element> emptyList().iterator();
+        } else {
+            it = sequence.getElements();
+        }
+
+        return it;
+    }
+
+    public String getMethod(Element element) {
+        return "get" + NameMapper.getMethodName(element.getName());
+    }
+
+    public String initArray(Element element) {
+        StringBuilder sb = new StringBuilder();
+        if (isArray(element.getMaxOccurs())) {
+            sb.append(" = new ");
+            sb.append(mapper.getJavaClassName(element.getType(), types, element.isNillable()));
+            sb.append("[0]");
+        }
+        return sb.toString();
+    }
+
+    public String javaType(Element element) {
+        QName type = element.getType();
+        return localJavaType(type, element.getMaxOccurs(), element.isNillable());
+    }
+
+    public String loadMethod(Element element) {
+        String type = javaType(element);
+        TypeMetadataConstructor.JavaType javaType = javaTypeMap.get(type);
+        return javaType.loadMethod;
+    }
+
+    public String loadType(Element element) {
+        if (!laxMinOccursMode && element.getMinOccurs() == 1) {
+            return "verifyElement";
+        } else {
+            return "isElement";
+        }
+    }
+
+    public String setMethod(Element element) {
+        return "set" + NameMapper.getMethodName(element.getName());
+    }
+
+    public String superLoad() {
+        if (!complexType.hasBaseClass()) { return ""; }
+
+        return "super.loadFields(__in, __typeMapper);";
+    }
+
+    public String superToString() {
+        if (!complexType.hasBaseClass()) { return ""; }
+
+        return "sb.append(super.toString());";
+    }
+
+    public String superWrite() {
+        if (!complexType.hasBaseClass()) { return ""; }
+
+        return "super.writeFields(__out, __typeMapper);";
+    }
+
+    public String typeInfo(Element element) {
+        String tns = element.getSchema().getTargetNamespace();
+        String name = element.getName();
+        String typeNs = element.getType().getNamespaceURI();
+        String type = element.getType().getLocalPart();
+        int minOcc = element.getMinOccurs();
+        int maxOcc = element.getMaxOccurs();
+        boolean formQualified = element.getSchema().isElementFormQualified();
+        return "\"" + tns + "\",\"" + name + "\",\"" + typeNs + "\",\"" + type + "\"," + minOcc + "," + maxOcc + ","
+                + formQualified;
+    }
+
+    public String writeMethod(Element element) {
+        String type = javaType(element);
+        TypeMetadataConstructor.JavaType javaType = javaTypeMap.get(type);
+        return javaType.writeMethod;
+    }
+
+    public String xsiType() {
+        if (complexType.getBase() == null) { return ""; }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("__typeMapper.writeXsiType(__out, \"");
+        sb.append(complexType.getSchema().getTargetNamespace());
+        sb.append("\", \"");
+        sb.append(complexType.getName());
+        sb.append("\");");
+        return sb.toString();
+    }
+
+    private boolean isArray(int maxOccurs) {
+        return maxOccurs == Element.UNBOUNDED || maxOccurs > 1;
+    }
+
+    protected String localJavaType(QName type, int maxOccurs, boolean nillable) {
+        String name = mapper.getJavaClassName(type, types, nillable);
+
+        if (isArray(maxOccurs)) {
+            name = name + "[]";
+        }
+
+        return name;
+    }
+}

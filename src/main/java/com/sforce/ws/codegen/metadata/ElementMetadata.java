@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,49 +23,31 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.sforce.ws.wsdl;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Iterator;
-
-import com.sforce.ws.util.Verbose;
+package com.sforce.ws.codegen.metadata;
 
 /**
- * A util class that can be used to test WSDL parser.
- *
- * @author  http://cheenath.com
- * @version 1.0
- * @since   1.0   Nov 5, 2005
+ * @author btoal 
+ * @author hhildebrand
+ * @since 184
  */
-public class Main {
-
-  public static void main(String[] args) throws WsdlParseException, MalformedURLException, IOException {
-    Definitions definitions = WsdlFactory.create(new URL(args[0]));
-    Verbose.log(definitions.toString());
-
-    Types types = definitions.getTypes();
-
-    System.out.println("types");
-
-    for(Schema schema: types.getSchemas() ) { 
-      System.out.println("  schema " + schema.getTargetNamespace()); 
-
-      for(ComplexType type: schema.getComplexTypes()) { 
-        System.out.println("    " + type.getName() + " extends " + type.getBase());
-        Collection sequence = type.getContent();
-
-        if (sequence != null) {
-          Iterator<Element> elements = sequence.getElements();
-
-          while(elements.hasNext()) {
-            Element element = elements.next();
-            System.out.println("      " + element.getName() + " " + element.getType());
-          }
-        }
-      }
-
+public class ElementMetadata {
+    private final String setMethod;
+    private final String name;
+    
+    public ElementMetadata(final String setMethod, final String name) {
+        this.setMethod = setMethod;
+        this.name = name;
     }
-  }
+
+    public static ElementMetadata newInstance(final String setMethod, final String name) {
+        return new ElementMetadata(setMethod, name);
+    }
+
+    public String getSetMethod() {
+        return setMethod;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

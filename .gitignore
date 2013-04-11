@@ -5,6 +5,5 @@ target
 *.iml
 *.ipr
 *.iws
-*.wsdl
 *.swp
 .DS_Store

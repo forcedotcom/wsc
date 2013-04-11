@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2005-2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,49 +23,54 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.sforce.ws.wsdl;
+package com.sforce.soap.partner.sobject;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.sforce.ws.bind.XmlObject;
+import com.sforce.ws.wsdl.Constants;
+import com.sforce.ws.parser.XmlInputStream;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.sforce.ws.util.Verbose;
-
 /**
- * A util class that can be used to test WSDL parser.
- *
- * @author  http://cheenath.com
- * @version 1.0
- * @since   1.0   Nov 5, 2005
  */
-public class Main {
+public class SObject extends XmlObject {
 
-  public static void main(String[] args) throws WsdlParseException, MalformedURLException, IOException {
-    Definitions definitions = WsdlFactory.create(new URL(args[0]));
-    Verbose.log(definitions.toString());
-
-    Types types = definitions.getTypes();
-
-    System.out.println("types");
-
-    for(Schema schema: types.getSchemas() ) { 
-      System.out.println("  schema " + schema.getTargetNamespace()); 
-
-      for(ComplexType type: schema.getComplexTypes()) { 
-        System.out.println("    " + type.getName() + " extends " + type.getBase());
-        Collection sequence = type.getContent();
-
-        if (sequence != null) {
-          Iterator<Element> elements = sequence.getElements();
-
-          while(elements.hasNext()) {
-            Element element = elements.next();
-            System.out.println("      " + element.getName() + " " + element.getType());
-          }
-        }
-      }
-
+    /**
+     * Constructor
+     */
+    public SObject() {
     }
-  }
+
+    public String getType() {
+        return (String)getField("type");
+    }
+
+    public void setType(String type) {
+        setField("type", type);
+    }
+
+    public String[] getFieldsToNull() {
+        Iterator<XmlObject> it = getChildren("fieldsToNull");
+        ArrayList<String> result = new ArrayList<String>();
+        while(it.hasNext()) {
+          result.add((String)it.next().getValue());
+        }
+        return (String[]) result.toArray(new String[0]);
+    }
+
+    public void setFieldsToNull(String[] fieldsToNull) {
+        for (int i=0; i<fieldsToNull.length; i++) {
+          addField("fieldsToNull", fieldsToNull[i]);
+        }
+    }
+
+    public String getId() {
+        return (String)getField("Id");
+    }
+
+    public void setId(String Id) {
+        setField("Id", Id);
+    }
 }

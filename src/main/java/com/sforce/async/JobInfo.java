@@ -20,6 +20,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         if (builder.externalIdFieldName != null) setExternalIdFieldName(builder.externalIdFieldName);
         if (builder.state != null) setState(builder.state);
         if (builder.id != null) setId(builder.id);
+        if (builder.fastPathEnabled != null) setFastPathEnabled(builder.fastPathEnabled);
     }
 
     /**
@@ -175,7 +176,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         this.state = state;
         state__is_set = true;
     }
-
+    
     /**
      * element  : externalIdFieldName of type {http://www.w3.org/2001/XMLSchema}string
      * java type: java.lang.String
@@ -220,6 +221,29 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         concurrencyMode__is_set = true;
     }
 
+    /**
+     * element : fastPathEnabled of type {http://www.w3.org/2001/XMLSchema}boolean java type: boolean
+     */
+    private static final com.sforce.ws.bind.TypeInfo fastPathEnabled__typeInfo =
+            new com.sforce.ws.bind.TypeInfo("http://www.force.com/2009/06/asyncapi/dataload", "fastPathEnabled",
+                    "http://www.w3.org/2001/XMLSchema", "boolean", 0, 1, true);
+
+    /**
+     * fashPath is not currently supported 
+     */
+    private boolean fastPathEnabled__is_set = false;
+
+    private boolean fastPathEnabled;
+
+    public boolean getFastPathEnabled() {
+        return fastPathEnabled;
+    }
+
+    public void setFastPathEnabled(boolean fastPathEnabled) {
+        this.fastPathEnabled = fastPathEnabled;
+        fastPathEnabled__is_set = true;
+    }
+    
     /**
      * element : numberBatchesQueued of type {http://www.w3.org/2001/XMLSchema}int java type: int
      */
@@ -549,6 +573,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         __typeMapper.writeLong(__out, apiActiveProcessingTime__typeInfo, apiActiveProcessingTime,
                 apiActiveProcessingTime__is_set);
         __typeMapper.writeLong(__out, apexProcessingTime__typeInfo, apexProcessingTime, apexProcessingTime__is_set);
+        __typeMapper.writeBoolean(__out, fastPathEnabled__typeInfo, fastPathEnabled, fastPathEnabled__is_set);
     }
 
 
@@ -675,6 +700,11 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         if (__typeMapper.isElement(__in, apexProcessingTime__typeInfo)) {
             setApexProcessingTime(__typeMapper.readLong(__in, apexProcessingTime__typeInfo, long.class));
         }
+        
+        __in.peekTag();
+        if (__typeMapper.isElement(__in, fastPathEnabled__typeInfo)) {
+            setFastPathEnabled(__typeMapper.readBoolean(__in, fastPathEnabled__typeInfo, boolean.class));
+        }
     }
 
     @Override
@@ -728,6 +758,8 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(apiActiveProcessingTime)).append("'\n");
         sb.append(" apexProcessingTime=");
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(apexProcessingTime)).append("'\n");
+        sb.append(" fastPathEnabled=");
+        sb.append("'").append(com.sforce.ws.util.Verbose.toString(fastPathEnabled)).append("'\n");
         sb.append("]\n");
         return sb.toString();
     }
@@ -743,6 +775,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         private String externalIdFieldName;
         private JobStateEnum state;
         private String id;
+        private Boolean fastPathEnabled;
 
         public Builder object(String object) {
             this.object = object;
@@ -781,6 +814,11 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+        
+        public Builder fastPathEnabled(boolean fastPathEnabled) {
+            this.fastPathEnabled = fastPathEnabled;
             return this;
         }
 
