@@ -15,8 +15,8 @@
  */
 package com.sforce.ws.wsdl;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -24,97 +24,69 @@ import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.util.Named;
 
 /**
- * This class represents WSDL->definitions->types->schema->complexType->attribute
+ * This class represents WSDL->definitions->types->schema->complexType->attributeGroup
  * 
- * @author http://cheenath.com
- * @version 158
+ * @author lmcalpin
+ * @version 186
  */
-public class Attribute implements Constants, Named {
+public class AttributeGroup implements Constants, Named {
 
     private Schema schema;
     private String name;
     private QName ref;
-    private QName type;
-    private String fixed;
-    
-    private static final int MAX_LENGTH = 255;
+    private List<Attribute> attributes = new ArrayList<Attribute>();
 
-    private static final Pattern pattern = Pattern.compile("[\\s:]");
-    
-    public Attribute(Schema schema) {
+    public AttributeGroup(Schema schema) {
         this.schema = schema;
     }
 
     @Override
     public String toString() {
-        return "Attribute{" + "name=" + name + '}';
+        return "AttributeGroup{" + "name=" + name + '}';
     }
 
     public String getName() {
         return name;
     }
     
-    public QName getRef() {
-    	return ref;
-    }
-
-    public QName getType() {
-        return type;
-    }
-
-    public String getFixed() {
-		return fixed;
-	}
-
-	public String getNamespace() {
+    public String getNamespace() {
         return schema.getTargetNamespace();
     }
     
-    void read(WsdlParser parser) throws WsdlParseException {
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    void read(final WsdlParser parser) throws WsdlParseException {
         name = parser.getAttributeValue(null, NAME);
 
         ref = parser.parseRef(schema);
-        
-        fixed = parser.getAttributeValue(null, FIXED);
 
         if (ref != null) {
             final String positionDescription = parser.getPositionDescription();
-            final Attribute thisAttribute = this;
+            final AttributeGroup thisAttribute = this;
             parser.addPostParseProcessor(new WsdlParser.PostParseProcessor() {
                 @Override
                 public void postParse() throws WsdlParseException {
-                    Attribute referencedAttribute = schema.getTypes().getAttribute(ref);
-                    if (referencedAttribute != null) {
-                        thisAttribute.schema = referencedAttribute.schema;
-                        thisAttribute.name = referencedAttribute.name;
-                        thisAttribute.type = referencedAttribute.type;
+                	AttributeGroup referencedGroup = schema.getTypes().getAttributeGroup(ref);
+                    if (referencedGroup != null) {
+                        thisAttribute.schema = referencedGroup.schema;
+                        thisAttribute.name = referencedGroup.name;
+                        thisAttribute.attributes = referencedGroup.attributes;
                     } else {
-                        throw new WsdlParseException("attribute ref '" + ref
+                        throw new WsdlParseException("attributeGroup ref '" + ref
                                 + "' could not be resolved at: " + positionDescription);
                     }
                 }
             });
         }
-
+        
         if (ref == null) {
-            if (name == null) { throw new WsdlParseException("attribute name can not be null at: "
-                    + parser.getPositionDescription()); }
-
-            if ("".equals(name)) { throw new WsdlParseException("attribute name can not be empty at: "
-                    + parser.getPositionDescription()); }
-
-            if (name.length() > MAX_LENGTH) { throw new WsdlParseException("attribute name '" + name
-                    + "' bigger than max length: " + MAX_LENGTH); }
-
-            Matcher matcher = pattern.matcher(name);
-            if (matcher.find()) { throw new WsdlParseException("attribute name '" + name
-                    + "' is not a valid attribute name"); }
-        }
-
-        String t = parser.getAttributeValue(null, TYPE);
-
-        if (t != null) {
-            type = ParserUtil.toQName(t, parser);
+	        if (name == null) { throw new WsdlParseException("attributeGroup name can not be null at: "
+	                + parser.getPositionDescription()); }
+	
+	        if ("".equals(name)) { throw new WsdlParseException("attributeGroup name can not be empty at: "
+	                + parser.getPositionDescription()); }
         }
 
         int eventType = parser.getEventType();
@@ -124,31 +96,22 @@ public class Attribute implements Constants, Named {
                 String name = parser.getName();
                 String namespace = parser.getNamespace();
 
-                if (SIMPLE_TYPE.equals(name) && SCHEMA_NS.equals(namespace)) {
-                    if (type != null) { throw new WsdlParseException("type should not be specified: "
-                            + parser.getPositionDescription()); }
-
-                    SimpleType st = new SimpleType(schema);
-                    st.read(parser, name);
-
-                    type = new QName(SCHEMA_NS, "string");
+                if (ATTRIBUTE.equals(name) && SCHEMA_NS.equals(namespace)) {
+                    Attribute attribute = new Attribute(this.schema);
+                    attribute.read(parser);
+                    attributes.add(attribute);
                 }
-
             } else if (eventType == XmlInputStream.END_TAG) {
                 String name = parser.getName();
                 String namespace = parser.getNamespace();
 
-                if (ATTRIBUTE.equals(name) && SCHEMA_NS.equals(namespace)) {
+                if (ATTRIBUTE_GROUP.equals(name) && SCHEMA_NS.equals(namespace)) {
                     break;
                 }
             } else if (eventType == XmlInputStream.END_DOCUMENT) { throw new WsdlParseException(
                     "Failed to find end tag for 'attribute'"); }
 
             eventType = parser.next();
-        }
-
-        if (ref == null) {
-            if (type == null) { throw new WsdlParseException("type not specified for attribute: " + name); }
         }
     }
 }
