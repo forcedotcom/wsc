@@ -67,8 +67,11 @@ public class wsdlc extends Generator {
                     "Output Jar file exists and cannot be deleted: %s", destJar.getAbsolutePath())); }
         }
         if (!destJar.getParentFile().exists()) {
-            if (!destJar.getParentFile().mkdirs()) { throw new ToolsException(String.format(
-                    "Cannot create jar file directory: %s", destJar.getParentFile().getAbsolutePath())); }
+            if (!destJar.getParentFile().mkdirs() && !destJar.getParentFile().exists()) { 
+                // only throw exception if mkdirs returns false and directory does not exist to 
+                // prevent build failures when multiple instances of wsdlc are invoked in parallel
+                throw new ToolsException(String.format(
+                        "Cannot create jar file directory: %s", destJar.getParentFile().getAbsolutePath())); }
         }
         URL wsdl;
         try {
