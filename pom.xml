@@ -88,6 +88,10 @@
                 <!-- repackage antlr to prevent namespace collision classpath in core app -->
                 <relocation>
                   <pattern>org.antlr</pattern>
+                  <shadedPattern>com.sforce.ws.shade.org.antlr</shadedPattern>
+                </relocation>
+                  <relocation>
+                  <pattern>antlr</pattern>
                   <shadedPattern>com.sforce.ws.shade.antlr</shadedPattern>
                 </relocation>
               </relocations>
