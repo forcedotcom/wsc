@@ -45,6 +45,7 @@ public class AttributeGroup implements Constants, Named {
         return "AttributeGroup{" + "name=" + name + '}';
     }
 
+    @Override
     public String getName() {
         return name;
     }

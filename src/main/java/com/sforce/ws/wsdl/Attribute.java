@@ -50,6 +50,7 @@ public class Attribute implements Constants, Named {
         return "Attribute{" + "name=" + name + '}';
     }
 
+    @Override
     public String getName() {
         return name;
     }

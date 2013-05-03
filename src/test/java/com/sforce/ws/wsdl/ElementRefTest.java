@@ -22,7 +22,8 @@ import com.sforce.ws.util.CollectionUtil;
 public class ElementRefTest extends TestCase {
     Definitions wsdlRefUnitTestDefs, duplicateAnonymousTypeTestDefs;
     
-	public void setUp() throws Exception {
+	@Override
+    public void setUp() throws Exception {
 		wsdlRefUnitTestDefs = WsdlFactory.create(getClass().getClassLoader().getResource("WsdlRefUnitTest.wsdl"));
 		duplicateAnonymousTypeTestDefs = WsdlFactory.create(getClass().getClassLoader().getResource("DuplicateElementNameTest.wsdl"));
 	}

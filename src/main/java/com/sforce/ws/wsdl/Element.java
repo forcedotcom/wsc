@@ -205,7 +205,8 @@ public class Element implements Constants, Named {
 		}
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 		return name;
 	}
 

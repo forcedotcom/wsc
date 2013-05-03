@@ -22,7 +22,8 @@ import com.sforce.ws.util.CollectionUtil;
 public class AttributeTest extends TestCase {
 	Definitions attrGroupTestDefs, attrUnitTestDefs, attrRefTestDefs;
 
-	public void setUp() throws Exception {
+	@Override
+    public void setUp() throws Exception {
 		attrGroupTestDefs = WsdlFactory.create(getClass().getClassLoader()
 				.getResource("AttributeGroupTest.wsdl"));
 		attrUnitTestDefs = WsdlFactory.create(getClass().getClassLoader()
