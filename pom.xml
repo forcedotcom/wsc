@@ -9,7 +9,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>29.0.0</version>
+  <version>29.1.0</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
@@ -120,7 +120,6 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3.1</version>
         <configuration>
->>>>>>> 27baff50c86f36b8738eccf0d8ef0921bb924797
           <includes>
             <include>**</include>
           </includes>
