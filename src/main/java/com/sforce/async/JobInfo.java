@@ -228,6 +228,9 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
             new com.sforce.ws.bind.TypeInfo("http://www.force.com/2009/06/asyncapi/dataload", "fastPathEnabled",
                     "http://www.w3.org/2001/XMLSchema", "boolean", 0, 1, true);
 
+    /**
+     * fashPath is not currently supported 
+     */
     private boolean fastPathEnabled__is_set = false;
 
     private boolean fastPathEnabled;
