@@ -53,6 +53,16 @@ public class Part extends WsdlNode {
         return element;
     }
 
+    public QName getElementOrDefault() {
+        if (name == null && element == null) {
+            return new QName("");
+        }
+        if (element == null) {
+            return new QName(name);
+        }
+        return element;
+    }
+
     public void read(WsdlParser parser) throws WsdlParseException {
 
         name = parser.getAttributeValue(null, NAME);

@@ -25,10 +25,15 @@
  */
 package com.sforce.ws.wsdl;
 
-import com.sforce.ws.parser.XmlInputStream;
-
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.util.CollectionUtil;
 
 /**
  * This class represents WSDL->definitions->types->schema
@@ -42,10 +47,21 @@ public class Schema implements Constants {
     private String targetNamespace;
     private String elementFormDefault;
     private String attributeFormDefault;
-    private HashMap<String, ComplexType> complexTypes = new HashMap<String, ComplexType>();
-    private HashMap<String, SimpleType> simpleTypes = new HashMap<String, SimpleType>();
-    private HashMap<String, Element> elements = new HashMap<String, Element>();
-
+    private Map<String, ComplexType> complexTypes = new HashMap<String, ComplexType>();
+    private Map<String, SimpleType> simpleTypes = new HashMap<String, SimpleType>();
+    private Map<String, Element> elements = new HashMap<String, Element>();
+    private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+    private Map<String, AttributeGroup> attributeGroups = new HashMap<String, AttributeGroup>();
+    
+    private Map<String, Integer> anonymousTypes = new HashMap<String, Integer>();
+    
+    // parent
+    private Types types;
+    
+    public Schema(Types types) {
+        this.types = types;
+    }
+    
     public String getTargetNamespace() {
         return targetNamespace;
     }
@@ -66,11 +82,11 @@ public class Schema implements Constants {
         simpleTypes.put(type.getName(), type);
     }
 
-    public java.util.Collection<ComplexType> getComplexTypes() {
+    public Collection<ComplexType> getComplexTypes() {
         return complexTypes.values();
     }
 
-    public java.util.Collection<SimpleType> getSimpleTypes() {
+    public Collection<SimpleType> getSimpleTypes() {
         return simpleTypes.values();
     }
 
@@ -88,6 +104,44 @@ public class Schema implements Constants {
 
     public Iterator<Element> getGlobalElements() {
         return elements.values().iterator();
+    }
+    
+    public Iterator<Attribute> getGlobalAttributes() {
+		return attributes.values().iterator();
+	}
+    
+    public Attribute getGlobalAttribute(String name) {
+    	return CollectionUtil.findByName(getGlobalAttributes(), name);
+    }
+
+    public Iterator<AttributeGroup> getGlobalAttributeGroups() {
+		return attributeGroups.values().iterator();
+	}
+    
+    public AttributeGroup getGlobalAttributeGroup(String name) {
+    	return CollectionUtil.findByName(getGlobalAttributeGroups(), name);
+    }
+    
+    /**
+     * Generate a unique name for an anonymous type
+     * @param name
+     * @return the name for the unique element
+     */
+    public String generateUniqueNameForAnonymousType(String elementName) {
+    	String name = elementName + "_element";
+    	Integer count = anonymousTypes.get(name);
+    	if (count == null) {
+    		anonymousTypes.put(name, Integer.valueOf(1));
+    	} else {
+    		int nextSequence = count.intValue() + 1;
+    		anonymousTypes.put(name,  Integer.valueOf(nextSequence));
+    		name += "_" + nextSequence;
+    	}
+    	return name;
+    }
+
+	public Types getTypes() {
+        return types;
     }
 
     @Override
@@ -135,6 +189,14 @@ public class Schema implements Constants {
                 } else if (ANNOTATION.equals(n) && SCHEMA_NS.equals(ns)) {
                     Annotation annotation = new Annotation();
                     annotation.read(parser);
+                } else if (ATTRIBUTE.equals(n) && SCHEMA_NS.equals(ns)) {
+                    Attribute attribute = new Attribute(this);
+                    attribute.read(parser);
+                    attributes.put(attribute.getName(), attribute);
+                } else if (ATTRIBUTE_GROUP.equals(n) && SCHEMA_NS.equals(ns)) {
+                    AttributeGroup attributeGroup = new AttributeGroup(this);
+                    attributeGroup.read(parser);
+                    attributeGroups.put(attributeGroup.getName(), attributeGroup);
                 } else {
                     throw new WsdlParseException("Unsupported Schema element found "
                             + ns + ":" + n + ". At: " + parser.getPositionDescription());

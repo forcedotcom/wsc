@@ -25,6 +25,8 @@
  */
 package com.sforce.ws.wsdl;
 
+import com.sforce.ws.ConnectionException;
+
 /**
  * This exception is thrown when there is an error in parsing WSDL.
  *
@@ -32,7 +34,7 @@ package com.sforce.ws.wsdl;
  * @version 1.0
  * @since 1.0   Nov 5, 2005
  */
-public class WsdlParseException extends Exception {
+public class WsdlParseException extends ConnectionException {
 
     /**
 	 * 

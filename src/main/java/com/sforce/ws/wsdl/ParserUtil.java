@@ -41,7 +41,6 @@ public class ParserUtil {
         if (index != -1) {
             String prefix = value.substring(0, index);
             String n = value.substring(index + 1);
-
             String namespace = parser.getNamespace(prefix);
             return new QName(namespace, n, prefix);
         } else {
@@ -51,5 +50,15 @@ public class ParserUtil {
                 return new QName(value);
             }
         }
+    }
+
+    public static QName toQName(String value, String namespace) {
+        int index = value.indexOf(":");
+        if (index != -1) {
+            String prefix = value.substring(0, index);
+            String n = value.substring(index + 1);
+            return new QName(namespace, n, prefix);
+        }
+        return new QName(namespace, value);
     }
 }
