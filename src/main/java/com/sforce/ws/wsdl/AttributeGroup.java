@@ -80,9 +80,7 @@ public class AttributeGroup implements Constants, Named {
                     }
                 }
             });
-        }
-        
-        if (ref == null) {
+        } else {
 	        if (name == null) { throw new WsdlParseException("attributeGroup name can not be null at: "
 	                + parser.getPositionDescription()); }
 	

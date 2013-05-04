@@ -95,9 +95,7 @@ public class Attribute implements Constants, Named {
                     }
                 }
             });
-        }
-
-        if (ref == null) {
+        } else {
             if (name == null) { throw new WsdlParseException("attribute name can not be null at: "
                     + parser.getPositionDescription()); }
 
@@ -148,8 +146,8 @@ public class Attribute implements Constants, Named {
             eventType = parser.next();
         }
 
-        if (ref == null) {
-            if (type == null) { throw new WsdlParseException("type not specified for attribute: " + name); }
+        if (type == null && ref == null) {
+            throw new WsdlParseException("type not specified for attribute: " + name);
         }
     }
 }
