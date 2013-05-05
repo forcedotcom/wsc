@@ -27,9 +27,12 @@ package com.sforce.ws.wsdl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import com.sforce.ws.parser.XmlInputStream;
-import javax.xml.namespace.QName;
+import com.sforce.ws.util.CollectionUtil;
 
 /**
  * This class represents WSDL->Definitions->types->schema->complexType
@@ -44,7 +47,8 @@ public class ComplexType implements Constants {
     private QName base;
     private Schema schema;
     private boolean isHeader;
-    private ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+    private List<Attribute> attributes = new ArrayList<Attribute>();
+    private List<AttributeGroup> attributeGroups = new ArrayList<AttributeGroup>();
 
     public ComplexType(Schema schema) {
         this.schema = schema;
@@ -57,6 +61,14 @@ public class ComplexType implements Constants {
 
     public Collection getContent() {
         return content;
+    }
+    
+    public Element getElement(String name) {
+    	return content.getElement(name);
+    }
+    
+    public boolean hasElement(String name) {
+    	return content.hasElement(name);
     }
 
     public QName getBase() {
@@ -83,6 +95,10 @@ public class ComplexType implements Constants {
         return attributes.iterator();
     }
 
+    public Attribute getAttribute(String name) {
+    	return CollectionUtil.findByName(getAttributes(), name);
+    }
+
     @Override
     public String toString() {
         return "ComplexType{" +
@@ -106,7 +122,7 @@ public class ComplexType implements Constants {
         }
 
         int eventType = parser.getEventType();
-
+        
         while (true) {
             if (eventType == XmlInputStream.START_TAG) {
                 String name = parser.getName();
@@ -124,14 +140,18 @@ public class ComplexType implements Constants {
                 } else if (ATTRIBUTE.equals(name) && SCHEMA_NS.equals(namespace)) {
                     Attribute attribute = new Attribute(schema);
                     attribute.read(parser);
-                    addAttribute(attribute);
+                    attributes.add(attribute);
+                } else if (ATTRIBUTE_GROUP.equals(name) && SCHEMA_NS.equals(namespace)) {
+                    AttributeGroup attributeGroup = new AttributeGroup(schema);
+                    attributeGroup.read(parser);
+                    attributeGroups.add(attributeGroup);
                 }
             } else if (eventType == XmlInputStream.END_TAG) {
                 String name = parser.getName();
                 String namespace = parser.getNamespace();
 
                 if (COMPLEX_TYPE.equals(name) && SCHEMA_NS.equals(namespace)) {
-                    return;
+                    break;
                 }
             } else if (eventType == XmlInputStream.END_DOCUMENT) {
                 throw new WsdlParseException("Failed to find end tag for 'complexType'");
@@ -139,18 +159,17 @@ public class ComplexType implements Constants {
 
             eventType = parser.next();
         }
-    }
-
-    private void addAttribute(Attribute attribute) throws WsdlParseException {
-        String name = attribute.getName();
-
-        for (Attribute att : attributes) {
-            if (name.equals(att.getName())) {
-                throw new WsdlParseException("Two attributes cannot have the same name: " + name);
-            }
-
+        
+        if (attributeGroups.size() > 0) {
+            parser.addPostParseProcessor(new WsdlParser.PostParseProcessor() {
+                @Override
+                public void postParse() throws WsdlParseException {
+                    for (AttributeGroup group : attributeGroups) {
+                    	attributes.addAll(group.getAttributes());
+                    }
+                }
+            });
         }
-        attributes.add(attribute);
     }
 
     public String getName() {

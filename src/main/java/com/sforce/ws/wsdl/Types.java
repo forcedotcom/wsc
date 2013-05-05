@@ -25,8 +25,7 @@
  */
 package com.sforce.ws.wsdl;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 
@@ -67,7 +66,7 @@ public class Types extends WsdlNode {
                             ". It must be: " + SCHEMA_NS);
                     }
 
-                    Schema schema = new Schema();
+                    Schema schema = new Schema(this);
                     schema.read(parser);
                     schemas.put(schema.getTargetNamespace(), schema);
                 }
@@ -85,59 +84,36 @@ public class Types extends WsdlNode {
 
             eventType = parser.next();
         }
-
-        try {
-            updateElementRef();
-        } catch(ConnectionException e) {
-            throw new WsdlParseException(e.getMessage(), e);
-        }
-    }
-
-    private void updateElementRef() throws WsdlParseException, ConnectionException {
-        for (Schema s: getSchemas()) { 
-            checkGlobalElements(s);
- 
-            for(ComplexType ctype: s.getComplexTypes()) { 
-                if (ctype.getContent() != null) {
-                    Iterator<Element> elementIt = ctype.getContent().getElements();
-
-                    while(elementIt.hasNext()) {
-                        Element element = elementIt.next();
-                        if (element.getRef() != null) {
-                            Element targetElement = getElement(element.getRef());
-                            element.setName(targetElement.getName());
-                            element.setType(targetElement.getType());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void checkGlobalElements(Schema s) throws WsdlParseException {
-        Iterator<Element> elementIt = s.getGlobalElements();
-        while(elementIt.hasNext()) {
-            Element e = elementIt.next();
-            if (e.getRef() != null) {
-                throw new WsdlParseException("Global element can not use ref: " + e.getRef());
-            }
-        }
     }
 
     public java.util.Collection<Schema> getSchemas() {
         return schemas.values();
     }
 
-    public Element getElement(QName element) throws ConnectionException {
+    public Element getElement(QName element) throws WsdlParseException {
         Schema schema = getSchema(element);
         Element el = schema.getGlobalElement(element.getLocalPart());
-        if (el == null) throw new ConnectionException("Unable to find element for " + element);
+        if (el == null) throw new WsdlParseException("Unable to find element for " + element);
         return el;
     }
 
-    private Schema getSchema(QName element) throws ConnectionException {
+    public Attribute getAttribute(QName element) throws WsdlParseException {
+        Schema schema = getSchema(element);
+        Attribute el = schema.getGlobalAttribute(element.getLocalPart());
+        if (el == null) throw new WsdlParseException("Unable to find attribute for " + element);
+        return el;
+    }
+
+    public AttributeGroup getAttributeGroup(QName element) throws WsdlParseException {
+        Schema schema = getSchema(element);
+        AttributeGroup el = schema.getGlobalAttributeGroup(element.getLocalPart());
+        if (el == null) throw new WsdlParseException("Unable to find attribute group for " + element);
+        return el;
+    }
+
+    private Schema getSchema(QName element) throws WsdlParseException {
         Schema schema = schemas.get(element.getNamespaceURI());
-        if (schema == null) throw new ConnectionException("Unable to find schema for element; " + element);
+        if (schema == null) throw new WsdlParseException("Unable to find schema for element; " + element);
         return schema;
     }
 

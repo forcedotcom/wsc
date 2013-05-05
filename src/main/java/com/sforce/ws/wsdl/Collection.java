@@ -25,9 +25,11 @@
  */
 package com.sforce.ws.wsdl;
 
-import com.sforce.ws.parser.XmlInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import com.sforce.ws.parser.XmlInputStream;
 
 /**
  * This class represents WSDL->definitions->types->schema->complexType->sequence
@@ -39,7 +41,7 @@ import java.util.Iterator;
 public class Collection implements Constants {
 
     private String type;
-    private ArrayList<Element> elements = new ArrayList<Element>();
+    private List<Element> elements = new ArrayList<Element>();
     private Schema schema;
 
     public Collection(Schema schema, String type) {
@@ -49,6 +51,18 @@ public class Collection implements Constants {
 
     public Iterator<Element> getElements() {
         return elements.iterator();
+    }
+    
+    public Element getElement(String name) {
+    	for (Element element : elements) {
+    		if (element.getName().equals(name))
+    			return element;
+    	}
+    	return null;
+    }
+    
+    public boolean hasElement(String name) {
+    	return getElement(name) != null;
     }
 
     @Override
@@ -73,6 +87,9 @@ public class Collection implements Constants {
                     elements.add(element);
                 } else if (SEQUENCE.equals(name) || CHOICE.equals(name) || ALL.equals(name) || "any".equals(name)) {
                     //consume event
+                } else if (ANNOTATION.equals(name) || (DOCUMENTATION.equals(name))) {
+                	// ignore
+                	// TODO: read annotations?
                 } else {
                     throw new WsdlParseException("Unexpected element '" + name + 
                                                  "' at: " + parser.getPositionDescription());

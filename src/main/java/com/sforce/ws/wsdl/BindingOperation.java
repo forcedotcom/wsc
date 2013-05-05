@@ -64,12 +64,9 @@ public class BindingOperation extends WsdlNode {
 
             eventType = parser.next();
         }
-
-        if (input == null) {
-            throw new WsdlParseException("input not defined in binding operation '" + name + "'");
-        }
-        if (output == null) {
-            throw new WsdlParseException("output not defined in binding operation '" + name + "'");
+        
+        if (input == null && output == null) {
+        	throw new WsdlParseException("binding '" + name + "' operation must have an input and/or an output");
         }
     }
 
