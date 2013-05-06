@@ -90,7 +90,7 @@
                   <pattern>org.antlr</pattern>
                   <shadedPattern>com.sforce.ws.shade.org.antlr</shadedPattern>
                 </relocation>
-                  <relocation>
+                <relocation>
                   <pattern>antlr</pattern>
                   <shadedPattern>com.sforce.ws.shade.antlr</shadedPattern>
                 </relocation>
@@ -103,6 +103,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -111,6 +112,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
+        <version>2.4.3</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -160,6 +162,28 @@
             <phase>package</phase>
             <goals>
               <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <version>1.8.0</version>
+        <configuration>
+          <header>license.txt</header>
+          <excludes>
+            <exclude>src/test/resources/codegeneration/*.java</exclude>
+          </excludes>
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>check</goal>
             </goals>
           </execution>
         </executions>

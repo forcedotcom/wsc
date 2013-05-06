@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,14 +23,11 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.sforce.ws.wsdl;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.util.CollectionUtil;
