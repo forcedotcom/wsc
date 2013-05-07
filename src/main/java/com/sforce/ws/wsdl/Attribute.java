@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
+import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.util.Named;
 
@@ -80,17 +81,16 @@ public class Attribute implements Constants, Named {
 
         if (ref != null) {
             final String positionDescription = parser.getPositionDescription();
-            final Attribute thisAttribute = this;
             parser.addPostParseProcessor(new WsdlParser.PostParseProcessor() {
                 @Override
-                public void postParse() throws WsdlParseException {
+                public void postParse() throws ConnectionException {
                     Attribute referencedAttribute = schema.getTypes().getAttribute(ref);
                     if (referencedAttribute != null) {
-                        thisAttribute.schema = referencedAttribute.schema;
-                        thisAttribute.name = referencedAttribute.name;
-                        thisAttribute.type = referencedAttribute.type;
+                        Attribute.this.schema = referencedAttribute.schema;
+                        Attribute.this.name = referencedAttribute.name;
+                        Attribute.this.type = referencedAttribute.type;
                     } else {
-                        throw new WsdlParseException("attribute ref '" + ref
+                        throw new ConnectionException("attribute ref '" + ref
                                 + "' could not be resolved at: " + positionDescription);
                     }
                 }

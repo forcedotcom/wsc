@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.util.Named;
 
@@ -65,17 +66,16 @@ public class AttributeGroup implements Constants, Named {
 
         if (ref != null) {
             final String positionDescription = parser.getPositionDescription();
-            final AttributeGroup thisAttribute = this;
             parser.addPostParseProcessor(new WsdlParser.PostParseProcessor() {
                 @Override
-                public void postParse() throws WsdlParseException {
+                public void postParse() throws ConnectionException {
                 	AttributeGroup referencedGroup = schema.getTypes().getAttributeGroup(ref);
                     if (referencedGroup != null) {
-                        thisAttribute.schema = referencedGroup.schema;
-                        thisAttribute.name = referencedGroup.name;
-                        thisAttribute.attributes = referencedGroup.attributes;
+                        AttributeGroup.this.schema = referencedGroup.schema;
+                        AttributeGroup.this.name = referencedGroup.name;
+                        AttributeGroup.this.attributes = referencedGroup.attributes;
                     } else {
-                        throw new WsdlParseException("attributeGroup ref '" + ref
+                        throw new ConnectionException("attributeGroup ref '" + ref
                                 + "' could not be resolved at: " + positionDescription);
                     }
                 }

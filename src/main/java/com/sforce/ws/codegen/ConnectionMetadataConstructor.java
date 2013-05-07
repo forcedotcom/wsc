@@ -138,14 +138,10 @@ public class ConnectionMetadataConstructor {
     }
 
     private boolean isSimpleType(Part header) throws ConnectionException {
-        try {
-            Types types = definitions.getTypes();
-            Element element = types.getElement(header.getElement());
-            if (!element.isComplexType()) { return true; }
-            return typeMapper.isWellKnownType(element.getType().getNamespaceURI(), element.getType().getLocalPart());
-        } catch (WsdlParseException e) {
-            throw new ConnectionException(e.getMessage(), e);
-        }
+        Types types = definitions.getTypes();
+        Element element = types.getElement(header.getElement());
+        if (!element.isComplexType()) { return true; }
+        return typeMapper.isWellKnownType(element.getType().getNamespaceURI(), element.getType().getLocalPart());
     }
 
     public String headerName(Part header) {
@@ -341,14 +337,10 @@ public class ConnectionMetadataConstructor {
     }
 
     private ComplexType getType(Part part) throws ConnectionException {
-        try {
-            Types types = definitions.getTypes();
-            Element element = types.getElement(part.getElement());
-            QName type = element.getType();
-            return types.getComplexType(type);
-        } catch (WsdlParseException e) {
-            throw new ConnectionException(e.getMessage(), e);
-        }
+        Types types = definitions.getTypes();
+        Element element = types.getElement(part.getElement());
+        QName type = element.getType();
+        return types.getComplexType(type);
     }
 
     public Iterator<Operation> getOperations() {

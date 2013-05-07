@@ -25,12 +25,11 @@
  */
 package com.sforce.ws.wsdl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 
+import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.util.CollectionUtil;
 
@@ -163,7 +162,7 @@ public class ComplexType implements Constants {
         if (attributeGroups.size() > 0) {
             parser.addPostParseProcessor(new WsdlParser.PostParseProcessor() {
                 @Override
-                public void postParse() throws WsdlParseException {
+                public void postParse() throws ConnectionException {
                     for (AttributeGroup group : attributeGroups) {
                     	attributes.addAll(group.getAttributes());
                     }

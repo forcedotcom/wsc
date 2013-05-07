@@ -62,7 +62,7 @@ public class Element implements Constants, Named {
 		return type;
 	}
 	
-	public ComplexType findComplexType() throws WsdlParseException {
+	public ComplexType findComplexType() throws ConnectionException {
 		if (isComplexType)
 			return schema.getTypes().getComplexType(getType());
 		return null;
@@ -126,19 +126,18 @@ public class Element implements Constants, Named {
 								+ ref);
 			}
             final String positionDescription = parser.getPositionDescription();
-			final Element thisElement = this;
 			parser.addPostParseProcessor(new WsdlParser.PostParseProcessor() {
 				@Override
-				public void postParse() throws WsdlParseException {
+				public void postParse() throws ConnectionException {
 					Element referencedElement = schema.getTypes().getElement(
 							getRef());
 
 					if (referencedElement != null) {
-						thisElement.schema = referencedElement.schema;
-						thisElement.name = referencedElement.name;
-						thisElement.type = referencedElement.type;
+					    Element.this.schema = referencedElement.schema;
+					    Element.this.name = referencedElement.name;
+					    Element.this.type = referencedElement.type;
 					} else {
-						throw new WsdlParseException("attribute ref '"
+						throw new ConnectionException("attribute ref '"
 								+ ref + "' could not be resolved at: "
 								+ positionDescription);
 					}
