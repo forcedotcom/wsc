@@ -58,8 +58,10 @@ public class Binding extends WsdlNode {
         HashSet<Part> headers = new HashSet<Part>();
 
         for (BindingOperation operation : operations.values()) {
-            addHeaders(operation.getInput().getHeaders(), headers);
-            addHeaders(operation.getOutput().getHeaders(), headers);
+        	if (operation.getInput() != null)
+        		addHeaders(operation.getInput().getHeaders(), headers);
+        	if (operation.getOutput() != null)
+        		addHeaders(operation.getOutput().getHeaders(), headers);
         }
         return headers.iterator();
     }
