@@ -91,30 +91,30 @@ public class Types extends WsdlNode {
         return schemas.values();
     }
 
-    public Element getElement(QName element) throws WsdlParseException {
+    public Element getElement(QName element) throws ConnectionException {
         Schema schema = getSchema(element);
         Element el = schema.getGlobalElement(element.getLocalPart());
-        if (el == null) throw new WsdlParseException("Unable to find element for " + element);
+        if (el == null) throw new ConnectionException("Unable to find element for " + element);
         return el;
     }
 
-    public Attribute getAttribute(QName element) throws WsdlParseException {
+    public Attribute getAttribute(QName element) throws ConnectionException {
         Schema schema = getSchema(element);
         Attribute el = schema.getGlobalAttribute(element.getLocalPart());
-        if (el == null) throw new WsdlParseException("Unable to find attribute for " + element);
+        if (el == null) throw new ConnectionException("Unable to find attribute for " + element);
         return el;
     }
 
-    public AttributeGroup getAttributeGroup(QName element) throws WsdlParseException {
+    public AttributeGroup getAttributeGroup(QName element) throws ConnectionException {
         Schema schema = getSchema(element);
         AttributeGroup el = schema.getGlobalAttributeGroup(element.getLocalPart());
-        if (el == null) throw new WsdlParseException("Unable to find attribute group for " + element);
+        if (el == null) throw new ConnectionException("Unable to find attribute group for " + element);
         return el;
     }
 
-    private Schema getSchema(QName element) throws WsdlParseException {
+    private Schema getSchema(QName element) throws ConnectionException {
         Schema schema = schemas.get(element.getNamespaceURI());
-        if (schema == null) throw new WsdlParseException("Unable to find schema for element; " + element);
+        if (schema == null) throw new ConnectionException("Unable to find schema for element; " + element);
         return schema;
     }
 

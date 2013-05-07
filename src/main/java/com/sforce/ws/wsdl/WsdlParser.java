@@ -51,7 +51,7 @@ public class WsdlParser {
 	 * @author lmcalpin
 	 */
     public interface PostParseProcessor {
-        public void postParse() throws WsdlParseException;
+        public void postParse() throws ConnectionException;
     }
     
     private XmlInputStream in;
@@ -170,8 +170,12 @@ public class WsdlParser {
         // phase 1: parse the WSDL syntactically
         definitions.read(this);
         // phase 2: resolve references
-        for (PostParseProcessor process : postParseBlocks) {
-            process.postParse();
+        try {
+            for (PostParseProcessor process : postParseBlocks) {
+                    process.postParse();
+            }
+        } catch (ConnectionException e) {
+            throw new WsdlParseException(e.getMessage(), e);
         }
         return definitions;
     }
