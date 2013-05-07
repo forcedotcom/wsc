@@ -123,10 +123,10 @@ public class Types extends WsdlNode {
         return schema.getSimpleType(type.getLocalPart());
     }
 
-    public ComplexType getComplexType(QName type) throws ConnectionException {
+    public ComplexType getComplexType(QName type) throws WsdlParseException {
         Schema schema = getSchema(type);
         ComplexType ct = schema.getComplexType(type.getLocalPart());
-        if (ct == null) throw new ConnectionException("Unable to find complexType for " + type);
+        if (ct == null) throw new WsdlParseException("Unable to find complexType for " + type);
         return ct;
     }
 }

@@ -62,7 +62,7 @@ public class Element implements Constants, Named {
 		return type;
 	}
 	
-	public ComplexType findComplexType() throws ConnectionException {
+	public ComplexType findComplexType() throws WsdlParseException {
 		if (isComplexType)
 			return schema.getTypes().getComplexType(getType());
 		return null;
