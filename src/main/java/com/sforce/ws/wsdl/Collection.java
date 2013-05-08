@@ -1,33 +1,34 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided 
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided
  * that the following conditions are met:
- * 
- *    Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ *
+ *    Redistributions of source code must retain the above copyright notice, this list of conditions and the
  *    following disclaimer.
- *  
- *    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and 
- *    the following disclaimer in the documentation and/or other materials provided with the distribution. 
- *    
- *    Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or 
+ *
+ *    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+ *    the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ *    Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
  *    promote products derived from this software without specific prior written permission.
- *  
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED 
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
- * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR 
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
- * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.sforce.ws.wsdl;
 
+import java.util.*;
+
 import com.sforce.ws.parser.XmlInputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * This class represents WSDL->definitions->types->schema->complexType->sequence
@@ -39,7 +40,7 @@ import java.util.Iterator;
 public class Collection implements Constants {
 
     private String type;
-    private ArrayList<Element> elements = new ArrayList<Element>();
+    private List<Element> elements = new ArrayList<Element>();
     private Schema schema;
 
     public Collection(Schema schema, String type) {
@@ -49,6 +50,18 @@ public class Collection implements Constants {
 
     public Iterator<Element> getElements() {
         return elements.iterator();
+    }
+    
+    public Element getElement(String name) {
+    	for (Element element : elements) {
+    		if (element.getName().equals(name))
+    			return element;
+    	}
+    	return null;
+    }
+    
+    public boolean hasElement(String name) {
+    	return getElement(name) != null;
     }
 
     @Override
@@ -73,6 +86,9 @@ public class Collection implements Constants {
                     elements.add(element);
                 } else if (SEQUENCE.equals(name) || CHOICE.equals(name) || ALL.equals(name) || "any".equals(name)) {
                     //consume event
+                } else if (ANNOTATION.equals(name) || (DOCUMENTATION.equals(name))) {
+                	// ignore
+                	// TODO: read annotations?
                 } else {
                     throw new WsdlParseException("Unexpected element '" + name + 
                                                  "' at: " + parser.getPositionDescription());

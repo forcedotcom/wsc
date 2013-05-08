@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,6 +23,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.sforce.ws.wsdl;
 
 /**
@@ -67,6 +68,7 @@ public interface Constants {
     String VALUE = "value";
     String TYPE = "type";
     String REF = "ref";
+    String FIXED = "fixed";
     String SEQUENCE = "sequence";
     String RESTRICTION = "restriction";
     String ELEMENT = "element";
@@ -90,6 +92,7 @@ public interface Constants {
     String IMPORT = "import";
     String ANNOTATION = "annotation";
     String ATTRIBUTE = "attribute";
+    String ATTRIBUTE_GROUP = "attributeGroup";
     String ALL = "all";
     String CHOICE = "choice";
 }

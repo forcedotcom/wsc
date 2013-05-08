@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,6 +23,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.sforce.ws.wsdl;
 
 import java.io.*;
@@ -63,9 +64,7 @@ public class WsdlFactory {
     private static Definitions createFromInputStream(InputStream in) throws WsdlParseException {
         XmlInputStream parser = new XmlInputStream();
         WsdlParser wsdlParser = new WsdlParser(parser);
-        Definitions definitions = new Definitions();
-        wsdlParser.setInput(in, "UTF-8");
-        definitions.read(wsdlParser);
+        Definitions definitions = wsdlParser.parse(in);
         return definitions;
     }
 

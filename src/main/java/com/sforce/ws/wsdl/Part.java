@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,13 +23,14 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.sforce.ws.wsdl;
 
+import javax.xml.namespace.QName;
+
+import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.util.Verbose;
-import com.sforce.ws.ConnectionException;
-
-import javax.xml.namespace.QName;
 
 /**
  * This class represents WSDL->definitions->message
@@ -49,6 +50,16 @@ public class Part extends WsdlNode {
     public QName getElement() throws ConnectionException {
         if (element == null) {
             throw new ConnectionException("Element not defined for part '" + name + "'");
+        }
+        return element;
+    }
+
+    public QName getElementOrDefault() {
+        if (name == null && element == null) {
+            return new QName("");
+        }
+        if (element == null) {
+            return new QName(name);
         }
         return element;
     }

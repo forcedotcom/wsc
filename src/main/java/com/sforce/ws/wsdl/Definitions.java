@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -25,12 +25,13 @@
  */
 package com.sforce.ws.wsdl;
 
-import com.sforce.ws.parser.XmlInputStream;
-import com.sforce.ws.ConnectionException;
-
-import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.parser.XmlInputStream;
 
 /**
  * This class represents a WSDL->definitions
@@ -133,7 +134,7 @@ public class Definitions extends WsdlNode {
         }
     }
 
-    private void updateHeaderTypes() throws ConnectionException {
+    private void updateHeaderTypes() throws WsdlParseException, ConnectionException {
         Iterator<Part> headers = getBinding().getAllHeaders();
 
         while (headers.hasNext()) {
