@@ -114,15 +114,6 @@ public class GaeHttpTransport implements Transport {
       output = new GZIPOutputStream(output);
     }
 
-//    if (config.isTraceMessage()) {
-//      output = new TeeOutputStream(output, config.getTraceStream());
-//    }
-//
-//    if (config.hasMessageHandlers()) {
-//      output = new MessageHandlerOutputStream(url, output,
-//          config.getMessagerHandlers());
-//    }
-
     return output;
   }
 
