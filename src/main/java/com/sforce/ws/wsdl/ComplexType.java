@@ -140,7 +140,7 @@ public class ComplexType implements Constants {
                 } else if (ATTRIBUTE.equals(name) && SCHEMA_NS.equals(namespace)) {
                     Attribute attribute = new Attribute(schema);
                     attribute.read(parser);
-                    attributes.add(attribute);
+                    addAttribute(attribute);
                 } else if (ATTRIBUTE_GROUP.equals(name) && SCHEMA_NS.equals(namespace)) {
                     AttributeGroup attributeGroup = new AttributeGroup(schema);
                     attributeGroup.read(parser);
@@ -171,6 +171,18 @@ public class ComplexType implements Constants {
             });
         }
     }
+    
+	private void addAttribute(Attribute attribute) throws WsdlParseException {
+	    String name = attribute.getName();
+	
+	    for (Attribute att : attributes) {
+	        if (name.equals(att.getName())) {
+	            throw new WsdlParseException("Two attributes cannot have the same name: " + name);
+	        }
+	    }
+	
+	    attributes.add(attribute);
+	 }
 
     public String getName() {
         return name;

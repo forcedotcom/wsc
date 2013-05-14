@@ -68,6 +68,22 @@ public class AttributeTest extends TestCase {
 	}
 
 	/**
+	 * Ensure attributes are properly parsed when they appear on Schema
+	 * elements.
+	 * 
+	 * @throws Exception
+	 */
+	public void testDontAcceptDuplicateAttributes() throws Exception {
+		try {
+			Definitions dupeAttrTestDefs = WsdlFactory.create(getClass().getClassLoader()
+					.getResource("testAttributeDuplicates.wsdl"));
+			fail(); // we should receive a WsdlParseException 
+		} catch (WsdlParseException e) {
+			assertEquals("Two attributes cannot have the same name: stringAtt", e.getMessage());
+		}
+	}	
+	
+	/**
 	 * Ensure attributes are properly parsed when they appear on ComplexType
 	 * elements.
 	 * 

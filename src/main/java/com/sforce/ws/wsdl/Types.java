@@ -85,6 +85,27 @@ public class Types extends WsdlNode {
 
             eventType = parser.next();
         }
+        try {
+            updateElementRef();
+        } catch(ConnectionException e) {
+            throw new WsdlParseException(e.getMessage(), e);
+        }
+    }
+
+    private void updateElementRef() throws WsdlParseException, ConnectionException {
+        for (Schema s: getSchemas()) { 
+            checkGlobalElements(s);
+         }
+    }
+
+    private void checkGlobalElements(Schema s) throws WsdlParseException {
+        Iterator<Element> elementIt = s.getGlobalElements();
+        while(elementIt.hasNext()) {
+            Element e = elementIt.next();
+            if (e.getRef() != null) {
+                throw new WsdlParseException("Global element can not use ref: " + e.getRef());
+            }
+        }
     }
 
     public java.util.Collection<Schema> getSchemas() {
