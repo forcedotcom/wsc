@@ -26,7 +26,10 @@
 
 package com.sforce.ws.codegen;
 
-import java.io.*;
+import java.io.File;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;

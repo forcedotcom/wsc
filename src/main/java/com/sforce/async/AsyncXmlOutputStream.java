@@ -26,10 +26,10 @@
 
 package com.sforce.async;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.sforce.ws.parser.XmlOutputStream;
+
+import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * AsyncXmlOutputStream --

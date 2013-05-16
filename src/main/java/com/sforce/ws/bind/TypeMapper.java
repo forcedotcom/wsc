@@ -24,22 +24,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package com.sforce.ws.bind;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.xml.namespace.QName;
 
 import com.sforce.ws.ConnectionException;
+import com.sforce.ws.types.Time;
+import com.sforce.ws.util.Base64;
 import com.sforce.ws.ConnectorConfig;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
-import com.sforce.ws.types.Time;
-import com.sforce.ws.util.Base64;
-import com.sforce.ws.wsdl.*;
+import com.sforce.ws.wsdl.Constants;
+import com.sforce.ws.wsdl.Restriction;
+import com.sforce.ws.wsdl.SfdcApiType;
+import com.sforce.ws.wsdl.SimpleType;
+import com.sforce.ws.wsdl.Types;
 
 /**
  * This class is used at runtime to bind xml document to java object and java objects

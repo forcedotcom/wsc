@@ -26,8 +26,8 @@
 
 package com.sforce.async;
 
-import java.io.IOException;
 import java.util.*;
+import java.io.IOException;
 
 import com.sforce.ws.parser.XmlOutputStream;
 

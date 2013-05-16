@@ -26,40 +26,28 @@
 
 package com.sforce.ws.wsdl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
-import com.sforce.ws.ConnectionException;
-import com.sforce.ws.parser.PullParserException;
 import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.PullParserException;
+import com.sforce.ws.ConnectionException;
+
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * WsdlParser
- * 
+ *
  * @author http://cheenath.com
  * @version 1.0
- * @since 1.0 Jan 20, 2006
+ * @since 1.0  Jan 20, 2006
  */
 public class WsdlParser {
-	/**
-	 * A block of code to be executed after parsing the WSDL.  We use this primarily to
-	 * support validation or resolving references.
-	 * @author lmcalpin
-	 */
-    public interface PostParseProcessor {
-        public void postParse() throws ConnectionException;
-    }
-    
-    private XmlInputStream in;
-    private List<PostParseProcessor> postParseBlocks = new ArrayList<PostParseProcessor>();
-    
+
+     private XmlInputStream in;
+
     public WsdlParser(XmlInputStream in) {
         this.in = in;
     }
+
 
     public void setInput(InputStream inputStream, String inputEncoding) throws WsdlParseException {
         try {
@@ -140,43 +128,5 @@ public class WsdlParser {
         } catch (IOException e) {
             throw new WsdlParseException(e);
         }
-    }
-    
-    public QName parseRef(Schema schema) throws WsdlParseException {
-		String r = getAttributeValue(null, Constants.REF);
-		QName ref = null;
-		if (r != null) {
-			if ("".equals(r)) {
-				throw new WsdlParseException(
-						"Element ref can not be empty, at: "
-								+ this.getPositionDescription());
-			}
-			ref = ParserUtil.toQName(r, this);
-			if (ref.getNamespaceURI() == null
-					|| "".equals(ref.getNamespaceURI())) {
-				ref = new QName(schema.getTargetNamespace(), ref.getLocalPart());
-			}
-		}
-		return ref;
-	}
-    
-    public void addPostParseProcessor(PostParseProcessor process) {
-        postParseBlocks.add(process);
-    }
-    
-    public Definitions parse(InputStream stream) throws WsdlParseException {
-        Definitions definitions = new Definitions();
-        setInput(stream, "UTF-8");
-        // phase 1: parse the WSDL syntactically
-        definitions.read(this);
-        // phase 2: resolve references
-        try {
-            for (PostParseProcessor process : postParseBlocks) {
-                    process.postParse();
-            }
-        } catch (ConnectionException e) {
-            throw new WsdlParseException(e.getMessage(), e);
-        }
-        return definitions;
     }
 }

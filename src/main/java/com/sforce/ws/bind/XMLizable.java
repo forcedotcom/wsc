@@ -26,13 +26,12 @@
 
 package com.sforce.ws.bind;
 
-import java.io.IOException;
+import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.ConnectionException;
 
 import javax.xml.namespace.QName;
-
-import com.sforce.ws.ConnectionException;
-import com.sforce.ws.parser.XmlInputStream;
-import com.sforce.ws.parser.XmlOutputStream;
+import java.io.IOException;
 
 /**
  * This interface is used to mark a class as de/serializable to XML.

@@ -26,11 +26,11 @@
 
 package com.sforce.bulk;
 
+import com.sforce.async.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
-import com.sforce.async.*;
 
 /**
  * This class represents

@@ -68,7 +68,6 @@ public interface Constants {
     String VALUE = "value";
     String TYPE = "type";
     String REF = "ref";
-    String FIXED = "fixed";
     String SEQUENCE = "sequence";
     String RESTRICTION = "restriction";
     String ELEMENT = "element";
@@ -92,7 +91,6 @@ public interface Constants {
     String IMPORT = "import";
     String ANNOTATION = "annotation";
     String ATTRIBUTE = "attribute";
-    String ATTRIBUTE_GROUP = "attributeGroup";
     String ALL = "all";
     String CHOICE = "choice";
 }

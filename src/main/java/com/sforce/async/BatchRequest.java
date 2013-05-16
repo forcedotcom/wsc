@@ -26,12 +26,16 @@
 
 package com.sforce.async;
 
-import java.io.*;
-
 import com.sforce.ws.ConnectionException;
-import com.sforce.ws.parser.*;
+import com.sforce.ws.parser.PullParserException;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.wsdl.Constants;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * BatchRequest

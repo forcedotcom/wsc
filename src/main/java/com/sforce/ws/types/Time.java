@@ -24,11 +24,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*
- * Copyright 2002-2004 The Apimport java.text.SimpleDateFormat;
-import java.util.*;
-he License, Version 2.0 (the "License");
+ * Copyright 2002-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -40,11 +39,12 @@ he License, Version 2.0 (the "License");
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.sforce.ws.types;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Class that represents the xsd:time XML Schema type

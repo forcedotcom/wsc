@@ -30,6 +30,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Copyright, 1999, SALESFORCE.com
+ */
 
 /**
  * Parse a CSV file into lines of fields.

@@ -26,10 +26,12 @@
 
 package com.sforce.ws.transport;
 
-import java.io.*;
-import java.util.HashMap;
-
 import com.sforce.ws.ConnectorConfig;
+
+import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * This interface defines a Transport.

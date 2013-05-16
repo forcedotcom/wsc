@@ -26,9 +26,9 @@
 
 package com.sforce.ws.tools;
 
-import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.io.*;
 
 /**
  * This is a util class that can be used to post a message

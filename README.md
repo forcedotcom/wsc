@@ -35,3 +35,4 @@ The following sample illustrates creating a connection and creating a new Accoun
         account.setField("Name", "My Account");
         connection.create(new SObject[]{account});
     }
+

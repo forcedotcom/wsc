@@ -26,9 +26,9 @@
 
 package com.sforce.bulk;
 
-import java.io.PrintStream;
-
 import com.sforce.ws.ConnectorConfig;
+
+import java.io.PrintStream;
 
 /**
  * This class represents a Handler for Stream status

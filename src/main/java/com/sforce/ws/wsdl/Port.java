@@ -26,9 +26,9 @@
 
 package com.sforce.ws.wsdl;
 
-import javax.xml.namespace.QName;
-
 import com.sforce.ws.parser.XmlInputStream;
+
+import javax.xml.namespace.QName;
 
 /**
  * Port

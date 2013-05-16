@@ -26,10 +26,10 @@
 
 package com.sforce.bulk;
 
+import com.sforce.async.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
-
-import com.sforce.async.*;
 
 /**
  * This class represents

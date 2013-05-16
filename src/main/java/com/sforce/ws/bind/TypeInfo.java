@@ -24,7 +24,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package com.sforce.ws.bind;
 
 /**

@@ -32,10 +32,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.xml.namespace.QName;
 
+import com.sforce.ws.parser.XmlOutputStream;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import com.sforce.ws.parser.XmlOutputStream;
 
 /**
  * XmlObjectTest -- Validates that subclasses of basic types can be serialized

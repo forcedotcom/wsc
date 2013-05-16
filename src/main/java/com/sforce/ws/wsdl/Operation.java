@@ -26,12 +26,11 @@
 
 package com.sforce.ws.wsdl;
 
-import java.util.HashMap;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.ConnectionException;
 
 import javax.xml.namespace.QName;
-
-import com.sforce.ws.ConnectionException;
-import com.sforce.ws.parser.XmlInputStream;
+import java.util.HashMap;
 
 /**
  * Operation

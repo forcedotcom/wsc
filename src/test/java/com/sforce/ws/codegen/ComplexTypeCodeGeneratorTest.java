@@ -29,10 +29,10 @@ package com.sforce.ws.codegen;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupDir;
+
+import junit.framework.TestCase;
 
 import com.sforce.ws.codegen.metadata.ComplexClassMetadata;
 import com.sforce.ws.codegen.metadata.MemberMetadata;

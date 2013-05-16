@@ -25,7 +25,6 @@
  */
 
 
-/* -*-             c-basic-offset: 4; indent-tabs-mode: nil; -*-  //------100-columns-wide------>|*/
 /*
  * Copyright (c) 2003 Extreme! Lab, Indiana University. All rights reserved.
  *
@@ -36,7 +35,11 @@
 
 package com.sforce.ws.parser;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 //import java.util.Hashtable;
 

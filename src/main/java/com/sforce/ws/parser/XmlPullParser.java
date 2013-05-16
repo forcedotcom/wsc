@@ -29,7 +29,9 @@ package com.sforce.ws.parser;
 /* -*-             c-basic-offset: 4; indent-tabs-mode: nil; -*-  //------100-columns-wide------>|*/
 // for license please see accompanying LICENSE.txt file (available also at http://www.xmlpull.org/)
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * XML Pull Parser is an interface that defines parsing functionlity provided

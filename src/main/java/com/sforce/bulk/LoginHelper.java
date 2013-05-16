@@ -26,11 +26,13 @@
 
 package com.sforce.bulk;
 
-import java.io.*;
-
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * This class is a helper to do login using partner wsdl.

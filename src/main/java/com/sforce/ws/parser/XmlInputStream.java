@@ -26,10 +26,10 @@
 
 package com.sforce.ws.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.sforce.ws.ConnectionException;
+
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * This is a minimal pull parser. It currently delegates to XPP parser available at

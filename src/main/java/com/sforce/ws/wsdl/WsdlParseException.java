@@ -26,7 +26,6 @@
 
 package com.sforce.ws.wsdl;
 
-
 /**
  * This exception is thrown when there is an error in parsing WSDL.
  *

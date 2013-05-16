@@ -26,12 +26,11 @@
 
 package com.sforce.ws.wsdl;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import com.sforce.ws.parser.XmlInputStream;
 
 import javax.xml.namespace.QName;
-
-import com.sforce.ws.parser.XmlInputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This class represents a WSDL definitions->portType

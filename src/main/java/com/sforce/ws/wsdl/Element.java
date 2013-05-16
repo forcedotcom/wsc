@@ -26,195 +26,184 @@
 
 package com.sforce.ws.wsdl;
 
-import javax.xml.namespace.QName;
-
-import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
-import com.sforce.ws.util.Named;
+
+import javax.xml.namespace.QName;
 
 /**
  * This class represents WSDL->Definitions->types->schema->element
- * 
+ *
  * @author http://cheenath.com
  * @version 1.0
- * @since 1.0 Nov 9, 2005
+ * @since 1.0  Nov 9, 2005
  */
-public class Element implements Constants, Named {
-	public static final int UNBOUNDED = -1;
+public class Element implements Constants {
+    public static final int UNBOUNDED = -1;
 
-	private String name;
-	private QName type;
-	private QName ref;
-	private String nillable;
-	private String minOccurs;
-	private String maxOccurs;
-	private Schema schema;
-	private boolean isComplexType = true;
+    private String name;
+    private QName type;
+    private QName ref;
+    private String nillable;
+    private String minOccurs;
+    private String maxOccurs;
+    private Schema schema;
+    private boolean isComplexType = true;
 
-	public Element(Schema schema) {
-		this.schema = schema;
-	}
+    public Element(Schema schema) {
+        this.schema = schema;
+    }
 
-	public boolean isComplexType() {
-		return isComplexType;
-	}
+    public boolean isComplexType() {
+        return isComplexType;
+    }
 
-	public QName getType() {
-		return type;
-	}
-	
-	public ComplexType findComplexType() throws ConnectionException {
-		if (isComplexType)
-			return schema.getTypes().getComplexType(getType());
-		return null;
-	}
+    public QName getType() {
+        return type;
+    }
 
-	public QName getRef() {
-		return ref;
-	}
+    public QName getRef() {
+        return ref;
+    }
 
-	public Schema getSchema() {
-		return schema;
-	}
+    public Schema getSchema() {
+        return schema;
+    }
 
-	public int getMinOccurs() {
-		return toRange(minOccurs);
-	}
+    public int getMinOccurs() {
+        return toRange(minOccurs);
+    }
 
-	public int getMaxOccurs() {
-		return toRange(maxOccurs);
-	}
+    public int getMaxOccurs() {
+        return toRange(maxOccurs);
+    }
 
-	public boolean isNillable() {
-		return "true".equals(nillable);
-	}
+    public boolean isNillable() {
+        return "true".equals(nillable);
+    }
 
-	private int toRange(String occurs) {
-		if (occurs == null || "".equals(occurs)) {
-			return 1;
-		} else if ("unbounded".equals(occurs)) {
-			return UNBOUNDED;
-		} else {
-			return Integer.parseInt(occurs);
-		}
-	}
+    private int toRange(String occurs) {
+        if (occurs == null || "".equals(occurs)) {
+            return 1;
+        } else if ("unbounded".equals(occurs)) {
+            return UNBOUNDED;
+        } else {
+            return Integer.parseInt(occurs);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "Element{" + "name='" + name + '\'' + ", type='" + type + '\''
-				+ ", ref='" + ref + '\'' + ", nillable='" + nillable + '\''
-				+ ", minOccurs='" + minOccurs + '\'' + ", maxOccurs='"
-				+ maxOccurs + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "Element{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", ref='" + ref + '\'' +
+                ", nillable='" + nillable + '\'' +
+                ", minOccurs='" + minOccurs + '\'' +
+                ", maxOccurs='" + maxOccurs + '\'' +
+                '}';
+    }
 
-	public void read(WsdlParser parser) throws WsdlParseException {
-		name = parser.getAttributeValue(null, NAME);
-		nillable = parser.getAttributeValue(null, NILLABLE);
-		minOccurs = parser.getAttributeValue(null, MIN_OCCURS);
-		maxOccurs = parser.getAttributeValue(null, MAX_OCCURS);
-		parseType(parser);
-		ref = parser.parseRef(schema);
+    public void read(WsdlParser parser) throws WsdlParseException {
+        name = parser.getAttributeValue(null, NAME);
+        nillable = parser.getAttributeValue(null, NILLABLE);
+        minOccurs = parser.getAttributeValue(null, MIN_OCCURS);
+        maxOccurs = parser.getAttributeValue(null, MAX_OCCURS);
+        parseType(parser);
+        parseRef(parser);
 
-		if (ref != null) {
-			if (name != null) {
-				throw new WsdlParseException(
-						"Both name and ref can not be specified for element: "
-								+ name);
-			}
-			if (type != null) {
-				throw new WsdlParseException(
-						"Both type and ref can not be specified for element with ref: "
-								+ ref);
-			}
-            final String positionDescription = parser.getPositionDescription();
-			parser.addPostParseProcessor(new WsdlParser.PostParseProcessor() {
-				@Override
-				public void postParse() throws ConnectionException {
-					Element referencedElement = schema.getTypes().getElement(
-							getRef());
+        if (ref != null) {
+            if (name != null) {
+                throw new WsdlParseException("Both name and ref can not be specified for element: " + name);
+            }
+            if (type != null) {
+                throw new WsdlParseException("Both type and ref can not be specified for element with ref: " + ref);
+            }
+        }
 
-					if (referencedElement != null) {
-					    Element.this.schema = referencedElement.schema;
-					    Element.this.name = referencedElement.name;
-					    Element.this.type = referencedElement.type;
-					} else {
-						throw new ConnectionException("attribute ref '"
-								+ ref + "' could not be resolved at: "
-								+ positionDescription);
-					}
-				}
-			});
-		}
+        int eventType = parser.getEventType();
 
-		int eventType = parser.getEventType();
+        while (true) {
+            if (eventType == XmlInputStream.START_TAG) {
+                String n = parser.getName();
+                String ns = parser.getNamespace();
 
-		while (true) {
-			if (eventType == XmlInputStream.START_TAG) {
-				String n = parser.getName();
-				String ns = parser.getNamespace();
+                if (COMPLEX_TYPE.equals(n) && SCHEMA_NS.equals(ns)) {
+                    ComplexType complexType = new ComplexType(schema);
+                    String ctn = name + "_element";
+                    type = new QName(schema.getTargetNamespace(), ctn);
+                    complexType.read(parser, ctn);
+                    schema.addComplexType(complexType);
+                    isComplexType = true;
+                } else if (SIMPLE_TYPE.equals(n) && SCHEMA_NS.equals(ns)) {
+                    SimpleType simpleType = new SimpleType(schema);
+                    String stn = name + "_element";
+                    type = new QName(schema.getTargetNamespace(), stn);
+                    simpleType.read(parser, stn);
+                    schema.addSimpleType(simpleType);
+                    isComplexType = false;
+                }
+            } else if (eventType == XmlInputStream.END_TAG) {
+                String name = parser.getName();
+                String namespace = parser.getNamespace();
 
-				if (COMPLEX_TYPE.equals(n) && SCHEMA_NS.equals(ns)) {
-					ComplexType complexType = new ComplexType(schema);
-					String ctn = schema.generateUniqueNameForAnonymousType(name);;
-					type = new QName(schema.getTargetNamespace(), ctn);
-					complexType.read(parser, ctn);
-					schema.addComplexType(complexType);
-					isComplexType = true;
-				} else if (SIMPLE_TYPE.equals(n) && SCHEMA_NS.equals(ns)) {
-					SimpleType simpleType = new SimpleType(schema);
-					String stn = schema.generateUniqueNameForAnonymousType(name);;
-					type = new QName(schema.getTargetNamespace(), stn);
-					simpleType.read(parser, stn);
-					schema.addSimpleType(simpleType);
-					isComplexType = false;
-				}
-			} else if (eventType == XmlInputStream.END_TAG) {
-				String name = parser.getName();
-				String namespace = parser.getNamespace();
+                if (ELEMENT.equals(name) && SCHEMA_NS.equals(namespace)) {
+                    if (type == null) {
+                        //Verbose.log("ERROR: no type found for element " + name);
+                        //addEmptyComplexType();
+                    }
+                    return;
+                }
+            } else if (eventType == XmlInputStream.END_DOCUMENT) {
+                throw new WsdlParseException("Failed to find end tag for 'complexType'");
+            }
 
-				if (ELEMENT.equals(name) && SCHEMA_NS.equals(namespace)) {
-					if (type == null) {
-						// Verbose.log("ERROR: no type found for element " +
-						// name);
-						// addEmptyComplexType();
-					}
-					return;
-				}
-			} else if (eventType == XmlInputStream.END_DOCUMENT) {
-				throw new WsdlParseException(
-						"Failed to find end tag for 'complexType'");
-			}
+            eventType = parser.next();
+        }
+    }
 
-			eventType = parser.next();
-		}
-	}
+    /*
+    private void addEmptyComplexType() {
+        String ctn = name + "_element";
+        ComplexType complexType = new ComplexType(schema, ctn);
+        type = new QName(schema.getTargetNamespace(), ctn);
+        schema.addComplexType(complexType);
+        isComplexType = true;
+    }
+    */
 
-	/*
-	 * private void addEmptyComplexType() { String ctn = name + "_element";
-	 * ComplexType complexType = new ComplexType(schema, ctn); type = new
-	 * QName(schema.getTargetNamespace(), ctn);
-	 * schema.addComplexType(complexType); isComplexType = true; }
-	 */
+    private void parseType(WsdlParser parser) {
+        String t = parser.getAttributeValue(null, TYPE);
 
-	private void parseType(WsdlParser parser) {
-		String t = parser.getAttributeValue(null, TYPE);
+        if (t != null) {
+            type = ParserUtil.toQName(t, parser);
+            isComplexType = !SCHEMA_NS.equals(type.getNamespaceURI());
+        }
+    }
 
-		if (t != null) {
-			type = ParserUtil.toQName(t, parser);
-			isComplexType = !SCHEMA_NS.equals(type.getNamespaceURI());
-		}
-	}
+    private void parseRef(WsdlParser parser) throws WsdlParseException {
+        String r = parser.getAttributeValue(null, REF);
 
-	@Override
+        if (r != null) {
+            if ("".equals(r)) {
+                throw new WsdlParseException("Element ref can not be empty, at: " +
+                                             parser.getPositionDescription());
+            }
+            ref = ParserUtil.toQName(r, parser);
+            if (ref.getNamespaceURI() == null || "".equals(ref.getNamespaceURI())) {
+                ref = new QName(schema.getTargetNamespace(), ref.getLocalPart());
+            }
+        }
+    }
+
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
-	void setName(String name) {
-		this.name = name;
-	}
+    void setName(String name) {
+        this.name = name;
+    }
 
-	void setType(QName type) {
-		this.type = type;
-	}
+    void setType(QName type) {
+        this.type = type;
+    }
 }

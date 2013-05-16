@@ -26,13 +26,12 @@
 
 package com.sforce.ws.codegen;
 
-import junit.framework.TestCase;
-
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupDir;
+import org.stringtemplate.v4.*;
 
 import com.sforce.ws.codegen.metadata.ConnectorMetadata;
 import com.sforce.ws.tools.wsdlc;
+
+import junit.framework.TestCase;
 
 public class ConnectorCodeGeneratorTest extends TestCase {
 

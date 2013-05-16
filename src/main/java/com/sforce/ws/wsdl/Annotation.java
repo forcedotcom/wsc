@@ -24,7 +24,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package com.sforce.ws.wsdl;
 
 import com.sforce.ws.parser.XmlInputStream;

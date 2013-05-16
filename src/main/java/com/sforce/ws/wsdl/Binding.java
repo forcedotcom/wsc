@@ -26,12 +26,13 @@
 
 package com.sforce.ws.wsdl;
 
-import java.util.*;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.ConnectionException;
 
 import javax.xml.namespace.QName;
-
-import com.sforce.ws.ConnectionException;
-import com.sforce.ws.parser.XmlInputStream;
+import java.util.Iterator;
+import java.util.HashSet;
+import java.util.HashMap;
 
 /**
  * This class represents WSDL->Definitions->Binding
@@ -57,10 +58,8 @@ public class Binding extends WsdlNode {
         HashSet<Part> headers = new HashSet<Part>();
 
         for (BindingOperation operation : operations.values()) {
-        	if (operation.getInput() != null)
-        		addHeaders(operation.getInput().getHeaders(), headers);
-        	if (operation.getOutput() != null)
-        		addHeaders(operation.getOutput().getHeaders(), headers);
+            addHeaders(operation.getInput().getHeaders(), headers);
+            addHeaders(operation.getOutput().getHeaders(), headers);
         }
         return headers.iterator();
     }

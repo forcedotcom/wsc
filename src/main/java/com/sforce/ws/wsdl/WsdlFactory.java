@@ -64,7 +64,9 @@ public class WsdlFactory {
     private static Definitions createFromInputStream(InputStream in) throws WsdlParseException {
         XmlInputStream parser = new XmlInputStream();
         WsdlParser wsdlParser = new WsdlParser(parser);
-        Definitions definitions = wsdlParser.parse(in);
+        Definitions definitions = new Definitions();
+        wsdlParser.setInput(in, "UTF-8");
+        definitions.read(wsdlParser);
         return definitions;
     }
 

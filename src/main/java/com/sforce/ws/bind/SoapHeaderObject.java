@@ -26,12 +26,12 @@
 
 package com.sforce.ws.bind;
 
-import java.io.IOException;
-
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.util.Verbose;
+
+import java.io.IOException;
 
 /**
  * SoapHeaderObject
