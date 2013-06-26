@@ -81,7 +81,7 @@ class Compiler {
         Verbose.log("Compiling to target " + target + "... ");
 
         String[] args = { "-g", "-d", dir.getAbsolutePath(), "-sourcepath", dir.getAbsolutePath(),
-                "-target", target };
+                "-target", target, "-source", target };
 
         String[] call = new String[args.length + files.length];
 
