@@ -91,7 +91,7 @@
             <configuration>
               <finalName>${project.build.finalName}-uber</finalName>
               <relocations>
-                <!-- repackage antlr to prevent namespace collision classpath in core app -->
+                <!-- repackage antlr to prevent namespace collision on classpath in core app -->
                 <relocation>
                   <pattern>org.antlr</pattern>
                   <shadedPattern>com.sforce.ws.shade.org.antlr</shadedPattern>
@@ -100,6 +100,11 @@
                   <pattern>antlr</pattern>
                   <shadedPattern>com.sforce.ws.shade.antlr</shadedPattern>
                 </relocation>
+                <!-- repackage string template to prevent namespace collision on classpath in core app -->
+                <relocation>
+                  <pattern>org.stringtemplate</pattern>
+                  <shadedPattern>com.sforce.ws.shade.org.stringtemplate</shadedPattern>
+                </relocation> 
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
             </configuration>
