@@ -255,7 +255,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
                     "http://www.w3.org/2001/XMLSchema", "boolean", 0, 1, true);
 
     /**
-     * fashPath is not currently supported 
+     * fastPath is not currently supported 
      */
     private boolean fastPathEnabled__is_set = false;
 
