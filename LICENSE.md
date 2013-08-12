@@ -1,6 +1,6 @@
 # Force.com Web Service Connector End User License Agreement
 
-Except as described below, Force.com Web Service Connector (WSC) is Copyright (c) 2005-2012, salesforce.com, inc. All rights reserved.
+Except as described below, Force.com Web Service Connector (WSC) is Copyright (c) 2005-2013, salesforce.com, inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -21,3 +21,4 @@ The following Third Party components are licensed as follows:
 * XmlPullParserException.java
 
 Your use of the Xml Pull Parser code is subject to the terms and conditions of the Indiana University Extreme! Lab Software License, Version 1.2, available at <http://extreme.indiana.edu/license.txt>
+
