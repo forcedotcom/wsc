@@ -77,6 +77,14 @@ public class wsdlc extends Generator {
             if (!destJar.delete()) { throw new ToolsException(String.format(
                     "Output Jar file exists and cannot be deleted: %s", destJar.getAbsolutePath())); }
         }
+        
+        if(destJar.getParentFile() == null)
+        {
+        	throw new Exception("Jar file doesnt have any parent directory. Please fill in the parent directory along with the " +
+        			"jar file.");
+        	
+        }
+        
         if (!destJar.getParentFile().exists()) {
             if (!destJar.getParentFile().mkdirs() && !destJar.getParentFile().exists()) { 
                 // only throw exception if mkdirs returns false and directory does not exist to 
