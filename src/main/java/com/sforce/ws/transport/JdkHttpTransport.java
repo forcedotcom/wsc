@@ -197,15 +197,15 @@ public class JdkHttpTransport implements Transport {
         InputStream in;
 
         try {
-            successful = true;
             in = connection.getInputStream();
         } catch (IOException e) {
-            successful = false;
             in = connection.getErrorStream();
             if (in == null) {
                 throw e;
             }
         }
+
+        successful = connection.getResponseCode() < 400;
 
         String encoding = connection.getHeaderField("Content-Encoding");
 
