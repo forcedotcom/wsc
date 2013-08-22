@@ -11,7 +11,7 @@ To skip the gpg signing, run the following command
     mvn clean package -Dgpg.skip
 
 ## Generating Stubs From WSDLs
-    java -classpath target/force-wsc-28.0.0-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
+    java -classpath target/force-wsc-29.0.0-jar-with-dependencies.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.
@@ -35,3 +35,4 @@ The following sample illustrates creating a connection and creating a new Accoun
         account.setField("Name", "My Account");
         connection.create(new SObject[]{account});
     }
+
