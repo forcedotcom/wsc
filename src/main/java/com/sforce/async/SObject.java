@@ -127,7 +127,7 @@ public final class SObject {
             String relationshipName = entry.getKey();
             SObject ref = entry.getValue();
             out.writeStartTag(BulkConnection.NAMESPACE, relationshipName);
-            ref.write(out, depth++);
+            ref.write(out, depth + 1);
             out.writeEndTag(BulkConnection.NAMESPACE, relationshipName);
         }
         out.writeEndTag(BulkConnection.NAMESPACE, "sObject");
