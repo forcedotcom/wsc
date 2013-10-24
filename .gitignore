@@ -7,6 +7,5 @@ target
 *.iws
 *.swp
 .DS_Store
-test
 *.sh
 
