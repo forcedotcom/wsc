@@ -69,11 +69,9 @@ public class CsvBatchRequest {
         } catch(IOException e) {
             throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);
         } catch (PullParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);
 		} catch (ConnectionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);
 		}
         return null;
     }
