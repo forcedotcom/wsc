@@ -414,7 +414,7 @@ public class BulkConnection {
 		}
     }
 
-    public CsvBatchRequest createTransformationSpec(JobInfo job) throws AsyncApiException {
+    public TransformationSpecRequest createTransformationSpec(JobInfo job) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
             Transport transport = config.createTransport();
@@ -424,7 +424,7 @@ public class BulkConnection {
                     "This method can only be used with csv content type", AsyncExceptionCode.ClientInputError); }
 
             OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE));
-            return new CsvBatchRequest(transport, out);
+            return new TransformationSpecRequest(transport, out);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
         } catch (ConnectionException e) {
