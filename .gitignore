@@ -1,12 +1,4 @@
-target
-.classpath
-.project
-.settings
-*.iml
-*.ipr
-*.iws
-*.swp
-.DS_Store
-test
-*.sh
-
+/.settings
+/.project
+/target
+/.classpath
