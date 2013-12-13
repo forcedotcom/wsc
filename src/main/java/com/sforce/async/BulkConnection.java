@@ -269,6 +269,68 @@ public class BulkConnection {
         }
     }
 
+    /*
+     * Creates a compliant Async Api batch from a stream containing an arbitrary CSV source (eg. Outlook contacts). 
+     * The stream does not have to be UTF-8, and it's contents are transformed into a compliant
+     * batch using the previously created transformation specification (a mapping of columns to fields). 
+     * The stream is still limited according to the same limit rules as apply to normal batches.
+     */
+    public BatchInfo createBatchFromForeignCsvStream(JobInfo jobInfo, InputStream input, String charSet) throws AsyncApiException {
+        try {
+            String endpoint = getRestEndpoint();
+            Transport transport = config.createTransport();
+            endpoint = endpoint + "job/" + jobInfo.getId() + "/batch";
+            String contentType = getContentTypeString(ContentType.CSV, false);
+            if (charSet != null) contentType = contentType + ";charset=" + charSet;
+            HashMap<String, String> httpHeaders = getHeaders(contentType);
+            final boolean allowZipToBeGzipped = false;
+            OutputStream out = transport.connect(endpoint, httpHeaders, allowZipToBeGzipped);
+
+            FileUtil.copy(input, out);
+
+            InputStream result = transport.getContent();
+            if (!transport.isSuccessful()) parseAndThrowException(result);
+            return BatchRequest.loadBatchInfo(result);
+        } catch (IOException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        } catch (PullParserException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        }
+    }
+
+    /*
+     * Creates a transformation specification for this job. Any subsequent batches that are submitted will
+     * be assumed to be non-compliant batches and will be transformed into compliant batches using this specification.
+     * An example spec for a Contact job might look like ...
+     * <code>
+     * Salesforce Field,Csv Header,Value,Hint
+     * LastName,Surname,#N/A,
+     * Birthdate,Birthday,,MM-dd-YYYY
+     * </code> 
+     */
+    public void createTransformationSpecFromStream(JobInfo jobInfo, InputStream input) throws AsyncApiException {
+        try {
+            String endpoint = getRestEndpoint();
+            Transport transport = config.createTransport();
+            endpoint = endpoint + "job/" + jobInfo.getId() + "/spec";
+            String contentType = getContentTypeString(ContentType.CSV, false);
+            HashMap<String, String> httpHeaders = getHeaders(contentType);
+            final boolean allowZipToBeGzipped = false;
+            OutputStream out = transport.connect(endpoint, httpHeaders, allowZipToBeGzipped);
+
+            FileUtil.copy(input, out);
+
+            InputStream result = transport.getContent();
+            if (!transport.isSuccessful()) parseAndThrowException(result);
+        } catch (IOException e) {
+            throw new AsyncApiException("Failed to create transformation specification", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException e) {
+            throw new AsyncApiException("Failed to create transformation specification", AsyncExceptionCode.ClientInputError, e);
+        }
+    }
+
     private String getContentTypeString(ContentType contentType, boolean isZip) throws AsyncApiException {
         ContentType ct = contentType == null ? ContentType.XML : contentType;
         if (isZip) {
@@ -332,6 +394,42 @@ public class BulkConnection {
         } catch (ConnectionException x) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, x);
         }
+    }
+
+    public CsvBatchRequest createCsvBatch(JobInfo job) throws AsyncApiException {
+        try {
+            String endpoint = getRestEndpoint();
+            Transport transport = config.createTransport();
+            endpoint = endpoint + "job/" + job.getId() + "/batch";
+            ContentType ct = job.getContentType();
+            if (ct != null && ct != ContentType.CSV) { throw new AsyncApiException(
+                    "This method can only be used with csv content type", AsyncExceptionCode.ClientInputError); }
+
+            OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE));
+            return new CsvBatchRequest(transport, out);
+        } catch (IOException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+		}
+    }
+
+    public TransformationSpecRequest createTransformationSpec(JobInfo job) throws AsyncApiException {
+        try {
+            String endpoint = getRestEndpoint();
+            Transport transport = config.createTransport();
+            endpoint = endpoint + "job/" + job.getId() + "/spec";
+            ContentType ct = job.getContentType();
+            if (ct != null && ct != ContentType.CSV) { throw new AsyncApiException(
+                    "This method can only be used with csv content type", AsyncExceptionCode.ClientInputError); }
+
+            OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE));
+            return new TransformationSpecRequest(transport, out);
+        } catch (IOException e) {
+            throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException e) {
+            throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
+		}
     }
 
     public BatchInfoList getBatchInfoList(String jobId) throws AsyncApiException {
