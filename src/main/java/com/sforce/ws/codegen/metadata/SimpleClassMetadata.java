@@ -39,14 +39,24 @@ import com.sforce.ws.wsdl.*;
  * @since 184
  */
 public class SimpleClassMetadata extends ClassMetadata {
+	
+	public static class EnumAndValue {
+		public String e;
+		public String v;
+		public EnumAndValue(String e, String v) {
+			this.e = e;
+			this.v = v;
+		}
+	}
+	
     private static final Pattern DASH_PATTERN = Pattern.compile("-");
-
-    public static Collection<String> getEnumerations(SimpleType simpleType, TypeMapper typeMapper) {
-        Collection<String> enumerations = new ArrayList<String>();
-        for (Enumeration e : simpleType.getRestriction()) {
-            enumerations.add(javaName(e, typeMapper));
-        }
-        return enumerations;
+    
+    public static Collection<EnumAndValue> getEnumsAndValues(SimpleType simpleType, TypeMapper typeMapper) {
+    	Collection<EnumAndValue> enumsAndValues = new ArrayList<EnumAndValue>();
+    	for (Enumeration e : simpleType.getRestriction()) {
+    		enumsAndValues.add(new EnumAndValue(javaName(e, typeMapper), e.getValue()));
+    	}
+    	return enumsAndValues;
     }
 
     public static String javaName(Enumeration enumeration, TypeMapper typeMapper) {
@@ -62,20 +72,19 @@ public class SimpleClassMetadata extends ClassMetadata {
         return subname;
     }
 
-    private final Collection<String> enumerations;
+    private final Collection<EnumAndValue> enumsAndValues;
 
     public SimpleClassMetadata(Schema schema, SimpleType simpleType, TypeMapper typeMapper) {
         this(NameMapper.getPackageName(schema.getTargetNamespace(), typeMapper.getPackagePrefix()), NameMapper
-                .getClassName(simpleType.getName()), getEnumerations(simpleType, typeMapper));
+                .getClassName(simpleType.getName()), getEnumsAndValues(simpleType, typeMapper));
     }
 
-    public SimpleClassMetadata(String packageName, String className, Collection<String> enumerations) {
+    public SimpleClassMetadata(String packageName, String className, Collection<EnumAndValue> enumsAndValues) {
         super(packageName, className);
-        this.enumerations = enumerations;
+        this.enumsAndValues = enumsAndValues;
     }
-
-    public Collection<String> getEnumerations() {
-        return this.enumerations;
+    
+    public Collection<EnumAndValue> getEnumsAndValues() {
+    	return enumsAndValues;
     }
-
 }
