@@ -142,7 +142,7 @@ abstract public class Generator {
         template.add("gen", gen);
         File source = new File(FileUtil.mkdirs(packageName, dir), fileName);
         PrintWriter out = null;
-        out = new PrintWriter(new BufferedWriter(new FileWriter(source), BUFFER_SIZE_16_KIB));
+        out = new PrintWriter(new BufferedWriter(newSourceWriter(source), BUFFER_SIZE_16_KIB));
         try {
             out.print(template.render());
         } finally {
@@ -150,6 +150,13 @@ abstract public class Generator {
         }
 
         return source;
+    }
+
+    /**
+     * Extension point for embedding applications, like Maven plugins, to provide custom I/O primitives.
+     */
+    protected Writer newSourceWriter(File source) throws IOException {
+        return new FileWriter(source);
     }
 
     protected void generateAggregateResultClasses(Definitions definitions, File dir) throws IOException {
