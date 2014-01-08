@@ -171,10 +171,19 @@ abstract public class Generator {
 
     protected void generateClassFromComplexType(Types types, Schema schema, ComplexType complexType, File dir)
             throws IOException {
-        ComplexClassMetadata gen = new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper)
+        ComplexClassMetadata gen = newTypeMetadataConstructor(types, schema, complexType, dir)
                 .generateMetadata();
         ST template = templates.getInstanceOf(TYPE);
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
+    }
+
+    /**
+     * Extension point for embedding applications, like Maven plugins, to customize TypeMetadataConstructor without
+     * changing system properties.
+     */
+    protected TypeMetadataConstructor newTypeMetadataConstructor(Types types, Schema schema, ComplexType complexType,
+            File dir) {
+        return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper);
     }
 
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {
