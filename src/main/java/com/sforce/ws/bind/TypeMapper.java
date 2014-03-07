@@ -666,6 +666,13 @@ public class TypeMapper {
                 s = enumStrValue;
             }
         }
+    	catch(NoSuchFieldException e) {
+    		// Do nothing.
+    		// It's possible that this type mapper is being used with stubs that were not
+    		// generated from templates that add the valuesToEnums field. So, catching
+    		// this exception and then doing nothing is a way to default back to the old
+    		// behavior in which enums with hyphens are not supported.
+    	}
         catch(Exception e) {
         	throw new ConnectionException("Failed to read enum", e);
         }
