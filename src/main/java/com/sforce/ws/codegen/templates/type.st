@@ -81,8 +81,7 @@ $gen.memberMetadataList:{ member |
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[$gen.className$ ");
       $gen.superToString$$gen.memberMetadataList: { member |
-      sb.append(" $member.fieldName$=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString($member.fieldName$)+"'\\n");
+      sb.append(" $member.fieldName$='").append(com.sforce.ws.util.Verbose.toString($member.fieldName$)).append("'\\n");
 }$      sb.append("]\\n");
       return sb.toString();
     }
