@@ -246,22 +246,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
     public String toString() {
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[EmailSyncEntity ");
-      sb.append(" conflictResolution=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(conflictResolution)+"'\n");
-      sb.append(" dataSetFilter=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(dataSetFilter)+"'\n");
-      sb.append(" fieldMapping=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(fieldMapping)+"'\n");
-      sb.append(" matchPreference=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(matchPreference)+"'\n");
-      sb.append(" name=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(name)+"'\n");
-      sb.append(" recordTypeId=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(recordTypeId)+"'\n");
-      sb.append(" syncDirection=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(syncDirection)+"'\n");
-      sb.append(" syncFollowed=");
-      sb.append("'"+com.sforce.ws.util.Verbose.toString(syncFollowed)+"'\n");
+      sb.append(" conflictResolution='").append(com.sforce.ws.util.Verbose.toString(conflictResolution)).append("'\n");
+      sb.append(" dataSetFilter='").append(com.sforce.ws.util.Verbose.toString(dataSetFilter)).append("'\n");
+      sb.append(" fieldMapping='").append(com.sforce.ws.util.Verbose.toString(fieldMapping)).append("'\n");
+      sb.append(" matchPreference='").append(com.sforce.ws.util.Verbose.toString(matchPreference)).append("'\n");
+      sb.append(" name='").append(com.sforce.ws.util.Verbose.toString(name)).append("'\n");
+      sb.append(" recordTypeId='").append(com.sforce.ws.util.Verbose.toString(recordTypeId)).append("'\n");
+      sb.append(" syncDirection='").append(com.sforce.ws.util.Verbose.toString(syncDirection)).append("'\n");
+      sb.append(" syncFollowed='").append(com.sforce.ws.util.Verbose.toString(syncFollowed)).append("'\n");
       sb.append("]\n");
       return sb.toString();
     }
