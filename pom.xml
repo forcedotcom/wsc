@@ -24,7 +24,7 @@
   <scm>
     <connection>scm:git:git://github.com/forcedotcom/wsc.git</connection>
     <developerConnection>scm:git:git://github.com/forcedotcom/wsc.git</developerConnection>
-    <url>http://github.com/forcedotcom/wsc</url>
+    <url>git@github.com/forcedotcom/wsc</url>
   </scm>
   <developers>
     <!-- see mailing list -->
