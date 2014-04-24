@@ -9,7 +9,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>31.0.0</version>
+  <version>31.0.0-SNAPSHOT</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
@@ -22,8 +22,8 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:git://github.com/forcedotcom/wsc.git</connection>
-    <developerConnection>scm:git:git://github.com/forcedotcom/wsc.git</developerConnection>
+    <connection>scm:git:git@github.com/forcedotcom/wsc.git</connection>
+    <developerConnection>scm:git:git@github.com/forcedotcom/wsc.git</developerConnection>
     <url>http://github.com/forcedotcom/wsc</url>
   </scm>
   <developers>
