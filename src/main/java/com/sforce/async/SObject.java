@@ -63,10 +63,6 @@ public final class SObject {
         fkRefs.put(name, ref);
     }
 
-    public Map<String, SObject> getFieldReferences() {
-        return Collections.unmodifiableMap(fkRefs);
-    }
-
     /**
      * Example:
      * <?xml version="1.0" encoding="UTF-8"?>
