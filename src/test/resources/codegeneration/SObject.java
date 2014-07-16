@@ -35,7 +35,7 @@ import java.util.Iterator;
 
 /**
  */
-public class SObject extends XmlObject {
+public class SObject extends XmlObject implements ISObject {
 
     /**
      * Constructor
@@ -43,14 +43,22 @@ public class SObject extends XmlObject {
     public SObject() {
     }
 
+    public SObject(String type) {
+        this();
+        setType(type);
+    }
+
+    @Override
     public String getType() {
         return (String)getField("type");
     }
 
+    @Override
     public void setType(String type) {
         setField("type", type);
     }
 
+    @Override
     public String[] getFieldsToNull() {
         Iterator<XmlObject> it = getChildren("fieldsToNull");
         ArrayList<String> result = new ArrayList<String>();
@@ -60,17 +68,39 @@ public class SObject extends XmlObject {
         return (String[]) result.toArray(new String[0]);
     }
 
+    @Override
     public void setFieldsToNull(String[] fieldsToNull) {
         for (int i=0; i<fieldsToNull.length; i++) {
           addField("fieldsToNull", fieldsToNull[i]);
         }
     }
 
+    @Override
     public String getId() {
         return (String)getField("Id");
     }
 
+    @Override
     public void setId(String Id) {
         setField("Id", Id);
+    }
+
+    @Override
+    public Object getSObjectField(String name) {
+        Object o = super.getField(name);
+        if (!(o instanceof XmlObject)) {
+            return o;
+        } else if (!(o instanceof SObject)) {
+            SObject sObject = new SObject();
+            sObject.cloneFrom((XmlObject)o);
+            return sObject;
+        } else {
+            return o;
+        }
+    }
+
+    @Override
+    public void setSObjectField(String field, Object value) {
+        setField(field, value);
     }
 }

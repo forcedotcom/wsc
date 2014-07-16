@@ -52,6 +52,7 @@ abstract public class Generator {
 
     private static final String AGGREGATE_RESULT_JAVA = "AggregateResult.java";
     private static final String SOBJECT_JAVA = "SObject.java";
+    private static final String ISOBJECT_JAVA = "ISObject.java";
 
     /**
      * Template names
@@ -59,27 +60,37 @@ abstract public class Generator {
     public final static String AGGREGATE_RESULT = "aggregateResult";
     public final static String SIMPLE_TYPE = "simpleType";
     public final static String SOBJECT = "sobject";
+    public final static String ISOBJECT = "isobject";
+
     public final static String TYPE = "type";
+    public final static String TYPE_INTERFACE = "typeinterface";
 
     protected final TypeMapper typeMapper = new TypeMapper();
     protected final ArrayList<File> javaFiles = new ArrayList<File>();
     protected final String packagePrefix;
+    protected final String interfacePackagePrefix;
 
     protected final STGroupDir templates;
+    protected boolean generateInterfaces;
 
-    public Generator(String packagePrefix, STGroupDir templates) throws Exception {
-        this(packagePrefix, templates, '$', '$');
+
+    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix) throws Exception {
+        this(packagePrefix, templates, interfacePackagePrefix, '$', '$');
     }
 
-    public Generator(String packagePrefix, STGroupDir templates, char startDelim, char endDelim) throws Exception {
+    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, char startDelim, char endDelim) throws Exception {
         this.templates = templates;
         this.packagePrefix = packagePrefix;
+        this.interfacePackagePrefix = interfacePackagePrefix;
         typeMapper.setPackagePrefix(packagePrefix);
+        typeMapper.setInterfacePackagePrefix(interfacePackagePrefix);
     }
 
     public void generate(URL wsdl, File dest) throws WsdlParseException, ToolsException, IOException {
         Definitions definitions = WsdlFactory.create(wsdl);
         SfdcApiType sfdcApiType = definitions.getApiType();
+        generateInterfaces = sfdcApiType == SfdcApiType.Partner;
+        typeMapper.setGenerateInterfaces(generateInterfaces);
         Types types = definitions.getTypes();
         generate(definitions, sfdcApiType, types, dest);
     }
@@ -132,6 +143,9 @@ abstract public class Generator {
             if (requiresSObjectClass(definitions)) {
                 generateSObjectClass(definitions, dir);
             }
+            if (requiresSObjectInterface(definitions)) {
+                generateSObjectInterface(definitions, dir);
+            }
             if (requiresAggregateResultClass(definitions)) {
                 generateAggregateResultClasses(definitions, dir);
             }
@@ -175,6 +189,10 @@ abstract public class Generator {
                 .generateMetadata();
         ST template = templates.getInstanceOf(TYPE);
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
+        if (generateInterfaces) {
+            ST interfc = templates.getInstanceOf(TYPE_INTERFACE);
+            javaFiles.add(generate(gen.getPackageName(), gen.getInterfaceName() + ".java", gen, interfc, dir));
+        }
     }
 
     /**
@@ -241,10 +259,22 @@ abstract public class Generator {
 
     protected void generateSObjectClass(Definitions definitions, File dir) throws IOException {
         String packageName = getPackageName(definitions);
-        ClassMetadata gen = new ClassMetadata(packageName, null);
+        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
         ST template = templates.getInstanceOf(SOBJECT);
         javaFiles.add(generate(packageName, SOBJECT_JAVA, gen, template, dir));
     }
+
+    protected String getInterfacePackageName(String packageName) {
+        return packageName;
+    }
+
+    protected void generateSObjectInterface(Definitions definitions, File dir) throws IOException {
+        String packageName = getPackageName(definitions);
+        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
+        ST template = templates.getInstanceOf(ISOBJECT);
+        javaFiles.add(generate(packageName, ISOBJECT_JAVA, gen, template, dir));
+    }
+
 
     protected void generateTypeClass(Types types, Schema schema, File dir) throws IOException {
         generateComplexTypeClass(types, schema, dir);
@@ -295,4 +325,7 @@ abstract public class Generator {
                 || definitions.getApiType() == SfdcApiType.SyncApi;
     }
 
+    protected boolean requiresSObjectInterface(Definitions definitions) {
+        return requiresSObjectClass(definitions);
+    }
 }

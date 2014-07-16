@@ -47,13 +47,24 @@ public class ConnectionMetadataConstructor {
     private final String className;
     private final String packageName;
     private final Definitions definitions;
-    private final TypeMapper typeMapper;
+    protected final TypeMapper typeMapper;
 
     public ConnectionMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix) {
         this.definitions = definitions;
         this.typeMapper = typeMapper;
         this.className = (definitions.getApiType() != null ? definitions.getApiType().name() : "Soap") + "Connection";
         this.packageName = NameMapper.getPackageName(definitions.getTargetNamespace(), packagePrefix);
+    }
+
+    /**
+     * Converts a fully qualified java class to an interface using the convention of prefix an "I" to the classname
+     */
+    static String convertJavaClassToInterface(String javaClassName, boolean isComplexType) {
+        if (!isComplexType) {
+            return javaClassName;
+        }
+        int i = javaClassName.lastIndexOf(".");
+        return javaClassName.substring(0, i+1) + "I" + javaClassName.substring(i+1);
     }
 
     public ConnectionClassMetadata getConnectionClassMetadata() {
@@ -89,9 +100,11 @@ public class ConnectionMetadataConstructor {
                 }
 
                 operations.add(OperationMetadata.newInstance(returnType(operation), getOperationName(operation),
-                        requestType(operation), responseType(operation), getArgs(operation), soapAction(operation),
+                        requestType(operation), responseType(operation), getArgs(operation, ArgListTypesToGenerate.CLASSES),
+                        getArgs(operation, ArgListTypesToGenerate.NONE),  getArgs(operation, ArgListTypesToGenerate.INTERFACE),
+                        getArgs(operation, ArgListTypesToGenerate.CAST_TO_CLASSES), soapAction(operation),
                         requestName(operation), responseName(operation), getResultCall(operation), elements,
-                        operationHeaders));
+                        operationHeaders, isReturnTypeComplexType(operation), returnTypeInterface(operation)));
             }
 
             ConnectionClassMetadata connectionClassMetadata = ConnectionClassMetadata.newInstance(getPackagePrefix(),
@@ -102,6 +115,15 @@ public class ConnectionMetadataConstructor {
         } catch (ConnectionException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    protected String returnTypeInterface(Operation operation) throws ConnectionException {
+        return convertJavaClassToInterface(returnType(operation), isReturnTypeComplexType(operation));
+    }
+
+    protected boolean isReturnTypeComplexType(Operation operation) throws ConnectionException {
+        Element el = getResponseElement(operation);
+        return el != null && isComplexType(el);
     }
 
     public String getPackageName() {
@@ -248,7 +270,7 @@ public class ConnectionMetadataConstructor {
     public String returnType(Operation operation) throws ConnectionException {
         Element el = getResponseElement(operation);
         if (el == null) { return "void"; }
-        return getJavaClassName(el);
+        return getJavaClassName(el, true);
     }
 
     public Element getResponseElement(Operation operation) throws ConnectionException {
@@ -273,7 +295,7 @@ public class ConnectionMetadataConstructor {
 
     public String headerArgs(Part header) throws ConnectionException {
         Iterator<Element> eit = headerElements(header);
-        return toArgs(eit);
+        return toArgs(eit, ArgListTypesToGenerate.CLASSES);
     }
 
     public Iterator<Element> headerElements(Part header) throws ConnectionException {
@@ -287,17 +309,45 @@ public class ConnectionMetadataConstructor {
         }
     }
 
-    public String getArgs(Operation operation) throws ConnectionException {
-        Iterator<Element> eit = argElements(operation);
-        return toArgs(eit);
+    // For a list of arguments, generate either the types (as concrete classes or interfaces), cast them to types, or just generate the variable names
+    protected enum ArgListTypesToGenerate {
+        NONE,
+        CLASSES,
+        INTERFACE,
+        CAST_TO_CLASSES
     }
 
-    private String toArgs(Iterator<Element> eit) {
+    public String getArgs(Operation operation, ArgListTypesToGenerate types) throws ConnectionException {
+        Iterator<Element> eit = argElements(operation);
+        return toArgs(eit, types);
+    }
+
+    private String toArgs(Iterator<Element> eit, ArgListTypesToGenerate types) {
         StringBuilder sb = new StringBuilder();
         while (eit.hasNext()) {
+            boolean appendedArgName=false;
             Element el = eit.next();
-            String clazz = getJavaClassName(el);
-            sb.append(clazz).append(" ").append(argName(el));
+            if (types == ArgListTypesToGenerate.INTERFACE) {
+                sb.append(getJavaInterfaceName(el));
+            } else if (types == ArgListTypesToGenerate.CLASSES) {
+                sb.append(getJavaClassName(el, true));
+            } else if (types == ArgListTypesToGenerate.CAST_TO_CLASSES) {
+                if (isComplexType(el)) {
+                    if (isArray(el)) {
+                        // The ConnectionWrapper calls the Connection, which expects arguments of the concrete class type.
+                        // An array of an interface type can't just be cast to the concrete class, or it'll throw a runtime
+                        // ClassCastException.  Unfortunately, it's necessary to copy the array elements to another array of
+                        // the concrete's class type.
+                        sb.append("castArray(").append(getJavaClassName(el, false)).append(".class, ").append(argName(el)).append(")");
+                        appendedArgName = true;
+                    } else {
+                        sb.append("(").append(getJavaClassName(el, true)).append(")");
+                    }
+                }
+            }
+            if (!appendedArgName) {
+                sb.append(" ").append(argName(el));
+            }
             if (eit.hasNext()) {
                 sb.append(",");
             }
@@ -319,12 +369,25 @@ public class ConnectionMetadataConstructor {
         return (sequence == null) ? new ArrayList<Element>().iterator() : sequence.getElements();
     }
 
-    public String getJavaClassName(Element el) {
+    public String getJavaClassName(Element el, boolean addBracketsForArray) {
         String clazz = typeMapper.getJavaClassName(el.getType(), definitions.getTypes(), el.isNillable());
-        if (el.getMaxOccurs() != 1) {
+        if (addBracketsForArray && isArray(el)) {
             clazz += "[]";
         }
         return clazz;
+    }
+
+    public boolean isArray(Element el) {
+        return el.getMaxOccurs() != 1;
+    }
+
+    protected String getJavaInterfaceName(Element el) {
+        String clazz = getJavaClassName(el, true);
+        return convertJavaClassToInterface(clazz, isComplexType(el));
+    }
+
+    public boolean isComplexType(Element el) {
+        return definitions.getTypes().getComplexTypeAllowNull(el.getType()) != null;
     }
 
     public String loginResult() throws ConnectionException {

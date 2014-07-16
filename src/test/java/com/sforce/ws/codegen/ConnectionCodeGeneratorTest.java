@@ -138,9 +138,11 @@ public class ConnectionCodeGeneratorTest extends TestCase {
         operations.add(OperationMetadata.newInstance("com.sforce.soap.partner.sobject.wsc130.SObject[]", "retrieve",
                 "com.sforce.soap.partner.wsc130.Retrieve_element",
                 "com.sforce.soap.partner.wsc130.RetrieveResponse_element",
-                "java.lang.String fieldList,java.lang.String sObjectType,java.lang.String[] ids", "\"\"",
+                "java.lang.String fieldList,java.lang.String sObjectType,java.lang.String[] ids", "ids",
+                "java.lang.String fieldList,java.lang.String sObjectType,java.lang.String[] ids",
+                "ids", "\"\"",
                 "retrieve_qname", "retrieveResponse_qname", "return __response.getResult();", elements,
-                operationHeaders));
+                operationHeaders, true, "com.sforce.soap.partner.sobject.wsc130.ISObject[]"));
 
         final String qNames = "    private static final javax.xml.namespace.QName convertLead_qname = new javax.xml.namespace.QName(\"urn:partner.soap.sforce.com\", \"convertLead\");\n"
                 + "    private static final javax.xml.namespace.QName convertLeadResponse_qname = new javax.xml.namespace.QName(\"urn:partner.soap.sforce.com\", \"convertLeadResponse\");\n"

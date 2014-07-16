@@ -25,11 +25,14 @@
  */
 package com.sforce.ws.codegen.metadata;
 
+import com.sforce.ws.codegen.ConnectionMetadataConstructor;
+
 import java.util.List;
 
 /**
  * @author btoal 
  * @author hhildebrand
+ * @author sweiss
  * @since 184
  */
 public class OperationMetadata {
@@ -37,32 +40,46 @@ public class OperationMetadata {
     private final String operationName;
     private final String requestType;
     private final String responseType;
-    private final String args;
     private final String soapAction;
     private final String requestName;
     private final String responseName;
     private final String resultCall;
     private final List<ElementMetadata> elements;
     private final List<HeaderMetadata> headers;
-    
+    private final String returnTypeInterface;
+
+    // SObject sObject, String s
+    private final String argsWithClasses;
+    // sObject, s
+    private final String argsWithoutTypes;
+    // ISObject sObject, String s
+    private final String argsWithInterfaces;
+    // (SObject)sObject, s
+    private final String argsWithCasts;
+
+
     public OperationMetadata(final String returnType, final String operationName, final String requestType,
-            final String responseType, final String args, final String soapAction, final String requestName, final String responseName, final String resultCall, final List<ElementMetadata> elements, final List<HeaderMetadata> headers) {
+                             final String responseType, final String argsWithClasses, String argsWithoutTypes, String argsWithInterfaces, String argsWithCasts, final String soapAction, final String requestName, final String responseName, final String resultCall, final List<ElementMetadata> elements, final List<HeaderMetadata> headers, boolean isReturnTypeComplexType, String returnTypeInterface) {
         this.returnType = returnType;
         this.operationName = operationName;
         this.requestType = requestType;
         this.responseType = responseType;
-        this.args = args;
+        this.argsWithClasses = argsWithClasses;
+        this.argsWithoutTypes = argsWithoutTypes;
+        this.argsWithInterfaces = argsWithInterfaces;
+        this.argsWithCasts = argsWithCasts;
         this.soapAction = soapAction;
         this.requestName = requestName;
         this.responseName = responseName;
         this.resultCall = resultCall;
         this.elements = elements;
         this.headers = headers;
+        this.returnTypeInterface = returnTypeInterface;
     }
 
     public static OperationMetadata newInstance(final String returnType, final String operationName, final String requestType,
-            final String responseType, final String args, final String soapAction, final String requestName, final String responseName, final String resultCall, final List<ElementMetadata> elements, final List<HeaderMetadata> headers) {
-        return new OperationMetadata(returnType, operationName, requestType, responseType, args, soapAction, requestName, responseName, resultCall, elements, headers);
+                                                final String responseType, final String argsWithClasses, String argsWithoutTypes, String argsWithInterfaces, String argsWithCasts, final String soapAction, final String requestName, final String responseName, final String resultCall, final List<ElementMetadata> elements, final List<HeaderMetadata> headers, boolean isReturnTypeComplexType, String returnTypeInterface) {
+        return new OperationMetadata(returnType, operationName, requestType, responseType, argsWithClasses, argsWithoutTypes, argsWithInterfaces, argsWithCasts, soapAction, requestName, responseName, resultCall, elements, headers, isReturnTypeComplexType, returnTypeInterface);
     }
 
     public String getReturnType() {
@@ -81,8 +98,16 @@ public class OperationMetadata {
         return responseType;
     }
 
-    public String getArgs() {
-        return args;
+    public String getArgsWithClasses() {
+        return argsWithClasses;
+    }
+
+    public String getArgsWithInterfaces() {
+        return argsWithInterfaces;
+    }
+
+    public String getArgsWithCasts() {
+        return argsWithCasts;
     }
 
     public List<ElementMetadata> getElements() {
@@ -107,5 +132,17 @@ public class OperationMetadata {
 
     public String getResultCall() {
         return resultCall;
+    }
+
+    public String getArgsWithoutTypes() {
+        return argsWithoutTypes;
+    }
+
+    public boolean getHasReturnType() {
+        return !getReturnType().equals("void");
+    }
+
+    public String getReturnTypeInterface() {
+        return returnTypeInterface;
     }
 }
