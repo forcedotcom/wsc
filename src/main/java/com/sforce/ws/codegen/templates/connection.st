@@ -82,7 +82,7 @@ $header.elements : { ael |
    }
 
 $gen.operations: { op |
-  public $op.returnType$ $op.operationName$($op.args$)
+  public $op.returnType$ $op.operationName$($op.argsWithClasses$)
        throws com.sforce.ws.ConnectionException {
     com.sforce.ws.transport.SoapConnection __connection = newConnection();
     $op.requestType$ __request = new $op.requestType$();

@@ -66,6 +66,9 @@ public class TypeMapper {
     private static final HashSet<String> keywords = getKeyWords();
     private static HashMap<String, Class<?>> primitiveClassCache = getPrimitiveClassCache();
 
+    // True if interfaces are generated for the WSDL
+    private boolean generateInterfaces;
+
     private static HashMap<String, QName> getJavaXmlMapping() {
         HashMap<String, QName> map = new HashMap<String, QName>();
         map.put(String.class.getName(), new QName(Constants.SCHEMA_NS, "string"));
@@ -133,6 +136,7 @@ public class TypeMapper {
     }
 
     private String packagePrefix;
+    private String interfacePackagePrefix = null;
     private CalendarCodec calendarCodec = new CalendarCodec();
     private DateCodec dateCodec = new DateCodec();
     private HashMap<QName, Class<?>> typeCache = new HashMap<QName, Class<?>>();
@@ -154,6 +158,14 @@ public class TypeMapper {
         return packagePrefix;
     }
 
+    public String getInterfacePackagePrefix() {
+        return interfacePackagePrefix;
+    }
+
+    public void setInterfacePackagePrefix(String interfacePackagePrefix) {
+        this.interfacePackagePrefix = interfacePackagePrefix;
+    }
+
     public boolean isKeyWord(String token) {
         return keywords.contains(token);
     }
@@ -172,6 +184,17 @@ public class TypeMapper {
      * @return true if this is a well known type
      */
     public boolean isWellKnownType(String namespace, String name) {
+        if (isSObject(namespace, name)) return true;
+
+        if ("AggregateResult".equals(name) && SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace)) {
+            return true;
+        }
+
+        QName type = new QName(namespace, name);
+        return xmlJavaMapping.containsKey(type);
+    }
+
+    public boolean isSObject(String namespace, String name) {
         if ("sObject".equals(name) &&
                 (SfdcApiType.Partner.getSobjectNamespace().equals(namespace) ||
                         SfdcApiType.CrossInstance.getSobjectNamespace().equals(namespace) ||
@@ -180,13 +203,7 @@ public class TypeMapper {
                         SfdcApiType.SyncApi.getSobjectNamespace().equals(namespace))) {
             return true;
         }
-
-        if ("AggregateResult".equals(name) && SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace)) {
-            return true;
-        }
-
-        QName type = new QName(namespace, name);
-        return xmlJavaMapping.containsKey(type);
+        return false;
     }
 
     /**
@@ -213,6 +230,7 @@ public class TypeMapper {
             return clazz;
         }
 
+        String prefix = packagePrefix;
         // Use the base type if it's a restricted simple type without enumerations.
         if (types != null) {
             SimpleType simpleType = types.getSimpleTypeAllowNull(xmltype);
@@ -220,11 +238,13 @@ public class TypeMapper {
                 Restriction rest = simpleType.getRestriction();
                 if (rest != null && rest.getNumEnumerations() == 0) {
                     return xmlJavaMapping.get(rest.getBase());
+                } else {
+                    prefix = interfacePackagePrefix;
                 }
             }
         }
 
-        String packageName = NameMapper.getPackageName(xmltype.getNamespaceURI(), packagePrefix);
+        String packageName = NameMapper.getPackageName(xmltype.getNamespaceURI(), prefix);
         return packageName + "." + NameMapper.getClassName(xmltype.getLocalPart());
     }
 
@@ -740,6 +760,14 @@ public class TypeMapper {
         keywords.add("double");
         keywords.add("boolean");
         return keywords;
+    }
+
+    public void setGenerateInterfaces(boolean generateInterfaces) {
+        this.generateInterfaces = generateInterfaces;
+    }
+
+    public boolean generateInterfaces() {
+        return generateInterfaces;
     }
 
     public static class PartialArrayException extends ConnectionException {
