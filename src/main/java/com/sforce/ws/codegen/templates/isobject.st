@@ -1,5 +1,6 @@
+isobject(gen) ::= <<
 /*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2005-2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,43 +24,25 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.sforce.ws.codegen.metadata;
+package $gen.packageName$;
 
-/**
- * @author btoal 
- * @author hhildebrand
- * @since 184
- */
-public class ClassMetadata {
-    protected final String className;
-    protected final String packageName;
-    protected final String interfacePackageName;
+public interface ISObject {
 
-    public static ClassMetadata newInstance(String packageName, String className) {
-        return new ClassMetadata(packageName, className);
-    }
+    public String getType();
 
-    public ClassMetadata(String packageName, String className) {
-        this(packageName, className, null);
-    }
+    public void setType(String type);
 
-    public ClassMetadata(String packageName, String className, String interfacePackageName) {
-        this.packageName = packageName;
-        this.className = className;
-        this.interfacePackageName = interfacePackageName;
-    }
+    public String[] getFieldsToNull();
 
-    public String getClassName() {
-        return this.className;
-    }
+    public void setFieldsToNull(String[] fieldsToNull);
 
-    public String getPackageName() {
-        return packageName;
-    }
+    public String getId();
 
-    public String getInterfaceName() {return "I" + this.className;}
+    public void setId(String Id);
 
-    public String getInterfacePackageName() {
-        return interfacePackageName;
-    }
+    public Object getSObjectField(String field);
+
+    public void setSObjectField(String field, Object value);
 }
+
+>>
