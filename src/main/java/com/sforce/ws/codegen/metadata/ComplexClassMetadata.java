@@ -28,17 +28,19 @@ public class ComplexClassMetadata extends ClassMetadata {
     private final String superLoad;
     private final String superToString;
     private final List<MemberMetadata> memberMetadataList;
-    private final String typeExtention;
+    private final boolean generateInterfaces;
+    private final String typeExtension;
 
-    public ComplexClassMetadata(String packageName, String className, String typeExtention, String xsiType,
-            String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList) {
-        super(packageName, className);
-        this.typeExtention = typeExtention;
+    public ComplexClassMetadata(String packageName, String className, String typeExtension, String xsiType,
+                                String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList, boolean generateInterfaces, String interfacePackageName) {
+        super(packageName, className, interfacePackageName);
+        this.typeExtension = typeExtension;
         this.xsiType = xsiType;
         this.superWrite = superWrite;
         this.superLoad = superLoad;
         this.superToString = superToString;
         this.memberMetadataList = memberMetadataList;
+        this.generateInterfaces = generateInterfaces;
     }
 
     public String getXsiType() {
@@ -57,11 +59,28 @@ public class ComplexClassMetadata extends ClassMetadata {
         return this.superToString;
     }
 
-    public String getTypeExtention() {
-        return typeExtention;
+    public String getTypeExtension() {
+        return typeExtension;
     }
 
     public List<MemberMetadata> getMemberMetadataList() {
         return this.memberMetadataList;
     }
+
+    public boolean getGenerateInterfaces() {
+        return generateInterfaces;
+    }
+
+    public String getInterfaceExtension() {
+        if (!generateInterfaces) {
+            return "";
+        }
+        String typeExt = getTypeExtension().toLowerCase();
+        if (typeExt.contains("implements")) {
+            return ", " + getInterfaceName();
+        } else {
+            return "implements " + getInterfaceName();
+        }
+    }
+
 }

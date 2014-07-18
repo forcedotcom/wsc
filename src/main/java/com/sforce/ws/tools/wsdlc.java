@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.sforce.ws.codegen.FactoryMetadataConstructor;
+import com.sforce.ws.codegen.metadata.ConnectionWrapperClassMetadata;
+import com.sforce.ws.codegen.metadata.FactoryClassMetadata;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupDir;
 
@@ -58,6 +61,10 @@ public class wsdlc extends Generator {
 
     public final static String CONNECTION = "connection";
     public final static String CONNECTOR = "connector";
+    public final static String CONNECTION_WRAPPER = "connectionWrapper";
+    public final static String INTERFACE_CONNECTION_WRAPPER = "iconnectionWrapper";
+    public final static String FACTORY = "factory";
+    public final static String IFACTORY = "ifactory";
 
     public static void main(String[] args) throws Exception {
         try {
@@ -69,7 +76,7 @@ public class wsdlc extends Generator {
     }
 
     public static void run(String wsdlUrl, String destJarFilename, String packagePrefix, boolean standAlone,
-            STGroupDir templates, String destDir, boolean compile) throws Exception, ToolsException,
+                           STGroupDir templates, String destDir, boolean compile) throws Exception, ToolsException,
             MalformedURLException, WsdlParseException, IOException {
         wsdlc wsc = new wsdlc(packagePrefix, templates);
         File destJar = new File(destJarFilename);
@@ -144,7 +151,8 @@ public class wsdlc extends Generator {
     }
 
     public wsdlc(String packagePrefix, STGroupDir templates) throws Exception {
-        super(packagePrefix, templates);
+        super(packagePrefix, templates, packagePrefix);
+
     }
 
     private void generateConnectionClasses(Definitions definitions, File dir) throws IOException {
@@ -152,6 +160,32 @@ public class wsdlc extends Generator {
                 .getConnectionClassMetadata();
         ST template = templates.getInstanceOf(CONNECTION);
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
+    }
+
+    private void generateConnectionWrapperClasses(Definitions definitions, File dir)
+            throws IOException {
+        ConnectionClassMetadata connectionMetadata = new ConnectionMetadataConstructor(
+                definitions, typeMapper, packagePrefix)
+                .getConnectionClassMetadata();
+        ConnectionWrapperClassMetadata gen = new ConnectionWrapperClassMetadata(connectionMetadata.getPackageName(), connectionMetadata.getClassName() + "Wrapper", null, connectionMetadata);
+        ST template = templates.getInstanceOf(CONNECTION_WRAPPER);
+        File wrapperFile = generate(gen.getPackageName(), gen.getClassName()
+                + ".java", gen, template, dir);
+        javaFiles.add(wrapperFile);
+
+        template = templates.getInstanceOf(INTERFACE_CONNECTION_WRAPPER);
+        javaFiles.add(generate(gen.getPackageName(), gen.getInterfaceName()
+                + ".java", gen, template, dir));
+    }
+
+    private void generateFactoryClasses(Definitions definitions, File dir) throws IOException {
+        FactoryClassMetadata gen = new FactoryMetadataConstructor(definitions, typeMapper, packagePrefix)
+                .getFactoryClassMetadata();
+        ST template = templates.getInstanceOf(FACTORY);
+        javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
+
+        template = templates.getInstanceOf(IFACTORY);
+        javaFiles.add(generate(gen.getPackageName(), gen.getInterfaceName() + ".java", gen, template, dir));
     }
 
     private void generateConnectorClasses(Definitions definitions, File dir) throws IOException {
@@ -165,5 +199,10 @@ public class wsdlc extends Generator {
         super.generate(definitions, sfdcApiType, types, dir);
         generateConnectionClasses(definitions, dir);
         generateConnectorClasses(definitions, dir);
+
+        if (generateInterfaces) {
+            generateConnectionWrapperClasses(definitions, dir);
+            generateFactoryClasses(definitions, dir);
+        }
     }
 }
