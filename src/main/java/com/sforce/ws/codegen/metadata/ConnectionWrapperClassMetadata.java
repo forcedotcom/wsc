@@ -24,70 +24,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.sforce.ws.util;
+package com.sforce.ws.codegen.metadata;
 
-import java.io.PrintStream;
-import java.lang.reflect.Array;
-
+import java.util.List;
 
 /**
- * Util class to log debug messages.
- *
- * @author  http://cheenath.com
- * @version 1.0
- * @since   1.0   Nov 5, 2005
+ * @author sweiss
+ * @since 192
  */
-public class Verbose {
+public class ConnectionWrapperClassMetadata extends ClassMetadata {
 
-  public static final String WSDL = "wsdl";
-  public static final String XML = "xml";
+    protected final ConnectionClassMetadata connectionMetadata;
 
-  private static final PrintStream out = System.out;
-
-  public static boolean isVerbose(String type) {
-    return true;
-  }
-
-  public static String toString(Object o) {
-    if (o == null) {
-      return "null";
+    public ConnectionWrapperClassMetadata(String packageName, String className,  String interfacePackageName, ConnectionClassMetadata connectionMetadata) {
+        super(packageName, className, interfacePackageName);
+        this.connectionMetadata = connectionMetadata;
     }
 
-    if (o.getClass().isArray()) {
-      return toStringArray(o);
+    public String getConnectionClassName() {
+        return this.connectionMetadata.getClassName();
     }
 
-    return o.toString();
-  }
-
-  private static String toStringArray(Object o) {
-    StringBuilder sb = new StringBuilder();
-    int length = Array.getLength(o);
-    sb.append("{[").append(length).append("]");
-    for (int i=0; i<length; i++) {
-      sb.append(Array.get(o, i));
-      sb.append(",");
+    public List<OperationMetadata> getOperations() {
+        return this.connectionMetadata.getOperations();
     }
-    sb.append("}");
-    return sb.toString();
-  }
 
-  public static void log(Object message) {
-    String m = toString(message);
-
-    StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-    StackTraceElement element = stack[stack.length-1];
-    out.print("[WSC]");
-    String className = element.getClassName();
-    int index = className.lastIndexOf(".");
-    className = className.substring(index+1);
-    out.print("[");
-    out.print(className);
-    out.print(".");
-    out.print(element.getMethodName());
-    out.print(":");
-    out.print(element.getLineNumber());
-    out.print("]");
-    out.println(m);
-  }
 }
