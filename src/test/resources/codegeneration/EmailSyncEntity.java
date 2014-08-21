@@ -257,4 +257,5 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
       sb.append("]\n");
       return sb.toString();
     }
+
 }

@@ -37,7 +37,11 @@ $endif$
 
   $if(gen.generateInterfaces)$@Override$endif$
   public void $member.setMethodName$($if(gen.generateInterfaces)$$member.javaTypeInterface$$else$$member.javaType$$endif$ $member.fieldName$) {
+    $if(member.isArray)$
+    this.$member.fieldName$ = $if(gen.generateInterfaces)$$member.arrayCast$$else$$member.fieldName$$endif$;
+    $else$
     this.$member.fieldName$ = $if(gen.generateInterfaces)$$member.castFromInterface$$endif$$member.fieldName$;
+    $endif$
     $member.fieldName$__is_set = true;
   \}
   
@@ -88,6 +92,18 @@ $gen.memberMetadataList:{ member |
 }$      sb.append("]\\n");
       return sb.toString();
     }
+    
+    $if(gen.generateInterfaces && gen.hasArrayField)$
+    @SuppressWarnings("unchecked")
+    private <T,U> T[] castArray(Class<T> clazz, U[] array) {
+        T[] retVal = (T[]) java.lang.reflect.Array.newInstance(clazz, array.length);
+        for (int i=0; i < array.length; i++) {
+            retVal[i] = (T)array[i];
+        }
+        	    
+        return retVal;
+	}
+	$endif$
 }
 
 >>

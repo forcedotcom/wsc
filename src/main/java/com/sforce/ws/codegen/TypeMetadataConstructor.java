@@ -146,14 +146,15 @@ public class TypeMetadataConstructor {
             // TODO Get rid of the second javaType, it will always be boolean
             memberMetadataList.add(MemberMetadata.newInstance(elementDoc(e), javaType(e), fieldName(e), typeInfo(e),
                     initArray(e), getMethod(e), javaType(e), booleanGetMethod(e), setMethod(e), writeMethod(e),
-                    loadType(e), loadMethod(e), isComplexType(e), javaTypeInterface(e)));
+                    loadType(e), loadMethod(e), isComplexType(e), javaTypeInterface(e), isArray(e)));
         }
 
         return new ComplexClassMetadata(packageName, className, baseClass(), xsiType(), superWrite(), superLoad(),
-                superToString(), memberMetadataList, mapper.generateInterfaces(), packageName);
+                superToString(), memberMetadataList, mapper.generateInterfaces(), packageName,
+                complexType.getBase() == null ? null : localJavaType(complexType.getBase(), 1, false));
     }
 
-    public Iterator<Element> getElements() {
+	public Iterator<Element> getElements() {
         Collection sequence = complexType.getContent();
         Iterator<Element> it;
 
@@ -262,6 +263,10 @@ public class TypeMetadataConstructor {
     private boolean isArray(int maxOccurs) {
         return maxOccurs == Element.UNBOUNDED || maxOccurs > 1;
     }
+
+    protected boolean isArray(Element e) {
+		return isArray(e.getMaxOccurs());
+	}
 
     protected String localJavaType(QName type, int maxOccurs, boolean nillable) {
         String name = mapper.getJavaClassName(type, types, nillable);

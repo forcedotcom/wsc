@@ -30,9 +30,11 @@ public class ComplexClassMetadata extends ClassMetadata {
     private final List<MemberMetadata> memberMetadataList;
     private final boolean generateInterfaces;
     private final String typeExtension;
+    private final String baseComplexClass;
 
     public ComplexClassMetadata(String packageName, String className, String typeExtension, String xsiType,
-                                String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList, boolean generateInterfaces, String interfacePackageName) {
+                                String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList,
+                                boolean generateInterfaces, String interfacePackageName, String baseComplexClass) {
         super(packageName, className, interfacePackageName);
         this.typeExtension = typeExtension;
         this.xsiType = xsiType;
@@ -41,6 +43,7 @@ public class ComplexClassMetadata extends ClassMetadata {
         this.superToString = superToString;
         this.memberMetadataList = memberMetadataList;
         this.generateInterfaces = generateInterfaces;
+        this.baseComplexClass = baseComplexClass;
     }
 
     public String getXsiType() {
@@ -82,5 +85,29 @@ public class ComplexClassMetadata extends ClassMetadata {
             return "implements " + getInterfaceName();
         }
     }
-
+    
+    public boolean getHasBaseComplexClass() {
+    	return baseComplexClass != null;
+    }
+    
+    public String getBaseComplexClass() {
+    	return baseComplexClass;
+    }
+    
+    public String getBaseComplexClassInterface() {
+    	if (baseComplexClass == null) {
+    		return null;
+    	}
+    	int position = baseComplexClass.lastIndexOf(".");
+    	return baseComplexClass.substring(0, position + 1) + "I" + baseComplexClass.substring(position + 1);
+    }
+    
+    public boolean getHasArrayField() {
+    	for (MemberMetadata m : this.memberMetadataList) {
+    		if (m.getIsArray()) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 }
