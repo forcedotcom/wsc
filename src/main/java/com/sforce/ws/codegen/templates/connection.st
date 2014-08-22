@@ -28,7 +28,7 @@ $gen.headersMetadata: { header |
 
   public void set$header.name$($header.args$) {
     __$header.name$ = new $header.type$();
-$header.elements : { ael |
+$header.elements: { ael |
     __$header.name$.$ael.setMethod$($ael.name$);
     }$  \}
 
@@ -89,10 +89,10 @@ $gen.operations: { op |
     $op.requestType$ __request = new $op.requestType$();
     $op.responseType$ __response = new $op.responseType$();
 
-$op.elements : { ael |
+$op.elements: { ael |
     __request.$ael.setMethod$($ael.name$);
     }$
-$op.headers : { header |
+$op.headers: { header |
     if (__$header.name$ != null) __connection.addHeader($header.element$, __$header.name$);
     }$
     addHeaders(__connection);
