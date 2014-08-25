@@ -90,18 +90,23 @@ public class TypeMetadataConstructor {
 
     private final Types types;
 
-    private final TypeMapper mapper;
+    protected final TypeMapper mapper;
 
     private final String packageName;
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
             TypeMapper typeMapper) {
+    	this(types, schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null);
+    }
+
+    public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
+            TypeMapper typeMapper, boolean laxMinOccursMode) {
         this.packageName = NameMapper.getPackageName(schema.getTargetNamespace(), typeMapper.getPackagePrefix());
         this.types = types;
         this.mapper = typeMapper;
         this.complexType = complexType;
         this.className = NameMapper.getClassName(complexType.getName());
-        this.laxMinOccursMode = System.getProperty(LAX_MINOCCURS) != null;
+        this.laxMinOccursMode = laxMinOccursMode;
     }
 
     public String baseClass() {
@@ -141,11 +146,11 @@ public class TypeMetadataConstructor {
             // TODO Get rid of the second javaType, it will always be boolean
             memberMetadataList.add(MemberMetadata.newInstance(elementDoc(e), javaType(e), fieldName(e), typeInfo(e),
                     initArray(e), getMethod(e), javaType(e), booleanGetMethod(e), setMethod(e), writeMethod(e),
-                    loadType(e), loadMethod(e)));
+                    loadType(e), loadMethod(e), isComplexType(e), javaTypeInterface(e)));
         }
 
         return new ComplexClassMetadata(packageName, className, baseClass(), xsiType(), superWrite(), superLoad(),
-                superToString(), memberMetadataList);
+                superToString(), memberMetadataList, mapper.generateInterfaces(), packageName);
     }
 
     public Iterator<Element> getElements() {
@@ -180,10 +185,18 @@ public class TypeMetadataConstructor {
         return localJavaType(type, element.getMaxOccurs(), element.isNillable());
     }
 
+    protected String javaTypeInterface(Element element) {
+        return ConnectionMetadataConstructor.convertJavaClassToInterface(javaType(element), isComplexType(element));
+    }
+
     public String loadMethod(Element element) {
         String type = javaType(element);
         TypeMetadataConstructor.JavaType javaType = javaTypeMap.get(type);
         return javaType.loadMethod;
+    }
+
+    protected boolean isComplexType(Element e) {
+        return types.getComplexTypeAllowNull(e.getType()) != null;
     }
 
     public String loadType(Element element) {

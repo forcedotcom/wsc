@@ -28,12 +28,14 @@ package com.sforce.ws.bind;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -63,6 +65,9 @@ public class TypeMapper {
     private static HashMap<String, QName> javaXmlMapping = getJavaXmlMapping();
     private static final HashSet<String> keywords = getKeyWords();
     private static HashMap<String, Class<?>> primitiveClassCache = getPrimitiveClassCache();
+
+    // True if interfaces are generated for the WSDL
+    private boolean generateInterfaces;
 
     private static HashMap<String, QName> getJavaXmlMapping() {
         HashMap<String, QName> map = new HashMap<String, QName>();
@@ -131,6 +136,7 @@ public class TypeMapper {
     }
 
     private String packagePrefix;
+    private String interfacePackagePrefix = null;
     private CalendarCodec calendarCodec = new CalendarCodec();
     private DateCodec dateCodec = new DateCodec();
     private HashMap<QName, Class<?>> typeCache = new HashMap<QName, Class<?>>();
@@ -152,6 +158,14 @@ public class TypeMapper {
         return packagePrefix;
     }
 
+    public String getInterfacePackagePrefix() {
+        return interfacePackagePrefix;
+    }
+
+    public void setInterfacePackagePrefix(String interfacePackagePrefix) {
+        this.interfacePackagePrefix = interfacePackagePrefix;
+    }
+
     public boolean isKeyWord(String token) {
         return keywords.contains(token);
     }
@@ -170,6 +184,17 @@ public class TypeMapper {
      * @return true if this is a well known type
      */
     public boolean isWellKnownType(String namespace, String name) {
+        if (isSObject(namespace, name)) return true;
+
+        if ("AggregateResult".equals(name) && SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace)) {
+            return true;
+        }
+
+        QName type = new QName(namespace, name);
+        return xmlJavaMapping.containsKey(type);
+    }
+
+    public boolean isSObject(String namespace, String name) {
         if ("sObject".equals(name) &&
                 (SfdcApiType.Partner.getSobjectNamespace().equals(namespace) ||
                         SfdcApiType.CrossInstance.getSobjectNamespace().equals(namespace) ||
@@ -178,13 +203,7 @@ public class TypeMapper {
                         SfdcApiType.SyncApi.getSobjectNamespace().equals(namespace))) {
             return true;
         }
-
-        if ("AggregateResult".equals(name) && SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace)) {
-            return true;
-        }
-
-        QName type = new QName(namespace, name);
-        return xmlJavaMapping.containsKey(type);
+        return false;
     }
 
     /**
@@ -211,6 +230,7 @@ public class TypeMapper {
             return clazz;
         }
 
+        String prefix = packagePrefix;
         // Use the base type if it's a restricted simple type without enumerations.
         if (types != null) {
             SimpleType simpleType = types.getSimpleTypeAllowNull(xmltype);
@@ -218,11 +238,13 @@ public class TypeMapper {
                 Restriction rest = simpleType.getRestriction();
                 if (rest != null && rest.getNumEnumerations() == 0) {
                     return xmlJavaMapping.get(rest.getBase());
+                } else {
+                    prefix = interfacePackagePrefix;
                 }
             }
         }
 
-        String packageName = NameMapper.getPackageName(xmltype.getNamespaceURI(), packagePrefix);
+        String packageName = NameMapper.getPackageName(xmltype.getNamespaceURI(), prefix);
         return packageName + "." + NameMapper.getClassName(xmltype.getLocalPart());
     }
 
@@ -425,7 +447,7 @@ public class TypeMapper {
         return sameTag(getNamespace(info), info.getName(), in.getNamespace(), in.getName());
     }
 
-    public String readString(XmlInputStream in, TypeInfo info, Class<?> type) throws IOException, ConnectionException {
+	public String readString(XmlInputStream in, TypeInfo info, Class<?> type) throws IOException, ConnectionException {
         boolean isNull = isXsiNilTrue(in);
         consumeStartTag(in);
         String strValue = in.nextText();
@@ -649,6 +671,32 @@ public class TypeMapper {
 
     private String readEnum(XmlInputStream in, TypeInfo typeInfo, Class<?> type) throws IOException, ConnectionException {
         String s = readString(in, typeInfo, type);
+        
+        // This block of code has been added to enable stubs to deserialize enum values
+        // that contain hyphens (e.g. UTF-8). The mdapi schema contains such enums
+        // (e.g. the Encoding enumeration).
+    	try {
+            Field valuesToEnumsField = type.getDeclaredField("valuesToEnums");
+            // The use of wildcards is due to not being able to specify Map<String, String>
+            // without also having to suppress a warning for an unchecked typecast.
+            // Suppressing a warning seemed to be worse than using wildcards.
+            Map<?, ?> valuesToEnums = (Map<?, ?>)valuesToEnumsField.get(null);
+            String enumStrValue = (String)valuesToEnums.get(s);
+            if(enumStrValue != null) {
+                s = enumStrValue;
+            }
+        }
+    	catch(NoSuchFieldException e) {
+    		// Do nothing.
+    		// It's possible that this type mapper is being used with stubs that were not
+    		// generated from templates that add the valuesToEnums field. So, catching
+    		// this exception and then doing nothing is a way to default back to the old
+    		// behavior in which enums with hyphens are not supported.
+    	}
+        catch(Exception e) {
+        	throw new ConnectionException("Failed to read enum", e);
+        }
+        
         int index = s.indexOf(":");
         String token = index == -1 ? s : s.substring(index + 1);
         return isKeyWord(token) ? "_" + token : token;
@@ -712,6 +760,14 @@ public class TypeMapper {
         keywords.add("double");
         keywords.add("boolean");
         return keywords;
+    }
+
+    public void setGenerateInterfaces(boolean generateInterfaces) {
+        this.generateInterfaces = generateInterfaces;
+    }
+
+    public boolean generateInterfaces() {
+        return generateInterfaces;
     }
 
     public static class PartialArrayException extends ConnectionException {

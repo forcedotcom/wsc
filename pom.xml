@@ -9,7 +9,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>31.0.0</version>
+  <version>31.1.0</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
@@ -198,7 +198,15 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+	    </plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.7.1</version>
+			<configuration>
+				<forkMode>always</forkMode>
+			</configuration>
+		</plugin>
     </plugins>
   </build>
 </project>

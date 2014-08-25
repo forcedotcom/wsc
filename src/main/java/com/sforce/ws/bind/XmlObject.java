@@ -298,4 +298,12 @@ public class XmlObject implements XMLizable {
 
         if (textFound) value = typeMapper.deserialize(text.toString(), xmlType);
     }
+
+    protected void cloneFrom(XmlObject source) {
+        this.name = source.name;
+        this.xmlType = source.xmlType;
+        this.value = source.value;
+        this.defaultNamespace = source.defaultNamespace;
+        this.children = source.children;
+    }
 }

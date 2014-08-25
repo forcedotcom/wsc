@@ -34,9 +34,13 @@ public class MemberMetadata {
     private final String loadType;
     private final String loadMethod;
 
+    // Either the interface corresponding to the javaType field if both interfaces are generated for the WSDL and
+    // the javaType corresponds to a complex class
+    private final String javaTypeInterface;
+
     public MemberMetadata(String elementDoc, String javaType, String fieldName, String typeInfo, String arraySource,
-            String getMethod, String boolMemberType, String boolMethod, String setMethod, String writeMethod,
-            String loadType, String loadMethod) {
+                          String getMethod, String boolMemberType, String boolMethod, String setMethod, String writeMethod,
+                          String loadType, String loadMethod, String javaTypeInterface) {
         this.elementDoc = elementDoc;
         this.javaType = javaType;
         this.fieldName = fieldName;
@@ -49,13 +53,14 @@ public class MemberMetadata {
         this.writeMethod = writeMethod;
         this.loadType = loadType;
         this.loadMethod = loadMethod;
+        this.javaTypeInterface = javaTypeInterface;
     }
 
     public static MemberMetadata newInstance(String elementDoc, String javaType, String fieldName, String typeInfo,
-            String arraySource, String getMethodName, String boolMemberType, String boolMethodName,
-            String setMethodName, String writeMethod, String loadType, String loadMethod) {
+                                             String arraySource, String getMethodName, String boolMemberType, String boolMethodName,
+                                             String setMethodName, String writeMethod, String loadType, String loadMethod, boolean isComplexType, String javaTypeInterface) {
         return new MemberMetadata(elementDoc, javaType, fieldName, typeInfo, arraySource, getMethodName,
-                boolMemberType, boolMethodName, setMethodName, writeMethod, loadType, loadMethod);
+                boolMemberType, boolMethodName, setMethodName, writeMethod, loadType, loadMethod, javaTypeInterface);
     }
 
     public String getElementDoc() {
@@ -114,4 +119,18 @@ public class MemberMetadata {
         if ("boolean".equals(javaType) || "java.lang.String".equals(javaType)) { return ""; }
         return String.format("(%s)", javaType);
     }
+
+    public String getCastFromInterface() {
+        if (javaType.equals(javaTypeInterface)) {
+            return "";
+        } else {
+            return getCast();
+        }
+    }
+
+    public String getJavaTypeInterface() {
+        return javaTypeInterface;
+    }
+
+
 }

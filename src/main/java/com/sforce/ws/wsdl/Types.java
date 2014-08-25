@@ -154,4 +154,10 @@ public class Types extends WsdlNode {
         if (ct == null) throw new ConnectionException("Unable to find complexType for " + type);
         return ct;
     }
+
+    public ComplexType getComplexTypeAllowNull(QName type) {
+        Schema schema = schemas.get(type.getNamespaceURI());
+        if (schema == null) return null;
+        return schema.getComplexType(type.getLocalPart());
+    }
 }
