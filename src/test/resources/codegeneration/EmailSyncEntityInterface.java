@@ -72,7 +72,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
 
     @Override
     public void setFieldMapping(com.sforce.soap.partner.wsc.IEmailSyncFieldMapping[] fieldMapping) {
-      this.fieldMapping = (com.sforce.soap.partner.wsc.EmailSyncFieldMapping[])fieldMapping;
+      this.fieldMapping = castArray(com.sforce.soap.partner.wsc.EmailSyncFieldMapping.class, fieldMapping);
       fieldMapping__is_set = true;
     }
 
@@ -274,4 +274,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       sb.append("]\n");
       return sb.toString();
     }
+
+    @SuppressWarnings("unchecked")
+    private <T,U> T[] castArray(Class<T> clazz, U[] array) {
+        T[] retVal = (T[]) java.lang.reflect.Array.newInstance(clazz, array.length);
+        for (int i=0; i < array.length; i++) {
+            retVal[i] = (T)array[i];
+        }
+
+        return retVal;
+	}
 }

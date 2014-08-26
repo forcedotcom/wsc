@@ -59,7 +59,7 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
                                 "conflictResolution",
                                 "\"urn:partner.soap.sforce.com\",\"conflictResolution\",\"urn:partner.soap.sforce.com\",\"EmailSyncConflictResolution\",1,1,true",
                                 "", "getConflictResolution", "", "", "setConflictResolution", "writeObject",
-                                "verifyElement", "readObject", true, "com.sforce.soap.partner.wsc.IEmailSyncConflictResolution"));
+                                "verifyElement", "readObject", true, "com.sforce.soap.partner.wsc.IEmailSyncConflictResolution", false));
 
         memberMetadataList
                 .add(MemberMetadata
@@ -69,7 +69,7 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
                                 "dataSetFilter",
                                 "\"urn:partner.soap.sforce.com\",\"dataSetFilter\",\"http://www.w3.org/2001/XMLSchema\",\"string\",0,1,true",
                                 "", "getDataSetFilter", "", "", "setDataSetFilter", "writeString", "isElement",
-                                "readString", true, "java.lang.String"));
+                                "readString", true, "java.lang.String", false));
 
         memberMetadataList
                 .add(MemberMetadata
@@ -79,7 +79,7 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
                                 "fieldMapping",
                                 "\"urn:partner.soap.sforce.com\",\"fieldMapping\",\"urn:partner.soap.sforce.com\",\"EmailSyncFieldMapping\",0,-1,true",
                                 " = new com.sforce.soap.partner.wsc.EmailSyncFieldMapping[0]", "getFieldMapping", "",
-                                "", "setFieldMapping", "writeObject", "isElement", "readObject", false, "com.sforce.soap.partner.wsc.IEmailSyncFieldMapping[]"));
+                                "", "setFieldMapping", "writeObject", "isElement", "readObject", false, "com.sforce.soap.partner.wsc.IEmailSyncFieldMapping[]", true));
 
         memberMetadataList
                 .add(MemberMetadata
@@ -89,17 +89,17 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
                                 "matchPreference",
                                 "\"urn:partner.soap.sforce.com\",\"matchPreference\",\"urn:partner.soap.sforce.com\",\"EmailSyncMatchPreference\",1,1,true",
                                 "", "getMatchPreference", "", "", "setMatchPreference", "writeObject", "verifyElement",
-                                "readObject", false, "com.sforce.soap.partner.wsc.IEmailSyncMatchPreference"));
+                                "readObject", false, "com.sforce.soap.partner.wsc.IEmailSyncMatchPreference", false));
 
         memberMetadataList.add(MemberMetadata.newInstance("name of type {http://www.w3.org/2001/XMLSchema}string",
                 "java.lang.String", "name",
                 "\"urn:partner.soap.sforce.com\",\"name\",\"http://www.w3.org/2001/XMLSchema\",\"string\",1,1,true",
-                "", "getName", "", "", "setName", "writeString", "verifyElement", "readString", false, "java.lang.String"));
+                "", "getName", "", "", "setName", "writeString", "verifyElement", "readString", false, "java.lang.String", false));
 
         memberMetadataList.add(MemberMetadata.newInstance("recordTypeId of type {urn:partner.soap.sforce.com}ID",
                 "java.lang.String", "recordTypeId",
                 "\"urn:partner.soap.sforce.com\",\"recordTypeId\",\"urn:partner.soap.sforce.com\",\"ID\",1,1,true", "",
-                "getRecordTypeId", "", "", "setRecordTypeId", "writeString", "verifyElement", "readString", true, "java.lang.String"));
+                "getRecordTypeId", "", "", "setRecordTypeId", "writeString", "verifyElement", "readString", true, "java.lang.String", false));
 
         memberMetadataList
                 .add(MemberMetadata
@@ -109,7 +109,7 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
                                 "syncDirection",
                                 "\"urn:partner.soap.sforce.com\",\"syncDirection\",\"urn:partner.soap.sforce.com\",\"EmailSyncDirection\",1,1,true",
                                 "", "getSyncDirection", "", "", "setSyncDirection", "writeObject", "verifyElement",
-                                "readObject", true, "com.sforce.soap.partner.wsc.IEmailSyncDirection"));
+                                "readObject", true, "com.sforce.soap.partner.wsc.IEmailSyncDirection", false));
 
         memberMetadataList
                 .add(MemberMetadata
@@ -119,7 +119,7 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
                                 "syncFollowed",
                                 "\"urn:partner.soap.sforce.com\",\"syncFollowed\",\"http://www.w3.org/2001/XMLSchema\",\"boolean\",1,1,true",
                                 "", "getSyncFollowed", "boolean", "isSyncFollowed", "setSyncFollowed", "writeBoolean",
-                                "verifyElement", "readBoolean", true, "boolean"));
+                                "verifyElement", "readBoolean", true, "boolean", false));
 
         generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, false, "EmailSyncEntity.java");
         generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, true, "EmailSyncEntityInterface.java");
@@ -129,7 +129,7 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
         String expectedSource = CodeGeneratorTestUtil.fileToString(expectedSourceFileName);
 
         final ComplexClassMetadata classMetadata = new ComplexClassMetadata(packageName, className, typeExtension,
-                xsiType, superWrite, superLoad, superToString, memberMetadataList, generateInterfaces, packageName);
+                xsiType, superWrite, superLoad, superToString, memberMetadataList, generateInterfaces, packageName, "EmailSyncEntityBase");
 
         STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
         ST template = templates.getInstanceOf(Generator.TYPE);
