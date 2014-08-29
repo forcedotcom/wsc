@@ -277,6 +277,9 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
 
     @SuppressWarnings("unchecked")
     private <T,U> T[] castArray(Class<T> clazz, U[] array) {
+        if (array == null) {
+            return null;
+        }
         T[] retVal = (T[]) java.lang.reflect.Array.newInstance(clazz, array.length);
         for (int i=0; i < array.length; i++) {
             retVal[i] = (T)array[i];
