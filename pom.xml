@@ -58,6 +58,7 @@
     </dependency>
   </dependencies>
   <build>
+  <defaultGoal>install</defaultGoal>
     <resources>
       <resource>
         <filtering>false</filtering>
