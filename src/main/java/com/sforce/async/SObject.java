@@ -68,7 +68,7 @@ public final class SObject {
 		this.maxDepth = maxDepth;
 	}
 
-	public Set<String> getFieldNames() {
+    public Set<String> getFieldNames() {
         return Collections.unmodifiableSet(fields.keySet());
     }
 
@@ -86,7 +86,7 @@ public final class SObject {
 
         fkRefs.put(name, ref);
     }
-
+    
     public SObject getFkRef(String fkRef) {
         return fkRefs.get(fkRef);
     }
