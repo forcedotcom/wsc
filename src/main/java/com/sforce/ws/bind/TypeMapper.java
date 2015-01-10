@@ -72,6 +72,7 @@ public class TypeMapper {
     private static HashMap<String, QName> getJavaXmlMapping() {
         HashMap<String, QName> map = new HashMap<String, QName>();
         map.put(String.class.getName(), new QName(Constants.SCHEMA_NS, "string"));
+        map.put(String[].class.getName(), new QName(Constants.SCHEMA_NS, "stringArray"));
         map.put(int.class.getName(), new QName(Constants.SCHEMA_NS, "int"));
         map.put(Integer.class.getName(), new QName(Constants.SCHEMA_NS, "int"));
         map.put(boolean.class.getName(), new QName(Constants.SCHEMA_NS, "boolean"));
@@ -94,6 +95,7 @@ public class TypeMapper {
     private static HashMap<QName, String> getXmlJavaMapping() {
         HashMap<QName, String> map = new HashMap<QName, String>();
         map.put(new QName(Constants.SCHEMA_NS, "string"), String.class.getName());
+        map.put(new QName(Constants.SCHEMA_NS, "stringArray"), String[].class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "int"), int.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "long"), long.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "float"), float.class.getName());
@@ -671,7 +673,7 @@ public class TypeMapper {
 
     private String readEnum(XmlInputStream in, TypeInfo typeInfo, Class<?> type) throws IOException, ConnectionException {
         String s = readString(in, typeInfo, type);
-        
+
         // This block of code has been added to enable stubs to deserialize enum values
         // that contain hyphens (e.g. UTF-8). The mdapi schema contains such enums
         // (e.g. the Encoding enumeration).
@@ -696,7 +698,7 @@ public class TypeMapper {
         catch(Exception e) {
         	throw new ConnectionException("Failed to read enum", e);
         }
-        
+
         int index = s.indexOf(":");
         String token = index == -1 ? s : s.substring(index + 1);
         return isKeyWord(token) ? "_" + token : token;
