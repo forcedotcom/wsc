@@ -40,11 +40,11 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.sforce.ws.ConnectionException;
-import com.sforce.ws.types.Time;
-import com.sforce.ws.util.Base64;
 import com.sforce.ws.ConnectorConfig;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.types.Time;
+import com.sforce.ws.util.Base64;
 import com.sforce.ws.wsdl.Constants;
 import com.sforce.ws.wsdl.Restriction;
 import com.sforce.ws.wsdl.SfdcApiType;
@@ -141,6 +141,7 @@ public class TypeMapper {
     private String interfacePackagePrefix = null;
     private CalendarCodec calendarCodec = new CalendarCodec();
     private DateCodec dateCodec = new DateCodec();
+    private ArrayCodec arrayCodec = new ArrayCodec();
     private HashMap<QName, Class<?>> typeCache = new HashMap<QName, Class<?>>();
     private ConnectorConfig config;
 
@@ -384,6 +385,9 @@ public class TypeMapper {
         } else if (value instanceof byte[]) {
             String s = new String(Base64.encode((byte[]) value));
             writeSimpleType(out, info, s, true, "[B");
+        } else if( value instanceof String[]) {
+        	String s = arrayCodec.getValueAsString( String.class, value );
+        	writeSimpleType(out, info, s, true, String[].class.getName());
         } else if (value instanceof Double) {
             writeDouble(out, info, (Double)value, true);
         } else if (value instanceof Float) {
@@ -515,6 +519,8 @@ public class TypeMapper {
             return Boolean.parseBoolean(value);
         } else if ("base64Binary".equals(localType)) {
             return Base64.decode(value.getBytes());
+        } else if("stringArray".equals(localType)) {
+        	return arrayCodec.deserialize( String.class, value );
         } else {
             return value;
         }
@@ -637,6 +643,9 @@ public class TypeMapper {
             String str = readString(in, typeInfo, type);
             str = str == null ? "" : str;
             return Base64.decode(str.getBytes());
+        } else if (type == String[].class) {
+        	String str = readString(in, typeInfo, type);
+        	return arrayCodec.deserialize( type, str );
         }
 
         if (type.isEnum()) {

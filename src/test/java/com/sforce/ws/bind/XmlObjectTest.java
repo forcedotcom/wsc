@@ -29,6 +29,7 @@ package com.sforce.ws.bind;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -77,20 +78,15 @@ public class XmlObjectTest extends TestCase {
         }
     }
 
-    private static class Foo { int x=0; public int getX() { return x; }
-    public String toString() { return ""+x; };
-    public boolean equals( Object a ) { return a instanceof Foo && ((Foo)a).getX() == this.getX(); } }
     public void testStringArray() throws Exception {
     	QName qname = new QName( "type", "sobject.partner.soap.sforce.com" );
     	TypeMapper typeMapper = new TypeMapper();
 
-//    	String[][] data = new String[][] { {"a","b"} };
-//    			{ "a","b" }, {}, { "<&>!" }
-//    	};
-    	String[] xx = { "a","b" };
-    	Object[] data = new Object[] { xx };
+    	String[][] data = new String[][] {
+    			{ "a","b" }, {}, { ",<&>!\"" }, { null, "", null }
+    	};
 
-    	for( Object d: data ) {
+    	for( String[] d: data ) {
     		// Serialize
     		ByteArrayOutputStream baos = new ByteArrayOutputStream();
         	XmlOutputStream xout = new XmlOutputStream( baos, true );
@@ -102,7 +98,6 @@ public class XmlObjectTest extends TestCase {
     		xout.writeEndTag("", "start");
     		xout.close();
 
-    		System.out.println( new String(baos.toByteArray(),"UTF-8"));
     		// Parse
     		ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray() );
     		XmlInputStream xin = new XmlInputStream();
@@ -110,10 +105,12 @@ public class XmlObjectTest extends TestCase {
     		xin.nextTag();
     		XmlObject parsed = new XmlObject( qname );
     		parsed.load( xin, typeMapper );
-    		parsed = parsed.getChildren().next().getChildren().next();
-    		System.out.println( parsed.toString() );
+    		parsed = parsed.getChildren().next();
+    		Object result = parsed.getValue();
 
-    		assertEquals( d, parsed.getValue() );
+    		// Assert
+    		assertTrue( result.getClass().isArray() );
+    		assertTrue( Arrays.equals(d, (Object[])result));
     	}
     }
 }
