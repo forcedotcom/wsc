@@ -67,6 +67,11 @@ public class XmlObjectTest extends TestCase {
         obj.setValue(new MyDate());
         obj.write(qname, xout, typeMapper);
 
+        // Then try String[]
+        obj = new XmlObject(qname);
+        obj.setValue(new String[] {"a","b" });
+        obj.write(qname, xout, typeMapper);
+
         // Then try some non-mappable subclass
         obj = new XmlObject(qname);
         obj.setValue(new AtomicLong(10L));
@@ -82,35 +87,31 @@ public class XmlObjectTest extends TestCase {
     	QName qname = new QName( "type", "sobject.partner.soap.sforce.com" );
     	TypeMapper typeMapper = new TypeMapper();
 
-    	String[][] data = new String[][] {
-    			{ "a","b" }, {}, { ",<&>!\"" }, { null, "", null }
-    	};
+    	String[] ab = new String[] { "a","b" };
+		XmlObject obj = new XmlObject( qname );
+		obj.setValue( ab );
 
-    	for( String[] d: data ) {
-    		// Serialize
-    		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        	XmlOutputStream xout = new XmlOutputStream( baos, true );
-        	xout.startDocument();
-        	xout.writeStartTag("", "start");
-    		XmlObject obj = new XmlObject( qname );
-    		obj.setValue( d );
-    		obj.write( qname,  xout,  typeMapper );
-    		xout.writeEndTag("", "start");
-    		xout.close();
+		// Serialize
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	XmlOutputStream xout = new XmlOutputStream( baos, true );
+    	xout.startDocument();
+    	xout.writeStartTag("", "start");
+		obj.write( qname,  xout,  typeMapper );
+		xout.writeEndTag("", "start");
+		xout.close();
 
-    		// Parse
-    		ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray() );
-    		XmlInputStream xin = new XmlInputStream();
-    		xin.setInput( bais, "UTF-8" );
-    		xin.nextTag();
-    		XmlObject parsed = new XmlObject( qname );
-    		parsed.load( xin, typeMapper );
-    		parsed = parsed.getChildren().next();
-    		Object result = parsed.getValue();
+		// Parse
+		ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray() );
+		XmlInputStream xin = new XmlInputStream();
+		xin.setInput( bais, "UTF-8" );
+		xin.nextTag();
+		XmlObject parsed = new XmlObject( qname );
+		parsed.load( xin, typeMapper );
+		parsed = parsed.getChildren().next();
+		Object result = parsed.getValue();
 
-    		// Assert
-    		assertTrue( result.getClass().isArray() );
-    		assertTrue( Arrays.equals(d, (Object[])result));
-    	}
+		// Assert
+		assertTrue( result.getClass().isArray() );
+		assertTrue( Arrays.equals(ab, (Object[])result));
     }
 }
