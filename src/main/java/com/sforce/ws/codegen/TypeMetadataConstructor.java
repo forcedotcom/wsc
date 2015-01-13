@@ -92,7 +92,7 @@ public class TypeMetadataConstructor {
 
     protected final TypeMapper mapper;
 
-    private final String packageName;
+    protected final String packageName;
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
             TypeMapper typeMapper) {

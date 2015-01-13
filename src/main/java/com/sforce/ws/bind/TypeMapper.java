@@ -186,7 +186,9 @@ public class TypeMapper {
     public boolean isWellKnownType(String namespace, String name) {
         if (isSObject(namespace, name)) return true;
 
-        if ("AggregateResult".equals(name) && SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace)) {
+        if ("AggregateResult".equals(name) && 
+        		(SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace) ||
+        		 SfdcApiType.Tooling.getSobjectNamespace().equals(namespace))) {
             return true;
         }
 
