@@ -315,7 +315,8 @@ abstract public class Generator {
     }
 
     protected boolean requiresAggregateResultClass(Definitions definitions) {
-        return definitions.getApiType() == SfdcApiType.Enterprise;
+        return definitions.getApiType() == SfdcApiType.Enterprise ||
+        	   definitions.getApiType() == SfdcApiType.Tooling;
     }
 
     protected boolean requiresSObjectClass(Definitions definitions) {
