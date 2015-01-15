@@ -35,7 +35,7 @@ public enum SfdcApiType {
     Internal(false, Constants.INTERNAL_SFORCE_NS, Constants.INTERNAL_SFORCE_NS, null),
     ClientSync(false, Constants.CLIENT_SYNC_SFORCE_NS, Constants.CLIENT_SYNC_SFORCE_NS, null),
     SyncApi(false, Constants.SYNC_API_SFORCE_NS, Constants.SYNC_API_SFORCE_NS, null),
-    Tooling(true, Constants.TOOLING_NS, Constants.TOOLING_NS, null);
+    Tooling(true, Constants.TOOLING_NS, Constants.TOOLING_NS, "verifyToolingEndpoint");
 
 
     private SfdcApiType(boolean hasLoginCall, String namespace) {

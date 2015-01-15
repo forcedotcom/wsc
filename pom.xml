@@ -56,6 +56,11 @@
       <version>1.7.3</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>18.0</version>
+    </dependency>
   </dependencies>
   <build>
     <resources>
@@ -104,6 +109,11 @@
                 <relocation>
                   <pattern>org.stringtemplate</pattern>
                   <shadedPattern>com.sforce.ws.shade.org.stringtemplate</shadedPattern>
+                </relocation>
+                <!-- repackage guava to prevent namespace collision on classpath in core app -->
+                <relocation>
+                  <pattern>com.google</pattern>
+                  <shadedPattern>com.sforce.ws.shade.com.google</shadedPattern>
                 </relocation> 
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>

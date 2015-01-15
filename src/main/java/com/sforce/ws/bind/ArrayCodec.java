@@ -31,8 +31,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.appengine.repackaged.com.google.common.base.Joiner;
-import com.google.appengine.repackaged.com.google.common.base.Splitter;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 /**
  * For embedding non-XML serialization of basic arrays within an XML document.
