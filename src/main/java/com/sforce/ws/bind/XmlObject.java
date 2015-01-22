@@ -237,6 +237,9 @@ public class XmlObject implements XMLizable {
             	}
             	if (info == null) {
                     QName xmlType = typeMapper.getXmlType(value.getClass().getName());
+                    if( xmlType == null && value.getClass().isArray()) {
+                    	xmlType = typeMapper.getXmlType( value.getClass().getComponentType().getName() );
+                    }
                     for (Class<?> classForType = value.getClass(); classForType != Object.class && xmlType == null;
                         classForType = classForType.getSuperclass()) {
                         xmlType = typeMapper.getXmlType(classForType.getName());
