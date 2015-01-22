@@ -139,7 +139,6 @@ public class TypeMapper {
     private String interfacePackagePrefix = null;
     private CalendarCodec calendarCodec = new CalendarCodec();
     private DateCodec dateCodec = new DateCodec();
-    private ArrayCodec arrayCodec = new ArrayCodec();
     private HashMap<QName, Class<?>> typeCache = new HashMap<QName, Class<?>>();
     private ConnectorConfig config;
 
