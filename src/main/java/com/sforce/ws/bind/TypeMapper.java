@@ -72,7 +72,6 @@ public class TypeMapper {
     private static HashMap<String, QName> getJavaXmlMapping() {
         HashMap<String, QName> map = new HashMap<String, QName>();
         map.put(String.class.getName(), new QName(Constants.SCHEMA_NS, "string"));
-        map.put(String[].class.getName(), new QName(Constants.SCHEMA_NS, "stringArray"));
         map.put(int.class.getName(), new QName(Constants.SCHEMA_NS, "int"));
         map.put(Integer.class.getName(), new QName(Constants.SCHEMA_NS, "int"));
         map.put(boolean.class.getName(), new QName(Constants.SCHEMA_NS, "boolean"));
@@ -95,7 +94,6 @@ public class TypeMapper {
     private static HashMap<QName, String> getXmlJavaMapping() {
         HashMap<QName, String> map = new HashMap<QName, String>();
         map.put(new QName(Constants.SCHEMA_NS, "string"), String.class.getName());
-        map.put(new QName(Constants.SCHEMA_NS, "stringArray"), String[].class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "int"), int.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "long"), long.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "float"), float.class.getName());
@@ -141,7 +139,6 @@ public class TypeMapper {
     private String interfacePackagePrefix = null;
     private CalendarCodec calendarCodec = new CalendarCodec();
     private DateCodec dateCodec = new DateCodec();
-    private ArrayCodec arrayCodec = new ArrayCodec();
     private HashMap<QName, Class<?>> typeCache = new HashMap<QName, Class<?>>();
     private ConnectorConfig config;
 
@@ -189,7 +186,7 @@ public class TypeMapper {
     public boolean isWellKnownType(String namespace, String name) {
         if (isSObject(namespace, name)) return true;
 
-        if ("AggregateResult".equals(name) && 
+        if ("AggregateResult".equals(name) &&
         		(SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace) ||
         		 SfdcApiType.Tooling.getSobjectNamespace().equals(namespace))) {
             return true;
@@ -387,9 +384,6 @@ public class TypeMapper {
         } else if (value instanceof byte[]) {
             String s = new String(Base64.encode((byte[]) value));
             writeSimpleType(out, info, s, true, "[B");
-        } else if( value instanceof String[]) {
-        	String s = arrayCodec.getValueAsString( String.class, value );
-        	writeSimpleType(out, info, s, true, String[].class.getName());
         } else if (value instanceof Double) {
             writeDouble(out, info, (Double)value, true);
         } else if (value instanceof Float) {
@@ -521,8 +515,6 @@ public class TypeMapper {
             return Boolean.parseBoolean(value);
         } else if ("base64Binary".equals(localType)) {
             return Base64.decode(value.getBytes());
-        } else if("stringArray".equals(localType)) {
-        	return arrayCodec.deserialize( String.class, value );
         } else {
             return value;
         }
@@ -645,9 +637,6 @@ public class TypeMapper {
             String str = readString(in, typeInfo, type);
             str = str == null ? "" : str;
             return Base64.decode(str.getBytes());
-        } else if (type == String[].class) {
-        	String str = readString(in, typeInfo, type);
-        	return arrayCodec.deserialize( type, str );
         }
 
         if (type.isEnum()) {

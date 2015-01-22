@@ -40,6 +40,7 @@ import junit.framework.TestCase;
 
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.wsdl.Constants;
 
 /**
  * XmlObjectTest -- Validates that subclasses of basic types can be serialized
@@ -84,31 +85,33 @@ public class XmlObjectTest extends TestCase {
     }
 
     public void testStringArray() throws Exception {
-    	QName qname = new QName( "type", "sobject.partner.soap.sforce.com" );
+    	String ns = "urn:sobject.partner.soap.sforce.com";
+    	QName qname = new QName( ns, "anArray" );
     	TypeMapper typeMapper = new TypeMapper();
 
-    	String[] ab = new String[] { "a","b" };
+    	String[] ab = new String[] { "a","b"  };
 		XmlObject obj = new XmlObject( qname );
 		obj.setValue( ab );
 
 		// Serialize
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	XmlOutputStream xout = new XmlOutputStream( baos, true );
+    	xout.setPrefix( "sfdc", ns );
+    	xout.setPrefix( "xsi", Constants.SCHEMA_NS );
     	xout.startDocument();
-    	xout.writeStartTag("", "start");
+    	xout.writeStartTag(ns, "start");
 		obj.write( qname,  xout,  typeMapper );
-		xout.writeEndTag("", "start");
+		xout.writeEndTag(ns, "start");
 		xout.close();
 
 		// Parse
+		TypeInfo info = new TypeInfo(qname.getNamespaceURI(), "anArray",
+		Constants.SCHEMA_NS, "string", 0, -1, true );
 		ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray() );
 		XmlInputStream xin = new XmlInputStream();
 		xin.setInput( bais, "UTF-8" );
 		xin.nextTag();
-		XmlObject parsed = new XmlObject( qname );
-		parsed.load( xin, typeMapper );
-		parsed = parsed.getChildren().next();
-		Object result = parsed.getValue();
+		Object result = typeMapper.readObject(xin, info, String[].class);
 
 		// Assert
 		assertTrue( result.getClass().isArray() );
