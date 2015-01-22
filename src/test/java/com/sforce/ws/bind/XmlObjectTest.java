@@ -89,7 +89,7 @@ public class XmlObjectTest extends TestCase {
     	QName qname = new QName( ns, "anArray" );
     	TypeMapper typeMapper = new TypeMapper();
 
-    	String[] ab = new String[] {  };
+    	String[] ab = new String[] { "a","b"  };
 		XmlObject obj = new XmlObject( qname );
 		obj.setValue( ab );
 
