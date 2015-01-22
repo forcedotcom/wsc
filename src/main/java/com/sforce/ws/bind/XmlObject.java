@@ -28,7 +28,6 @@ package com.sforce.ws.bind;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
@@ -247,7 +246,7 @@ public class XmlObject implements XMLizable {
             			throw new IOException("Unable to find xml type for :" + value.getClass().getName());
             		}
             		int max = value.getClass().isArray() ? -1 : 1;
-            		if (Arrays.<Class<?>>asList( byte[].class, String[].class ).contains( value.getClass() )) {
+            		if ( value.getClass().equals( byte[].class )) {
             			//special case for arrays we wish to treat as a single value
             			max = 1;
             		}
