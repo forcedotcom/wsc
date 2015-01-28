@@ -107,6 +107,8 @@
                 </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>uber</shadedClassifierName>
             </configuration>
           </execution>
         </executions>
