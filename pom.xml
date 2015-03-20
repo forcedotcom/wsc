@@ -57,6 +57,17 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
+    </profile>
+  </profiles>
   <build>
     <resources>
       <resource>
@@ -89,7 +100,6 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <finalName>${project.build.finalName}-uber</finalName>
               <relocations>
                 <!-- repackage antlr to prevent namespace collision on classpath in core app -->
                 <relocation>
@@ -157,7 +167,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
         <configuration>
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <additionalparam>${javadoc.opts}</additionalparam>
         </configuration>
         <executions>
           <execution>
