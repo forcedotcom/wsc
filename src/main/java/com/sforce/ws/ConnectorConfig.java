@@ -150,17 +150,29 @@ public class ConnectorConfig {
     private int maxRequestSize;
     private int maxResponseSize;
     private boolean validateSchema = true;
-    private Class transport = JdkHttpTransport.class;
+    private Class<? extends Transport> transport = JdkHttpTransport.class;
     private SessionRenewer sessionRenewer;
     private String ntlmDomain;
+    
+    public Transport getTransportInstance() throws ConnectionException {
+        try {
+            return getTransport().newInstance();
+        }
+        catch (InstantiationException e) {
+            throw new ConnectionException("Failed to create new Transport " + getTransport());
+        }
+        catch (IllegalAccessException e) {
+            throw new ConnectionException("Failed to create new Transport " + getTransport());
+        }
+    }
 
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
 
-    public Class getTransport() {
+    public Class<? extends Transport> getTransport() {
         return transport;
     }
 
-    public void setTransport(Class transport) {
+    public void setTransport(Class<? extends Transport> transport) {
         this.transport = transport;
     }
 
@@ -438,15 +450,9 @@ public class ConnectorConfig {
     }
 
     public Transport createTransport() throws ConnectionException {
-        try {
-            Transport t = (Transport)getTransport().newInstance();
-            t.setConfig(this);
-            return t;
-        } catch (InstantiationException e) {
-            throw new ConnectionException("Failed to create new Transport " + getTransport());
-        } catch (IllegalAccessException e) {
-            throw new ConnectionException("Failed to create new Transport " + getTransport());
-        }
+        Transport t = (Transport)getTransportInstance();
+        t.setConfig(this);
+        return t;
     }
 
     public HttpURLConnection createConnection(URL url,
@@ -473,9 +479,8 @@ public class ConnectorConfig {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection(getProxy());
         connection.addRequestProperty("User-Agent", VersionInfo.info());
 
-        /*
-         * Add all the client specific headers here
-         */
+        
+        /* Add all the client specific headers here*/
         if (getHeaders() != null) {
             for (Entry<String, String> ent : getHeaders().entrySet()) {
                 connection.setRequestProperty(ent.getKey(), ent.getValue());
