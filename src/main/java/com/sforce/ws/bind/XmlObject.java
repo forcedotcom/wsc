@@ -237,6 +237,9 @@ public class XmlObject implements XMLizable {
             	}
             	if (info == null) {
                     QName xmlType = typeMapper.getXmlType(value.getClass().getName());
+                    if( xmlType == null && value.getClass().isArray()) {
+                    	xmlType = typeMapper.getXmlType( value.getClass().getComponentType().getName() );
+                    }
                     for (Class<?> classForType = value.getClass(); classForType != Object.class && xmlType == null;
                         classForType = classForType.getSuperclass()) {
                         xmlType = typeMapper.getXmlType(classForType.getName());
@@ -246,8 +249,8 @@ public class XmlObject implements XMLizable {
             			throw new IOException("Unable to find xml type for :" + value.getClass().getName());
             		}
             		int max = value.getClass().isArray() ? -1 : 1;
-            		if (value.getClass().getName().equals("[B")) {
-            			//special case for byte[]
+            		if ( value.getClass().equals( byte[].class )) {
+            			//special case for arrays we wish to treat as a single value
             			max = 1;
             		}
             		info = new TypeInfo(name.getNamespaceURI(), name.getLocalPart(),

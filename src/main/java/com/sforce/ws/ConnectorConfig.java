@@ -374,6 +374,10 @@ public class ConnectorConfig {
         verifyEndpoint("/services/Soap/c/");
     }
 
+    public void verifyToolingEndpoint() throws ConnectionException {
+        verifyEndpoint("/services/Soap/T/");
+    }
+
     public Iterator<MessageHandler> getMessagerHandlers() {
         return handlers.iterator();
     }

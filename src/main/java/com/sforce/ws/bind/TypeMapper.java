@@ -40,11 +40,11 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.sforce.ws.ConnectionException;
-import com.sforce.ws.types.Time;
-import com.sforce.ws.util.Base64;
 import com.sforce.ws.ConnectorConfig;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.types.Time;
+import com.sforce.ws.util.Base64;
 import com.sforce.ws.wsdl.Constants;
 import com.sforce.ws.wsdl.Restriction;
 import com.sforce.ws.wsdl.SfdcApiType;
@@ -186,7 +186,9 @@ public class TypeMapper {
     public boolean isWellKnownType(String namespace, String name) {
         if (isSObject(namespace, name)) return true;
 
-        if ("AggregateResult".equals(name) && SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace)) {
+        if ("AggregateResult".equals(name) &&
+        		(SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace) ||
+        		 SfdcApiType.Tooling.getSobjectNamespace().equals(namespace))) {
             return true;
         }
 
@@ -435,7 +437,12 @@ public class TypeMapper {
         if (config != null && !config.isValidateSchema()) {
             return isElement(in, info);
         } else {
-            verifyTag(getNamespace(info), info.getName(), in.getNamespace(), in.getName());
+            try {
+                verifyTag(getNamespace(info), info.getName(), in.getNamespace(), in.getName());
+            } catch (ConnectionException ce) {
+                return false;
+            }
+
             return true;
         }
     }
@@ -671,7 +678,7 @@ public class TypeMapper {
 
     private String readEnum(XmlInputStream in, TypeInfo typeInfo, Class<?> type) throws IOException, ConnectionException {
         String s = readString(in, typeInfo, type);
-        
+
         // This block of code has been added to enable stubs to deserialize enum values
         // that contain hyphens (e.g. UTF-8). The mdapi schema contains such enums
         // (e.g. the Encoding enumeration).
@@ -696,7 +703,7 @@ public class TypeMapper {
         catch(Exception e) {
         	throw new ConnectionException("Failed to read enum", e);
         }
-        
+
         int index = s.indexOf(":");
         String token = index == -1 ? s : s.substring(index + 1);
         return isKeyWord(token) ? "_" + token : token;

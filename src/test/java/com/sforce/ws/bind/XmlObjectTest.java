@@ -26,16 +26,21 @@
 
 package com.sforce.ws.bind;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.xml.namespace.QName;
 
-import com.sforce.ws.parser.XmlOutputStream;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.wsdl.Constants;
 
 /**
  * XmlObjectTest -- Validates that subclasses of basic types can be serialized
@@ -57,12 +62,17 @@ public class XmlObjectTest extends TestCase {
         XmlObject obj = new XmlObject(qname);
         obj.setValue(new Date());
         obj.write(qname, xout, typeMapper);
-        
+
         // Then try subclass of Date
         obj = new XmlObject(qname);
         obj.setValue(new MyDate());
         obj.write(qname, xout, typeMapper);
-        
+
+        // Then try String[]
+        obj = new XmlObject(qname);
+        obj.setValue(new String[] {"a","b" });
+        obj.write(qname, xout, typeMapper);
+
         // Then try some non-mappable subclass
         obj = new XmlObject(qname);
         obj.setValue(new AtomicLong(10L));
@@ -72,5 +82,39 @@ public class XmlObjectTest extends TestCase {
         } catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Unable to find xml type for"));
         }
+    }
+
+    public void testStringArray() throws Exception {
+    	String ns = "urn:sobject.partner.soap.sforce.com";
+    	QName qname = new QName( ns, "anArray" );
+    	TypeMapper typeMapper = new TypeMapper();
+
+    	String[] ab = new String[] { "a","b"  };
+		XmlObject obj = new XmlObject( qname );
+		obj.setValue( ab );
+
+		// Serialize
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	XmlOutputStream xout = new XmlOutputStream( baos, true );
+    	xout.setPrefix( "sfdc", ns );
+    	xout.setPrefix( "xsi", Constants.SCHEMA_NS );
+    	xout.startDocument();
+    	xout.writeStartTag(ns, "start");
+		obj.write( qname,  xout,  typeMapper );
+		xout.writeEndTag(ns, "start");
+		xout.close();
+
+		// Parse
+		TypeInfo info = new TypeInfo(qname.getNamespaceURI(), "anArray",
+		Constants.SCHEMA_NS, "string", 0, -1, true );
+		ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray() );
+		XmlInputStream xin = new XmlInputStream();
+		xin.setInput( bais, "UTF-8" );
+		xin.nextTag();
+		Object result = typeMapper.readObject(xin, info, String[].class);
+
+		// Assert
+		assertTrue( result.getClass().isArray() );
+		assertTrue( Arrays.equals(ab, (Object[])result));
     }
 }

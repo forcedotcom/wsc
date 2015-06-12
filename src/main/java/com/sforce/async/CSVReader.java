@@ -28,6 +28,7 @@ package com.sforce.async;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -44,7 +45,7 @@ public class CSVReader {
     //private static final char PARSE_FIND = '\u00A0';
 
     private StreamTokenizer parser;
-    private char separator;
+    private char[] separators;
     private boolean ignoreBlankRecords = true;
     private int maxSizeOfIndividualCell = 32000;
     private int maxColumnsPerRow = 5000;
@@ -70,8 +71,20 @@ public class CSVReader {
         this(new BufferedReader(input), customizedSeparator);
     }
 
+    public CSVReader(Reader input, char[] customizedSeparators) {
+        this(new BufferedReader(input), customizedSeparators);
+    }
+
     public CSVReader(InputStream input) {
         this(new InputStreamReader(input));
+    }
+
+    public CSVReader(InputStream input, char customizedSeparator) throws UnsupportedEncodingException {
+        this(new InputStreamReader(input), customizedSeparator);
+    }
+
+    public CSVReader(InputStream input, char[] customizedSeparators) throws UnsupportedEncodingException {
+        this(new InputStreamReader(input), customizedSeparators);
     }
 
     public CSVReader(InputStream input, String enc) throws UnsupportedEncodingException {
@@ -82,18 +95,29 @@ public class CSVReader {
         this(new InputStreamReader(input, enc), customizedSeparator);
     }
 
+    public CSVReader(InputStream input, String enc, char[] customizedSeparators) throws UnsupportedEncodingException {
+        this(new InputStreamReader(input, enc), customizedSeparators);
+    }
+
     public CSVReader(BufferedReader input) {
         this(input, ',');
     }
 
     public CSVReader(BufferedReader input, char customizedSeparator) {
-        this.separator = customizedSeparator;
+        this(input, new char[]{customizedSeparator});
+    }
+    
+    public CSVReader(BufferedReader input, char[] customizedSeparators) {
+    	Arrays.sort(customizedSeparators);
+        this.separators = customizedSeparators;
         
         parser = new StreamTokenizer(input);
         parser.ordinaryChars(0, 255);
         parser.wordChars(0, 255);
         parser.ordinaryChar('\"');
-        parser.ordinaryChar(customizedSeparator);
+        for (char customizedSeparator : customizedSeparators) {
+        	parser.ordinaryChar(customizedSeparator);
+        }
 
         // Need to do set EOL significance after setting ordinary and word
         // chars, and need to explicitly set \n and \r as whitespace chars
@@ -189,18 +213,18 @@ public class CSVReader {
                 break;
             }
 
-            if (token == separator) {
-                addField(record, fieldValue);
-                fieldValue = null;
-                continue;
-            }
-
             if (token == StreamTokenizer.TT_WORD) {
                 if (fieldValue != null) {
-                    throw new CSVParseException("Unknown error", parser.lineno());
+                    throw new CSVParseException(String.format("Unknown error, near %s", fieldValue), parser.lineno());
                 }
 
                 fieldValue = new StringBuilder(parser.sval);
+                continue;
+            }
+
+            if (Arrays.binarySearch(separators, (char)token) >= 0) {
+                addField(record, fieldValue);
+                fieldValue = null;
                 continue;
             }
 
@@ -218,22 +242,20 @@ public class CSVReader {
                         throw new CSVParseException("EOF reached before closing an opened quote", parser.lineno());
                     }
 
-                    if (token == separator) {
-                        fieldValue = appendFieldValue(fieldValue, token);
-                        continue;
-                    }
-
                     if (token == StreamTokenizer.TT_EOL) {
                         fieldValue = appendFieldValue(fieldValue, "\n");
                         continue;
                     }
-
 
                     if (token == StreamTokenizer.TT_WORD) {
                         fieldValue = appendFieldValue(fieldValue, parser.sval);
                         continue;
                     }
 
+                    if (Arrays.binarySearch(separators, (char)token) >= 0) {
+                        fieldValue = appendFieldValue(fieldValue, token);
+                        continue;
+                    }
 
                     if (token == '"') {
                         int nextToken = parser.nextToken();
