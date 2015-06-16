@@ -30,10 +30,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.Map.Entry;
-
 import com.sforce.ws.tools.VersionInfo;
 import com.sforce.ws.transport.JdkHttpTransport;
 import com.sforce.ws.transport.Transport;
+import com.sforce.ws.transport.TransportFactory;
 import com.sforce.ws.util.Base64;
 import com.sforce.ws.util.Verbose;
 
@@ -153,6 +153,7 @@ public class ConnectorConfig {
     private Class transport = JdkHttpTransport.class;
     private SessionRenewer sessionRenewer;
     private String ntlmDomain;
+	private TransportFactory transportFactory;
 
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
 
@@ -160,6 +161,14 @@ public class ConnectorConfig {
         return transport;
     }
 
+    public TransportFactory getTransportFactory() {
+    	return transportFactory;
+    }
+    
+    public void setTransportFactory(TransportFactory transportFactory) {
+    	this.transportFactory = transportFactory;
+    }
+    
     public void setTransport(Class transport) {
         this.transport = transport;
     }
@@ -438,6 +447,10 @@ public class ConnectorConfig {
     }
 
     public Transport createTransport() throws ConnectionException {
+    	if(transportFactory != null) {
+    		return transportFactory.createTransport();
+    	}
+    	
         try {
             Transport t = (Transport)getTransport().newInstance();
             t.setConfig(this);

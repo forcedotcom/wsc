@@ -123,6 +123,10 @@ public class SoapConnection {
     }
 
     private Transport newTransport(ConnectorConfig config) throws ConnectionException {
+    	if(config.getTransportFactory() != null) {
+    		return config.getTransportFactory().createTransport();
+    	}
+    	
         try {
             Transport t = (Transport) config.getTransport().newInstance();
             t.setConfig(config);
