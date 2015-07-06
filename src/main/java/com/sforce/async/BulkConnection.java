@@ -51,8 +51,10 @@ public class BulkConnection {
     public static final String SESSION_ID = "X-SFDC-Session";
     public static final String XML_CONTENT_TYPE = "application/xml";
     public static final String CSV_CONTENT_TYPE = "text/csv";
+    public static final String JSON_CONTENT_TYPE = "application/json";
     public static final String ZIP_XML_CONTENT_TYPE = "zip/xml";
     public static final String ZIP_CSV_CONTENT_TYPE = "zip/csv";
+    public static final String ZIP_JSON_CONTENT_TYPE = "zip/json";
 
     public static final QName JOB_QNAME = new QName(NAMESPACE, "jobInfo");
     public static final QName BATCH_QNAME = new QName(NAMESPACE, "batchInfo");
@@ -339,6 +341,8 @@ public class BulkConnection {
                 return ZIP_CSV_CONTENT_TYPE;
             case ZIP_XML:
                 return ZIP_XML_CONTENT_TYPE;
+            case ZIP_JSON:
+            	return ZIP_JSON_CONTENT_TYPE;
             default:
                 // non zip content type
                 throw new AsyncApiException("Invalid zip content type: " + contentType,
@@ -350,6 +354,8 @@ public class BulkConnection {
                 return XML_CONTENT_TYPE;
             case CSV:
                 return CSV_CONTENT_TYPE;
+            case JSON:
+            	return JSON_CONTENT_TYPE;
             default:
                 // zip content type
                 throw new AsyncApiException("Not expecting zip content type: " + contentType,
