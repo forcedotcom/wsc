@@ -44,7 +44,15 @@ $endif$
     $endif$
     $member.fieldName$__is_set = true;
   \}
-  
+
+  protected void $member.setMethodName$(com.sforce.ws.parser.XmlInputStream __in,
+      com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+    __in.peekTag();
+    if (__typeMapper.$member.loadType$(__in, $member.fieldName$__typeInfo)) {
+      $member.setMethodName$($member.cast$__typeMapper.$member.loadMethod$(__in, $member.fieldName$__typeInfo, $member.javaType$.class));
+    \}
+  \}
+
    }$    /**
      */
     @Override
@@ -77,10 +85,7 @@ $gen.memberMetadataList: { member |
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
         $gen.superLoad$
 $gen.memberMetadataList:{ member |
-        __in.peekTag();
-        if (__typeMapper.$member.loadType$(__in, $member.fieldName$__typeInfo)) {
-            $member.setMethodName$($member.cast$__typeMapper.$member.loadMethod$(__in, $member.fieldName$__typeInfo, $member.javaType$.class));
-        \}
+        $member.setMethodName$(__in, __typeMapper);
 }$    }
     
     @Override
