@@ -761,6 +761,11 @@ public class TypeMapper {
         keywords.add("int");
         keywords.add("double");
         keywords.add("boolean");
+        keywords.add("byte");
+        keywords.add("short");
+        keywords.add("long");
+        keywords.add("float");
+        keywords.add("char");
         return keywords;
     }
 
