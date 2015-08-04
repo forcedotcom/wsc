@@ -124,7 +124,9 @@ public class SoapConnection {
 
     private Transport newTransport(ConnectorConfig config) throws ConnectionException {
     	if(config.getTransportFactory() != null) {
-    		return config.getTransportFactory().createTransport();
+			Transport t = config.getTransportFactory().createTransport();
+			t.setConfig(config);
+			return t;
     	}
     	
         try {
