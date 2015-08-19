@@ -147,7 +147,7 @@ public class GaeHttpTransport implements Transport {
     }
 
     FetchOptions fetchOptions = FetchOptions.Builder.withDeadline(config
-        .getReadTimeout() / 1000);
+        .getReadTimeout() / 1000).validateCertificate();
     HTTPRequest request = new HTTPRequest(url, HTTPMethod.POST, fetchOptions);
 
     if (httpHeaders == null
