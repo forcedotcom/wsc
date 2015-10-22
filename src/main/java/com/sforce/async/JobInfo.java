@@ -26,9 +26,12 @@
 
 package com.sforce.async;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 /**
  * Async Api JobInfo
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
     /**
