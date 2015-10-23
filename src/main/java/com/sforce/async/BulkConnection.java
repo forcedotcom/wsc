@@ -38,6 +38,10 @@ import com.sforce.ws.bind.TypeMapper;
 import com.sforce.ws.parser.*;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.*;
+import com.sforce.ws.bind.CalendarCodec;
+
 
 /**
  * BulkConnection
@@ -45,6 +49,7 @@ import com.sforce.ws.util.FileUtil;
  * @author mcheenath
  * @since 160
  */
+
 public class BulkConnection {
 
     public static final String NAMESPACE = "http://www.force.com/2009/06/asyncapi/dataload";
@@ -64,6 +69,7 @@ public class BulkConnection {
     private ConnectorConfig config;
     private HashMap<String, String> headers = new HashMap<String, String>();
     public static final TypeMapper typeMapper = new TypeMapper();
+    private static final JsonFactory factory = new JsonFactory(new ObjectMapper());
 
     public BulkConnection(ConnectorConfig config) throws AsyncApiException {
         if (config == null) {
@@ -99,19 +105,30 @@ public class BulkConnection {
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint) throws AsyncApiException {
         try {
             Transport transport = config.createTransport();
-            OutputStream out = transport.connect(endpoint, getHeaders(XML_CONTENT_TYPE));
-            XmlOutputStream xout = new AsyncXmlOutputStream(out, true);
-            job.write(JOB_QNAME, xout, typeMapper);
-            xout.close();
+            OutputStream out;
+            if (job.getContentType() == ContentType.JSON) {
+                out = transport.connect(endpoint, getHeaders(JSON_CONTENT_TYPE));
+                serializeToJson (out, job);
+                out.close();
+            } else {
+                out = transport.connect(endpoint, getHeaders(XML_CONTENT_TYPE));
+                XmlOutputStream xout = new AsyncXmlOutputStream(out, true);
+                job.write(JOB_QNAME, xout, typeMapper);
+                xout.close();
+            }
 
             InputStream in = transport.getContent();
 
             if (transport.isSuccessful()) {
-                XmlInputStream xin = new XmlInputStream();
-                xin.setInput(in, "UTF-8");
-                JobInfo result = new JobInfo();
-                result.load(xin, typeMapper);
-                return result;
+                if (job.getContentType() == ContentType.JSON) {
+                    return deserializeJsonToObject(in, JobInfo.class);
+                } else {
+                    XmlInputStream xin = new XmlInputStream();
+                    xin.setInput(in, "UTF-8");
+                    JobInfo result = new JobInfo();
+                    result.load(xin, typeMapper);
+                    return result;
+                }
             } else {
                 parseAndThrowException(in);
             }
@@ -127,11 +144,14 @@ public class BulkConnection {
 
     static void parseAndThrowException(InputStream in) throws AsyncApiException {
         try {
+            AsyncApiException exception = new AsyncApiException();
+
             XmlInputStream xin = new XmlInputStream();
             xin.setInput(in, "UTF-8");
-            AsyncApiException exception = new AsyncApiException();
+
             exception.load(xin, typeMapper);
             throw exception;
+
         } catch (PullParserException e) {
             throw new AsyncApiException("Failed to parse exception ", AsyncExceptionCode.ClientInputError, e);
         } catch (IOException e) {
@@ -175,7 +195,12 @@ public class BulkConnection {
 
             InputStream result = transport.getContent();
             if (!transport.isSuccessful()) parseAndThrowException(result);
+            //xml/json content type
+            if (jobInfo.getContentType() == ContentType.JSON)
+                return deserializeJsonToObject(result, BatchInfo.class);
+
             return BatchRequest.loadBatchInfo(result);
+
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
         } catch (PullParserException e) {
@@ -390,8 +415,8 @@ public class BulkConnection {
             Transport transport = config.createTransport();
             endpoint = endpoint + "job/" + job.getId() + "/batch";
             ContentType ct = job.getContentType();
-            if (ct != null && ct != ContentType.XML) { throw new AsyncApiException(
-                    "This method can only be used with xml content type", AsyncExceptionCode.ClientInputError); }
+            if (ct != null && ct != ContentType.XML && ct != ContentType.JSON) { throw new AsyncApiException(
+                    "This method can only be used with xml or JSON content type", AsyncExceptionCode.ClientInputError); }
 
             OutputStream out = transport.connect(endpoint, getHeaders(XML_CONTENT_TYPE));
             return new BatchRequest(transport, out);
@@ -439,16 +464,23 @@ public class BulkConnection {
     }
 
     public BatchInfoList getBatchInfoList(String jobId) throws AsyncApiException {
+        return getBatchInfoList(jobId, ContentType.XML);
+    }
+    public BatchInfoList getBatchInfoList(String jobId, ContentType contentType) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint() + "job/" + jobId + "/batch/";
             URL url = new URL(endpoint);
             InputStream stream = doHttpGet(url);
 
-            XmlInputStream xin = new XmlInputStream();
-            xin.setInput(stream, "UTF-8");
-            BatchInfoList result = new BatchInfoList();
-            result.load(xin, typeMapper);
-            return result;
+            if (contentType==ContentType.JSON) {
+                return deserializeJsonToObject(stream, BatchInfoList.class);
+            } else {
+                XmlInputStream xin = new XmlInputStream();
+                xin.setInput(stream, "UTF-8");
+                BatchInfoList result = new BatchInfoList();
+                result.load(xin, typeMapper);
+                return result;
+            }
         } catch (IOException e) {
             throw new AsyncApiException("Failed to get batch info list ", AsyncExceptionCode.ClientInputError, e);
         } catch (PullParserException e) {
@@ -459,16 +491,24 @@ public class BulkConnection {
     }
 
     public BatchInfo getBatchInfo(String jobId, String batchId) throws AsyncApiException {
+        return getBatchInfo(jobId, batchId, ContentType.XML);
+    }
+
+    public BatchInfo getBatchInfo(String jobId, String batchId, ContentType contentType) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint() + "job/" + jobId + "/batch/" + batchId;
             URL url = new URL(endpoint);
             InputStream stream = doHttpGet(url);
 
-            XmlInputStream xin = new XmlInputStream();
-            xin.setInput(stream, "UTF-8");
-            BatchInfo result = new BatchInfo();
-            result.load(xin, typeMapper);
-            return result;
+            if (contentType==ContentType.JSON) {
+                return deserializeJsonToObject(stream, BatchInfo.class);
+            } else {
+                XmlInputStream xin = new XmlInputStream();
+                xin.setInput(stream, "UTF-8");
+                BatchInfo result = new BatchInfo();
+                result.load(xin, typeMapper);
+                return result;
+            }
         } catch (IOException e) {
             throw new AsyncApiException("Failed to parse batch info ", AsyncExceptionCode.ClientInputError, e);
         } catch (PullParserException e) {
@@ -479,14 +519,21 @@ public class BulkConnection {
     }
 
     public BatchResult getBatchResult(String jobId, String batchId) throws AsyncApiException {
+        return getBatchResult(jobId, batchId, ContentType.XML);
+    }
+    public BatchResult getBatchResult(String jobId, String batchId, ContentType contentType) throws AsyncApiException {
         try {
             InputStream stream = doHttpGet(buildBatchResultURL(jobId, batchId));
 
-            XmlInputStream xin = new XmlInputStream();
-            xin.setInput(stream, "UTF-8");
-            BatchResult result = new BatchResult();
-            result.load(xin, typeMapper);
-            return result;
+            if (contentType==ContentType.JSON) {
+                return deserializeJsonToObject(stream, BatchResult.class);
+            } else {
+                XmlInputStream xin = new XmlInputStream();
+                xin.setInput(stream, "UTF-8");
+                BatchResult result = new BatchResult();
+                result.load(xin, typeMapper);
+                return result;
+            }
         } catch (PullParserException e) {
             throw new AsyncApiException("Failed to parse result ", AsyncExceptionCode.ClientInputError, e);
         } catch (IOException e) {
@@ -526,14 +573,22 @@ public class BulkConnection {
     }
 
     public QueryResultList getQueryResultList(String jobId, String batchId) throws AsyncApiException {
+        return getQueryResultList(jobId, batchId, ContentType.XML);
+    }
+
+    public QueryResultList getQueryResultList(String jobId, String batchId, ContentType contentType) throws AsyncApiException {
         InputStream stream = getBatchResultStream(jobId, batchId);
 
         try {
-            XmlInputStream xin = new XmlInputStream();
-            xin.setInput(stream, "UTF-8");
-            QueryResultList result = new QueryResultList();
-            result.load(xin, typeMapper);
-            return result;
+            if (contentType == ContentType.JSON) {
+                return deserializeJsonToObject(stream, QueryResultList.class);
+            } else {
+                XmlInputStream xin = new XmlInputStream();
+                xin.setInput(stream, "UTF-8");
+                QueryResultList result = new QueryResultList();
+                result.load(xin, typeMapper);
+                return result;
+            }
         } catch (ConnectionException e) {
             throw new AsyncApiException("Failed to parse query result list ", AsyncExceptionCode.ClientInputError, e);
         } catch (PullParserException e) {
@@ -625,17 +680,26 @@ public class BulkConnection {
     }
 
     public JobInfo getJobStatus(String jobId) throws AsyncApiException {
+        return getJobStatus(jobId, ContentType.XML);
+    }
+
+    public JobInfo getJobStatus(String jobId, ContentType contentType) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
             endpoint += "job/" + jobId;
             URL url = new URL(endpoint);
 
             InputStream in = doHttpGet(url);
-            JobInfo result = new JobInfo();
-            XmlInputStream xin = new XmlInputStream();
-            xin.setInput(in, "UTF-8");
-            result.load(xin, typeMapper);
-            return result;
+
+            if (contentType == ContentType.JSON) {
+                return deserializeJsonToObject(in, JobInfo.class);
+            } else {
+                JobInfo result = new JobInfo();
+                XmlInputStream xin = new XmlInputStream();
+                xin.setInput(in, "UTF-8");
+                result.load(xin, typeMapper);
+                return result;
+            }
         } catch (PullParserException e) {
             throw new AsyncApiException("Failed to get job status ", AsyncExceptionCode.ClientInputError, e);
         } catch (IOException e) {
@@ -643,6 +707,33 @@ public class BulkConnection {
         } catch (ConnectionException e) {
             throw new AsyncApiException("Failed to get job status ", AsyncExceptionCode.ClientInputError, e);
         }
+    }
+
+    /**
+     * Serialize to json
+     * @param out
+     * @param value
+     * @throws IOException
+     */
+    static void serializeToJson(OutputStream out, Object value) throws IOException{
+        JsonGenerator generator = factory.createJsonGenerator(out);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setDateFormat(CalendarCodec.getDateFormat());
+        mapper.writeValue(generator, value);
+    }
+
+    /**
+     * Deserialize JSON input
+     * @param in
+     * @param tmpClass
+     * @param <T>
+     * @return
+     * @throws IOException
+     * @throws ConnectionException
+     */
+    static <T> T deserializeJsonToObject (InputStream in, Class<T> tmpClass) throws IOException, ConnectionException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(in, tmpClass);
     }
 
     public JobInfo abortJob(String jobId) throws AsyncApiException {

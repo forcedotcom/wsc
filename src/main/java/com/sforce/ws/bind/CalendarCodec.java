@@ -61,12 +61,21 @@ import java.util.GregorianCalendar;
  */
 public class CalendarCodec {
 
+  public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
   private static final SimpleDateFormat zulu =
-      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+      new SimpleDateFormat(DATE_FORMAT);
   //  0123456789 0 123456789
 
+  public static final String GMT = "GMT";
+
   static {
-    zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+    zulu.setTimeZone(TimeZone.getTimeZone(GMT));
+  }
+
+  public static SimpleDateFormat getDateFormat() {
+    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+    sdf.setTimeZone(TimeZone.getTimeZone(GMT));
+    return sdf;
   }
 
   public String getValueAsString(Object value) {
