@@ -124,7 +124,12 @@
                 <relocation>
                   <pattern>org.stringtemplate</pattern>
                   <shadedPattern>com.sforce.ws.shade.org.stringtemplate</shadedPattern>
-                </relocation>
+	        </relocation>
+                <!-- jackson is also in core, prevent namespace collission -->
+		<relocation>
+		  <pattern>org.codehaus.jackson</pattern>
+		  <shadedPattern>com.sforce.ws.shade.org.codehaus.jackson</shadedPattern>
+		</relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <shadedArtifactAttached>true</shadedArtifactAttached>
