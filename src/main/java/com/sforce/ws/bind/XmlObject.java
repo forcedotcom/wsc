@@ -103,6 +103,17 @@ public class XmlObject implements XMLizable {
     }
 
     /**
+     * Because we create complex types as subclasses of XMLizable instead of
+     * XmlObject (and we don't want to change interfaces), this method will
+     * return this as the complex type subclass of XMLizable, if this represents
+     * a complex type. If it does not, it will simply return this.
+     * @return
+     */
+    public XMLizable asTyped() {
+        return this;
+    }
+
+    /**
      * evaluate the given xpath like expression.
      * eg xpath: "OpportunityContactRoles/records/Contact/LastName" this will list
      * all LastName
@@ -210,6 +221,21 @@ public class XmlObject implements XMLizable {
         return result.iterator();
     }
 
+    /**
+     * Similar to {@link #asTyped()}, this will return this object's children
+     * as the proper complex type subclass of XMLizable, if they are complex
+     * types. If a child is not a complex type, it will be returned as-is,
+     * as an XmlObject.
+     * @return
+     */
+    public Iterator<XMLizable> getTypedChildren() {
+        ArrayList<XMLizable> result = new ArrayList<XMLizable>(children.size());
+        for (XmlObject child : children) {
+            result.add(child.asTyped());
+        }
+        return result.iterator();
+    }
+
 
     @Override
     public String toString() {
@@ -282,7 +308,7 @@ public class XmlObject implements XMLizable {
             int type = in.next();
 
             if (type == XmlInputStream.START_TAG) {
-                XmlObject child = new XmlObject();
+                XmlObject child = new XmlObjectWrapper();
                 child.load(in, typeMapper);
                 children.add(child);
             } else if (type == XmlInputStream.TEXT) {
