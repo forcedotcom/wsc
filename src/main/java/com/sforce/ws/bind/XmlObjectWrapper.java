@@ -15,73 +15,204 @@
  */
 package com.sforce.ws.bind;
 
-import java.io.ByteArrayInputStream;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import com.sforce.ws.ConnectionException;
-import com.sforce.ws.parser.*;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.wsdl.Constants;
 
 /**
+ * This class wraps an XMLizable and presents it as an XmlObject so that we
+ * can later convert this object to the complex type this represents.
+ * 
  * @author georges.nguyen
  */
 public class XmlObjectWrapper extends XmlObject {
+    private String defaultNamespace;
+    private QName name;
+    private QName xmlType;
 
-    private TypeMapper typeMapper;
     private XMLizable xmlizable;
-    private QName xsiType;
 
-    public XmlObjectWrapper() {}
+    public XmlObjectWrapper(XMLizable xmlizable) {
+        this.xmlizable = xmlizable;
+    }
+
+    @Override
+    public XmlObject addField(String name, Object value) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public XMLizable asTyped() {
-        if (this.xmlizable != null) { return this.xmlizable; }
-
-        try {
-            Class<?> childTypeClass = typeMapper.getJavaType(xsiType);
-            if (childTypeClass == null) {
-                this.xmlizable = this;
-                return this.xmlizable;
-            }
-            this.xmlizable = (XMLizable)childTypeClass.newInstance();
-            this.xmlizable.load(createInputStream(), typeMapper);
-        } catch (PullParserException e) {
-            this.xmlizable = this;
-        } catch (IOException e) {
-            this.xmlizable = this;
-        } catch (ConnectionException e) {
-            this.xmlizable = this;
-        } catch (InstantiationException e) {
-            this.xmlizable = this;
-        } catch (IllegalAccessException e) {
-            this.xmlizable = this;
-        }
         return this.xmlizable;
     }
 
-    private XmlInputStream createInputStream() throws IOException, PullParserException, ConnectionException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        XmlOutputStream xmlOutputStream = new XmlOutputStream(baos, false);
-        super.write(getName(), xmlOutputStream, typeMapper);
-        xmlOutputStream.close();
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        XmlInputStream in = new XmlInputStream();
-        in.setInput(bais, "UTF-8");
-        in.peekTag();
-        return in;
+    @Override
+    public XmlObject getChild(String name) {
+        PropertyDescriptor descriptor = getPropertyDescriptor(name);
+        if (descriptor != null) {
+            try {
+                Object value = descriptor.getReadMethod().invoke(xmlizable);
+                XMLizable child;
+                if (value instanceof XmlObject) {
+                    child = (XmlObject)value;
+                } if (value instanceof XMLizable) {
+                    child = new XmlObjectWrapper((XMLizable)value);
+                } else {
+                    child = new XmlObject(getQNameFor(descriptor.getName()), value);
+                }
+                return new XmlObjectWrapper(child);
+            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException e) {
+            } catch (InvocationTargetException e) {
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Iterator<XmlObject> getChildren() {
+        ArrayList<XmlObject> result = new ArrayList<XmlObject>();
+        for (PropertyDescriptor descriptor : getPropertyDescriptors()) {
+            addProperty(descriptor, result);
+        }
+        return result.iterator();
+    }
+
+    @Override
+    public Iterator<XmlObject> getChildren(String name) {
+        ArrayList<XmlObject> result = new ArrayList<XmlObject>();
+        for (PropertyDescriptor descriptor : getPropertyDescriptors()) {
+            if (descriptor.getName().equals(name)) {
+                addProperty(descriptor, result);
+            }
+        }
+        return result.iterator();
+    }
+
+    @Override
+    public Object getField(String name) {
+        XmlObject item = getChild(name);
+        Object result = null;
+        if (item != null) {
+            if (item.hasChildren()) {
+                result = item;
+            } else {
+                result = item.getValue();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public QName getName() {
+        return this.name;
+    }
+
+    @Override
+    public QName getXmlType() {
+        return this.xmlType;
+    }
+
+    @Override
+    public boolean hasChildren() {
+        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(xmlizable);
+        return descriptors.length != 0;
     }
 
     @Override
     public void load(XmlInputStream in, TypeMapper typeMapper) throws IOException, ConnectionException {
-        this.typeMapper = typeMapper;
-        this.xsiType = typeMapper.getXsiType(in);
-        if (this.xsiType == null) {
-            this.xmlizable = this;
-        }
-        super.load(in, typeMapper);
+        name = new QName(in.getNamespace(), in.getName());
+        xmlType = typeMapper.getXsiType(in);
+        xmlizable.load(in, typeMapper);
     }
 
+    @Override
+    public boolean removeField(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setDefaultNamespace(String namespace) {
+        this.defaultNamespace = namespace;
+    }
+
+    @Override
+    public XmlObject setField(String name, Object value) {
+        PropertyDescriptor descriptor = getPropertyDescriptor(name);
+        if (descriptor != null) {
+            try {
+                descriptor.getWriteMethod().invoke(xmlizable, value);
+                return new XmlObjectWrapper((XMLizable)descriptor.getReadMethod().invoke(xmlizable));
+            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException e) {
+            } catch (InvocationTargetException e) {
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setName(QName name) {
+        this.name = name;
+    }
+
+    @Override
+    public void write(QName element, XmlOutputStream out, TypeMapper typeMapper) throws IOException {
+        xmlizable.write(element, out, typeMapper);
+    }
+
+    private void addProperty(PropertyDescriptor descriptor, ArrayList<XmlObject> result) {
+        Object value;
+        try {
+            value = descriptor.getReadMethod().invoke(xmlizable);
+            if (value instanceof XmlObject) {
+                result.add((XmlObject)value);
+            } else if (value instanceof XMLizable) {
+                result.add(new XmlObjectWrapper((XMLizable)value));
+            } else if (value instanceof Object[]) {
+                for (Object subValue : (Object[])value) {
+                    result.add(new XmlObject(getQNameFor(descriptor.getName()), subValue));
+                }
+            } else {
+                result.add(new XmlObject(getQNameFor(descriptor.getName()), value));
+            }
+        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
+        } catch (InvocationTargetException e) {
+        }
+    }
+
+    private QName getQNameFor(String n) {
+        String namespace = defaultNamespace == null ? Constants.PARTNER_SOBJECT_NS : defaultNamespace;
+        return name == null ? new QName(namespace, n) :  new QName(name.getNamespaceURI(), n);
+    }
+
+    private PropertyDescriptor getPropertyDescriptor(String name) {
+        for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(xmlizable)) {
+            if (descriptor.getName().equals(name) && descriptor.getReadMethod() != null && descriptor.getWriteMethod() != null) {
+                return descriptor;
+            }
+        }
+        return null;
+    }
+
+    private List<PropertyDescriptor> getPropertyDescriptors() {
+        List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+        for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(xmlizable)) {
+            if (descriptor.getReadMethod() != null && descriptor.getWriteMethod() != null) {
+                descriptors.add(descriptor);
+            }
+        }
+        return descriptors;
+    }
 }

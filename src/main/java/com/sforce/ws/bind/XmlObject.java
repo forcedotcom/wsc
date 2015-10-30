@@ -305,16 +305,18 @@ public class XmlObject implements XMLizable {
         boolean textFound = false;
 
         while (true) {
-            int type = in.next();
+            int type = in.peek();
 
             if (type == XmlInputStream.START_TAG) {
-                XmlObject child = new XmlObjectWrapper();
+                XmlObject child = extractChildElement(in, typeMapper);
                 child.load(in, typeMapper);
                 children.add(child);
             } else if (type == XmlInputStream.TEXT) {
+                in.consumePeeked();
                 text.append(in.getText());
                 textFound = true;
             } else if (type == XmlInputStream.END_TAG) {
+                in.consumePeeked();
                 String ns = in.getNamespace();
                 String n = in.getName();
                 if (name.getNamespaceURI().equals(ns) && name.getLocalPart().equals(n)) {
@@ -326,6 +328,38 @@ public class XmlObject implements XMLizable {
         }
 
         if (textFound) value = typeMapper.deserialize(text.toString(), xmlType);
+    }
+
+    private XmlObject extractChildElement(XmlInputStream in, TypeMapper typeMapper) throws ConnectionException {
+        XmlObject child;
+        QName xsiType = typeMapper.getXsiType(in);
+        if (xsiType == null) {
+            child = new XmlObject();
+        }
+        else {
+            Class<?> childClass = typeMapper.getJavaType(xsiType);
+            if (childClass == null || !XMLizable.class.isAssignableFrom(childClass)) {
+                child = new XmlObject();
+            }
+            else {
+                XMLizable xmlizable;
+                try {
+                    xmlizable = (XMLizable)childClass.newInstance();
+                    if (xmlizable instanceof XmlObject) {
+                        child = (XmlObject) xmlizable;
+                    } else {
+                        child = new XmlObjectWrapper(xmlizable);
+                    }
+                } catch (InstantiationException e) {
+                    throw new ConnectionException("Failed to create object", e);
+                } catch (IllegalAccessException e) {
+                    throw new ConnectionException("Failed to create object", e);
+                } catch (ClassCastException e) {
+                    child = new XmlObject();
+                }
+            }
+        }
+        return child;
     }
 
     protected void cloneFrom(XmlObject source) {
