@@ -335,8 +335,12 @@ public class XmlObject implements XMLizable {
         QName xsiType = typeMapper.getXsiType(in);
         if (xsiType == null) {
             child = new XmlObject();
-        }
-        else {
+        } else if (xsiType.getLocalPart().equals("QueryResult") && !in.getName().equals("QueryResult")) {
+            // In older API versions, some objects had their xsitype erroneously set to "QueryResult"
+            // even when they were not QueryResult objects. Since we have no information about their type
+            // we will default back to XmlObject.
+            child = new XmlObject();
+        } else {
             Class<?> childClass = typeMapper.getJavaType(xsiType);
             if (childClass == null || !XMLizable.class.isAssignableFrom(childClass)) {
                 child = new XmlObject();
