@@ -358,8 +358,6 @@ public class XmlObject implements XMLizable {
                     throw new ConnectionException("Failed to create object", e);
                 } catch (IllegalAccessException e) {
                     throw new ConnectionException("Failed to create object", e);
-                } catch (ClassCastException e) {
-                    child = new XmlObject();
                 }
             }
         }
