@@ -66,6 +66,11 @@
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.9.13</version>
     </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.9.2</version>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>
@@ -124,12 +129,16 @@
                 <relocation>
                   <pattern>org.stringtemplate</pattern>
                   <shadedPattern>com.sforce.ws.shade.org.stringtemplate</shadedPattern>
-	        </relocation>
+	            </relocation>
                 <!-- jackson is also in core, prevent namespace collission -->
-		<relocation>
-		  <pattern>org.codehaus.jackson</pattern>
-		  <shadedPattern>com.sforce.ws.shade.org.codehaus.jackson</shadedPattern>
-		</relocation>
+                <relocation>
+                  <pattern>org.codehaus.jackson</pattern>
+                  <shadedPattern>com.sforce.ws.shade.org.codehaus.jackson</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.commons</pattern>
+                  <shadedPattern>com.sforce.ws.shade.org.apache.commons</shadedPattern>
+                </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <shadedArtifactAttached>true</shadedArtifactAttached>

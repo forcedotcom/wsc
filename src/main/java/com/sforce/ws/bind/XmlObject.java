@@ -103,6 +103,17 @@ public class XmlObject implements XMLizable {
     }
 
     /**
+     * Because we create complex types as subclasses of XMLizable instead of
+     * XmlObject (and we don't want to change interfaces), this method will
+     * return this as the complex type subclass of XMLizable, if this represents
+     * a complex type. If it does not, it will simply return this.
+     * @return
+     */
+    public XMLizable asTyped() {
+        return this;
+    }
+
+    /**
      * evaluate the given xpath like expression.
      * eg xpath: "OpportunityContactRoles/records/Contact/LastName" this will list
      * all LastName
@@ -210,6 +221,21 @@ public class XmlObject implements XMLizable {
         return result.iterator();
     }
 
+    /**
+     * Similar to {@link #asTyped()}, this will return this object's children
+     * as the proper complex type subclass of XMLizable, if they are complex
+     * types. If a child is not a complex type, it will be returned as-is,
+     * as an XmlObject.
+     * @return
+     */
+    public Iterator<XMLizable> getTypedChildren() {
+        ArrayList<XMLizable> result = new ArrayList<XMLizable>(children.size());
+        for (XmlObject child : children) {
+            result.add(child.asTyped());
+        }
+        return result.iterator();
+    }
+
 
     @Override
     public String toString() {
@@ -279,16 +305,18 @@ public class XmlObject implements XMLizable {
         boolean textFound = false;
 
         while (true) {
-            int type = in.next();
+            int type = in.peek();
 
             if (type == XmlInputStream.START_TAG) {
-                XmlObject child = new XmlObject();
+                XmlObject child = extractChildElement(in, typeMapper);
                 child.load(in, typeMapper);
                 children.add(child);
             } else if (type == XmlInputStream.TEXT) {
+                in.consumePeeked();
                 text.append(in.getText());
                 textFound = true;
             } else if (type == XmlInputStream.END_TAG) {
+                in.consumePeeked();
                 String ns = in.getNamespace();
                 String n = in.getName();
                 if (name.getNamespaceURI().equals(ns) && name.getLocalPart().equals(n)) {
@@ -300,6 +328,40 @@ public class XmlObject implements XMLizable {
         }
 
         if (textFound) value = typeMapper.deserialize(text.toString(), xmlType);
+    }
+
+    private XmlObject extractChildElement(XmlInputStream in, TypeMapper typeMapper) throws ConnectionException {
+        XmlObject child;
+        QName xsiType = typeMapper.getXsiType(in);
+        if (xsiType == null) {
+            child = new XmlObject();
+        } else if (xsiType.getLocalPart().equals("QueryResult") && !in.getName().equals("QueryResult")) {
+            // In older API versions, some objects had their xsitype erroneously set to "QueryResult"
+            // even when they were not QueryResult objects. Since we have no information about their type
+            // we will default back to XmlObject.
+            child = new XmlObject();
+        } else {
+            Class<?> childClass = typeMapper.getJavaType(xsiType);
+            if (childClass == null || !XMLizable.class.isAssignableFrom(childClass)) {
+                child = new XmlObject();
+            }
+            else {
+                XMLizable xmlizable;
+                try {
+                    xmlizable = (XMLizable)childClass.newInstance();
+                    if (xmlizable instanceof XmlObject) {
+                        child = (XmlObject) xmlizable;
+                    } else {
+                        child = new XmlObjectWrapper(xmlizable);
+                    }
+                } catch (InstantiationException e) {
+                    throw new ConnectionException("Failed to create object", e);
+                } catch (IllegalAccessException e) {
+                    throw new ConnectionException("Failed to create object", e);
+                }
+            }
+        }
+        return child;
     }
 
     protected void cloneFrom(XmlObject source) {
