@@ -704,7 +704,7 @@ public class TypeMapper {
         return isKeyWord(token) ? "_" + token : token;
     }
 
-    private Class<?> getJavaType(QName qName) throws ConnectionException {
+    Class<?> getJavaType(QName qName) throws ConnectionException {
         Class<?> c = typeCache.get(qName);
 
         if (c == null) {

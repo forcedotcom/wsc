@@ -26,10 +26,10 @@
 
 package com.sforce.ws.parser;
 
-import com.sforce.ws.ConnectionException;
-
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import com.sforce.ws.ConnectionException;
 
 /**
  * This is a minimal pull parser. It currently delegates to XPP parser available at
@@ -178,4 +178,18 @@ public final class XmlInputStream {
     peekTag = nextTag();
     return peekTag;
   }
+  
+  public int peek() throws ConnectionException, IOException {
+      if (peekTag != EMPTY) {
+          return peekTag;
+        }
+
+        int peek = next();
+        if (peek == START_TAG || peek == END_TAG) {
+            peekTag = peek;
+        } else {
+            peekTag = EMPTY;
+        }
+        return peek;
+    }
 }
