@@ -103,10 +103,14 @@ public class BulkConnection {
     }
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint) throws AsyncApiException {
+        return createOrUpdateJob(job, endpoint, ContentType.XML);
+    }
+
+    private JobInfo createOrUpdateJob(JobInfo job, String endpoint, ContentType contentType) throws AsyncApiException {
         try {
             Transport transport = config.createTransport();
             OutputStream out;
-            if (job.getContentType() == ContentType.JSON) {
+            if (job.getContentType() == ContentType.JSON || job.getContentType() == ContentType.ZIP_JSON || contentType == ContentType.JSON) {
                 out = transport.connect(endpoint, getHeaders(JSON_CONTENT_TYPE));
                 serializeToJson (out, job);
                 out.close();
@@ -120,7 +124,7 @@ public class BulkConnection {
             InputStream in = transport.getContent();
 
             if (transport.isSuccessful()) {
-                if (job.getContentType() == ContentType.JSON) {
+                if (job.getContentType() == ContentType.JSON || job.getContentType() == ContentType.ZIP_JSON || contentType == ContentType.JSON) {
                     return deserializeJsonToObject(in, JobInfo.class);
                 } else {
                     XmlInputStream xin = new XmlInputStream();
@@ -196,7 +200,7 @@ public class BulkConnection {
             InputStream result = transport.getContent();
             if (!transport.isSuccessful()) parseAndThrowException(result);
             //xml/json content type
-            if (jobInfo.getContentType() == ContentType.JSON)
+            if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON)
                 return deserializeJsonToObject(result, BatchInfo.class);
 
             return BatchRequest.loadBatchInfo(result);
@@ -286,6 +290,9 @@ public class BulkConnection {
             }
 
             InputStream result = transport.getContent();
+            if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON)
+                return deserializeJsonToObject(result, BatchInfo.class);
+
             return BatchRequest.loadBatchInfo(result);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
@@ -418,7 +425,17 @@ public class BulkConnection {
             if (ct != null && ct != ContentType.XML && ct != ContentType.JSON) { throw new AsyncApiException(
                     "This method can only be used with xml or JSON content type", AsyncExceptionCode.ClientInputError); }
 
-            OutputStream out = transport.connect(endpoint, getHeaders(XML_CONTENT_TYPE));
+            String jobContentType = "";
+            switch (ct) {
+                case JSON:
+                    jobContentType = JSON_CONTENT_TYPE;
+                    break;
+                case XML:
+                default:
+                    jobContentType = XML_CONTENT_TYPE;
+                    break;
+            }
+            OutputStream out = transport.connect(endpoint, getHeaders(jobContentType));
             return new BatchRequest(transport, out);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
@@ -472,7 +489,7 @@ public class BulkConnection {
             URL url = new URL(endpoint);
             InputStream stream = doHttpGet(url);
 
-            if (contentType==ContentType.JSON) {
+            if (contentType == ContentType.JSON || contentType == ContentType.ZIP_JSON) {
                 return deserializeJsonToObject(stream, BatchInfoList.class);
             } else {
                 XmlInputStream xin = new XmlInputStream();
@@ -500,7 +517,7 @@ public class BulkConnection {
             URL url = new URL(endpoint);
             InputStream stream = doHttpGet(url);
 
-            if (contentType==ContentType.JSON) {
+            if (contentType == ContentType.JSON || contentType == ContentType.ZIP_JSON) {
                 return deserializeJsonToObject(stream, BatchInfo.class);
             } else {
                 XmlInputStream xin = new XmlInputStream();
@@ -525,7 +542,7 @@ public class BulkConnection {
         try {
             InputStream stream = doHttpGet(buildBatchResultURL(jobId, batchId));
 
-            if (contentType==ContentType.JSON) {
+            if (contentType == ContentType.JSON || contentType == ContentType.ZIP_JSON) {
                 return deserializeJsonToObject(stream, BatchResult.class);
             } else {
                 XmlInputStream xin = new XmlInputStream();
@@ -580,8 +597,11 @@ public class BulkConnection {
         InputStream stream = getBatchResultStream(jobId, batchId);
 
         try {
-            if (contentType == ContentType.JSON) {
-                return deserializeJsonToObject(stream, QueryResultList.class);
+            if (contentType == ContentType.JSON || contentType == ContentType.ZIP_JSON) {
+                String[] results = deserializeJsonToObject(stream, String[].class);
+                QueryResultList list = new QueryResultList();
+                list.setResult(results);
+                return list;
             } else {
                 XmlInputStream xin = new XmlInputStream();
                 xin.setInput(stream, "UTF-8");
@@ -691,7 +711,7 @@ public class BulkConnection {
 
             InputStream in = doHttpGet(url);
 
-            if (contentType == ContentType.JSON) {
+            if (contentType == ContentType.JSON  || contentType == ContentType.ZIP_JSON) {
                 return deserializeJsonToObject(in, JobInfo.class);
             } else {
                 JobInfo result = new JobInfo();
@@ -751,9 +771,13 @@ public class BulkConnection {
     }
 
     public JobInfo updateJob(JobInfo job) throws AsyncApiException {
+        return updateJob(job, ContentType.XML);
+    }
+
+    public JobInfo updateJob(JobInfo job, ContentType contentType) throws AsyncApiException {
         String endpoint = getRestEndpoint();
         endpoint += "job/" + job.getId();
-        return createOrUpdateJob(job, endpoint);
+        return createOrUpdateJob(job, endpoint, contentType);
     }
 
     public ConnectorConfig getConfig() {
