@@ -426,14 +426,18 @@ public class BulkConnection {
                     "This method can only be used with xml or JSON content type", AsyncExceptionCode.ClientInputError); }
 
             String jobContentType = "";
-            switch (ct) {
-                case JSON:
-                    jobContentType = JSON_CONTENT_TYPE;
-                    break;
-                case XML:
-                default:
-                    jobContentType = XML_CONTENT_TYPE;
-                    break;
+            if (ct == null) {
+                jobContentType = XML_CONTENT_TYPE;
+            } else {
+                switch (ct) {
+                    case JSON:
+                        jobContentType = JSON_CONTENT_TYPE;
+                        break;
+                    case XML:
+                    default:
+                        jobContentType = XML_CONTENT_TYPE;
+                        break;
+                }
             }
             OutputStream out = transport.connect(endpoint, getHeaders(jobContentType));
             return new BatchRequest(transport, out);
