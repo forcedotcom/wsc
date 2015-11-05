@@ -167,6 +167,14 @@ public class XmlObjectWrapper extends XmlObject {
     }
 
     @Override
+    public String toString() {
+        return "XmlObjectWrapper{" +
+                "name=" + name +
+                ", xmlizable=" + xmlizable +
+                '}';
+    }
+
+    @Override
     public void write(QName element, XmlOutputStream out, TypeMapper typeMapper) throws IOException {
         xmlizable.write(element, out, typeMapper);
     }
