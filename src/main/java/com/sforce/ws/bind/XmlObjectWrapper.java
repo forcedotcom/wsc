@@ -62,15 +62,13 @@ public class XmlObjectWrapper extends XmlObject {
         if (descriptor != null) {
             try {
                 Object value = descriptor.getReadMethod().invoke(xmlizable);
-                XMLizable child;
                 if (value instanceof XmlObject) {
-                    child = (XmlObject)value;
+                    return (XmlObject)value;
                 } if (value instanceof XMLizable) {
-                    child = new XmlObjectWrapper((XMLizable)value);
+                    return new XmlObjectWrapper((XMLizable)value);
                 } else {
-                    child = new XmlObject(getQNameFor(descriptor.getName()), value);
+                    return new XmlObject(getQNameFor(descriptor.getName()), value);
                 }
-                return new XmlObjectWrapper(child);
             } catch (IllegalAccessException e) {
             } catch (IllegalArgumentException e) {
             } catch (InvocationTargetException e) {
@@ -101,16 +99,16 @@ public class XmlObjectWrapper extends XmlObject {
 
     @Override
     public Object getField(String name) {
-        XmlObject item = getChild(name);
-        Object result = null;
-        if (item != null) {
-            if (item.hasChildren()) {
-                result = item;
-            } else {
-                result = item.getValue();
+        PropertyDescriptor descriptor = getPropertyDescriptor(name);
+        if (descriptor != null) {
+            try {
+                return descriptor.getReadMethod().invoke(xmlizable);
+            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException e) {
+            } catch (InvocationTargetException e) {
             }
         }
-        return result;
+        return null;
     }
 
     @Override
