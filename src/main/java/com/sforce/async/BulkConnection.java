@@ -547,7 +547,10 @@ public class BulkConnection {
             InputStream stream = doHttpGet(buildBatchResultURL(jobId, batchId));
 
             if (contentType == ContentType.JSON || contentType == ContentType.ZIP_JSON) {
-                return deserializeJsonToObject(stream, BatchResult.class);
+                BatchResult batchResult = new BatchResult();
+                Result[] results = deserializeJsonToObject(stream, Result[].class);
+                batchResult.setResult(results);
+                return batchResult;
             } else {
                 XmlInputStream xin = new XmlInputStream();
                 xin.setInput(stream, "UTF-8");
