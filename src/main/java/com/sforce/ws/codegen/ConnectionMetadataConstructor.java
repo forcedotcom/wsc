@@ -148,7 +148,7 @@ public class ConnectionMetadataConstructor {
     }
 
     public String sobjectNamespace() {
-    	if(definitions.getApiType() == SfdcApiType.Tooling && hasSobjectNamespace(definitions)){
+    	if(definitions.getApiType() == SfdcApiType.Tooling && !hasSobjectNamespace(definitions)){
     		return "\"" + definitions.getApiType().getNamespace() + "\"";
     	}
         return definitions.getApiType() == null ? "null" : "\"" + definitions.getApiType().getSobjectNamespace() + "\"";
