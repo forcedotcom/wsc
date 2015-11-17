@@ -38,6 +38,7 @@ import com.sforce.ws.bind.TypeMapper;
 import com.sforce.ws.parser.*;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.*;
 import com.sforce.ws.bind.CalendarCodec;
@@ -290,8 +291,9 @@ public class BulkConnection {
             }
 
             InputStream result = transport.getContent();
-            if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON)
+            if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON) {
                 return deserializeJsonToObject(result, BatchInfo.class);
+            }
 
             return BatchRequest.loadBatchInfo(result);
         } catch (IOException e) {
@@ -760,6 +762,7 @@ public class BulkConnection {
      */
     static <T> T deserializeJsonToObject (InputStream in, Class<T> tmpClass) throws IOException, ConnectionException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         return mapper.readValue(in, tmpClass);
     }
 

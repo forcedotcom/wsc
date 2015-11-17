@@ -42,6 +42,7 @@ public class Result implements com.sforce.ws.bind.XMLizable {
             new com.sforce.ws.bind.TypeInfo(NAMESPACE, "errors", NAMESPACE, "Error", 0, -1, true);
 
     private boolean errors__is_set = false;
+
     private Error[] errors = new Error[0];
 
     public Result() {
