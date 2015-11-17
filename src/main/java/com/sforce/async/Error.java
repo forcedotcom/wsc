@@ -26,13 +26,17 @@
 
 package com.sforce.async;
 
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 /**
  * Error --
  *
  * @author mcheenath
  * @since 160
  */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Error implements com.sforce.ws.bind.XMLizable {
 
   /**
@@ -41,7 +45,12 @@ public class Error implements com.sforce.ws.bind.XMLizable {
   public Error() {
   }
 
-  
+  @JsonCreator
+  public Error(@JsonProperty("fields") String[] fields, @JsonProperty("message") String message, @JsonProperty("statusCode") StatusCode statusCode) {
+    this.message = message;
+    this.fields = fields;
+    this.statusCode = statusCode;
+  }
   /**
    * element  : fields of type {http://www.w3.org/2001/XMLSchema}string
    * java type: java.lang.String[]
@@ -51,13 +60,12 @@ public class Error implements com.sforce.ws.bind.XMLizable {
 
   private boolean fields__is_set = false;
 
+  @JsonProperty("fields")
   private java.lang.String[] fields = new java.lang.String[0];
 
   public java.lang.String[] getFields() {
     return fields;
   }
-
-
 
   public void setFields(java.lang.String[] fields) {
     this.fields = fields;
@@ -73,12 +81,12 @@ public class Error implements com.sforce.ws.bind.XMLizable {
 
   private boolean message__is_set = false;
 
+  @JsonProperty("message")
   private java.lang.String message;
 
   public java.lang.String getMessage() {
     return message;
   }
-
 
 
   public void setMessage(java.lang.String message) {
@@ -95,6 +103,7 @@ public class Error implements com.sforce.ws.bind.XMLizable {
 
   private boolean statusCode__is_set = false;
 
+  @JsonProperty("statusCode")
   private StatusCode statusCode;
 
   public StatusCode getStatusCode() {
