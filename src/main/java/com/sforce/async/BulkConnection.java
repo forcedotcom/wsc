@@ -103,6 +103,12 @@ public class BulkConnection {
         return createOrUpdateJob(job, endpoint);
     }
 
+    public JobInfo createJob(JobInfo job, ContentType contentType) throws AsyncApiException {
+        String endpoint = getRestEndpoint();
+        endpoint = endpoint + "job/";
+        return createOrUpdateJob(job, endpoint, contentType);
+    }
+
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint) throws AsyncApiException {
         return createOrUpdateJob(job, endpoint, ContentType.XML);
     }
@@ -111,7 +117,7 @@ public class BulkConnection {
         try {
             Transport transport = config.createTransport();
             OutputStream out;
-            if (job.getContentType() == ContentType.JSON || job.getContentType() == ContentType.ZIP_JSON || contentType == ContentType.JSON) {
+            if (contentType == ContentType.ZIP_JSON || contentType == ContentType.JSON) {
                 out = transport.connect(endpoint, getHeaders(JSON_CONTENT_TYPE));
                 serializeToJson (out, job);
                 out.close();
@@ -125,7 +131,7 @@ public class BulkConnection {
             InputStream in = transport.getContent();
 
             if (transport.isSuccessful()) {
-                if (job.getContentType() == ContentType.JSON || job.getContentType() == ContentType.ZIP_JSON || contentType == ContentType.JSON) {
+                if (contentType == ContentType.ZIP_JSON || contentType == ContentType.JSON) {
                     return deserializeJsonToObject(in, JobInfo.class);
                 } else {
                     XmlInputStream xin = new XmlInputStream();
