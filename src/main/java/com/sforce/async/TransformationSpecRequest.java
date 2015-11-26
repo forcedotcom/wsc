@@ -27,6 +27,7 @@
 package com.sforce.async;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.sforce.ws.transport.Transport;
@@ -75,8 +76,9 @@ public class TransformationSpecRequest {
         try {
             csvStream.close();
 
+            InputStream result = transport.getContent();
             if (!transport.isSuccessful()) {
-                BulkConnection.parseAndThrowException(transport.getContent());
+                BulkConnection.parseAndThrowException(result);
             }
         } catch(IOException e) {
             throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);
@@ -94,19 +96,23 @@ public class TransformationSpecRequest {
                 	addColumn(columns[i]);
                 }
         	}
+          nextLine();
         } catch (IOException e) {
             throw new AsyncApiException("Failed to add row", AsyncExceptionCode.ClientInputError, e);
         }
     }
 
-    
-    private void addFirstColumn(String value) throws IOException {
-    	csvStream.write(",".getBytes(UTF8));
-    	addColumn(value);
+    private void nextLine() throws IOException {
+    	csvStream.write("\n".getBytes(UTF8));
     }
     
     private void addColumn(String value) throws IOException {
-    	if (value != null) {
+    	csvStream.write(",".getBytes(UTF8));
+    	addFirstColumn(value);
+    }
+    
+    private void addFirstColumn(String value) throws IOException {
+    	if (value != null && !value.trim().isEmpty()) {
         	csvStream.write("\"".getBytes(UTF8));
         	csvStream.write(value.replace("\"", "\"\"").getBytes(UTF8));
         	csvStream.write("\"".getBytes(UTF8));
