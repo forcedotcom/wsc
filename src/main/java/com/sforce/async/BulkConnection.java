@@ -483,7 +483,8 @@ public class BulkConnection {
             if (ct != null && ct != ContentType.CSV) { throw new AsyncApiException(
                     "This method can only be used with csv content type", AsyncExceptionCode.ClientInputError); }
 
-            OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE));
+            final boolean allowZipToBeGzipped = false;
+            OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE), allowZipToBeGzipped);
             return new TransformationSpecRequest(transport, out);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
