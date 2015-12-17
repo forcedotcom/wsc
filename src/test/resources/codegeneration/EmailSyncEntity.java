@@ -30,6 +30,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
       conflictResolution__is_set = true;
     }
 
+    protected void setConflictResolution(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.verifyElement(__in, conflictResolution__typeInfo)) {
+        setConflictResolution((com.sforce.soap.partner.wsc.EmailSyncConflictResolution)__typeMapper.readObject(__in, conflictResolution__typeInfo, com.sforce.soap.partner.wsc.EmailSyncConflictResolution.class));
+      }
+    }
+
     /**
      * element : dataSetFilter of type {http://www.w3.org/2001/XMLSchema}string
      * java type: java.lang.String
@@ -48,6 +56,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
     public void setDataSetFilter(java.lang.String dataSetFilter) {
       this.dataSetFilter = dataSetFilter;
       dataSetFilter__is_set = true;
+    }
+
+    protected void setDataSetFilter(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.isElement(__in, dataSetFilter__typeInfo)) {
+        setDataSetFilter(__typeMapper.readString(__in, dataSetFilter__typeInfo, java.lang.String.class));
+      }
     }
 
     /**
@@ -70,6 +86,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
       fieldMapping__is_set = true;
     }
 
+    protected void setFieldMapping(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.isElement(__in, fieldMapping__typeInfo)) {
+        setFieldMapping((com.sforce.soap.partner.wsc.EmailSyncFieldMapping[])__typeMapper.readObject(__in, fieldMapping__typeInfo, com.sforce.soap.partner.wsc.EmailSyncFieldMapping[].class));
+      }
+    }
+
     /**
      * element : matchPreference of type {urn:partner.soap.sforce.com}EmailSyncMatchPreference
      * java type: com.sforce.soap.partner.wsc.EmailSyncMatchPreference
@@ -88,6 +112,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
     public void setMatchPreference(com.sforce.soap.partner.wsc.EmailSyncMatchPreference matchPreference) {
       this.matchPreference = matchPreference;
       matchPreference__is_set = true;
+    }
+
+    protected void setMatchPreference(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.verifyElement(__in, matchPreference__typeInfo)) {
+        setMatchPreference((com.sforce.soap.partner.wsc.EmailSyncMatchPreference)__typeMapper.readObject(__in, matchPreference__typeInfo, com.sforce.soap.partner.wsc.EmailSyncMatchPreference.class));
+      }
     }
 
     /**
@@ -110,6 +142,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
       name__is_set = true;
     }
 
+    protected void setName(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.verifyElement(__in, name__typeInfo)) {
+        setName(__typeMapper.readString(__in, name__typeInfo, java.lang.String.class));
+      }
+    }
+
     /**
      * element : recordTypeId of type {urn:partner.soap.sforce.com}ID
      * java type: java.lang.String
@@ -130,6 +170,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
       recordTypeId__is_set = true;
     }
 
+    protected void setRecordTypeId(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.verifyElement(__in, recordTypeId__typeInfo)) {
+        setRecordTypeId(__typeMapper.readString(__in, recordTypeId__typeInfo, java.lang.String.class));
+      }
+    }
+
     /**
      * element : syncDirection of type {urn:partner.soap.sforce.com}EmailSyncDirection
      * java type: com.sforce.soap.partner.wsc.EmailSyncDirection
@@ -148,6 +196,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
     public void setSyncDirection(com.sforce.soap.partner.wsc.EmailSyncDirection syncDirection) {
       this.syncDirection = syncDirection;
       syncDirection__is_set = true;
+    }
+
+    protected void setSyncDirection(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.verifyElement(__in, syncDirection__typeInfo)) {
+        setSyncDirection((com.sforce.soap.partner.wsc.EmailSyncDirection)__typeMapper.readObject(__in, syncDirection__typeInfo, com.sforce.soap.partner.wsc.EmailSyncDirection.class));
+      }
     }
 
     /**
@@ -172,6 +228,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
     public void setSyncFollowed(boolean syncFollowed) {
       this.syncFollowed = syncFollowed;
       syncFollowed__is_set = true;
+    }
+
+    protected void setSyncFollowed(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      __in.peekTag();
+      if (__typeMapper.verifyElement(__in, syncFollowed__typeInfo)) {
+        setSyncFollowed(__typeMapper.readBoolean(__in, syncFollowed__typeInfo, boolean.class));
+      }
     }
 
     /**
@@ -208,38 +272,14 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
 
     protected void loadFields(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
-        __in.peekTag();
-        if (__typeMapper.verifyElement(__in, conflictResolution__typeInfo)) {
-            setConflictResolution((com.sforce.soap.partner.wsc.EmailSyncConflictResolution)__typeMapper.readObject(__in, conflictResolution__typeInfo, com.sforce.soap.partner.wsc.EmailSyncConflictResolution.class));
-        }
-        __in.peekTag();
-        if (__typeMapper.isElement(__in, dataSetFilter__typeInfo)) {
-            setDataSetFilter(__typeMapper.readString(__in, dataSetFilter__typeInfo, java.lang.String.class));
-        }
-        __in.peekTag();
-        if (__typeMapper.isElement(__in, fieldMapping__typeInfo)) {
-            setFieldMapping((com.sforce.soap.partner.wsc.EmailSyncFieldMapping[])__typeMapper.readObject(__in, fieldMapping__typeInfo, com.sforce.soap.partner.wsc.EmailSyncFieldMapping[].class));
-        }
-        __in.peekTag();
-        if (__typeMapper.verifyElement(__in, matchPreference__typeInfo)) {
-            setMatchPreference((com.sforce.soap.partner.wsc.EmailSyncMatchPreference)__typeMapper.readObject(__in, matchPreference__typeInfo, com.sforce.soap.partner.wsc.EmailSyncMatchPreference.class));
-        }
-        __in.peekTag();
-        if (__typeMapper.verifyElement(__in, name__typeInfo)) {
-            setName(__typeMapper.readString(__in, name__typeInfo, java.lang.String.class));
-        }
-        __in.peekTag();
-        if (__typeMapper.verifyElement(__in, recordTypeId__typeInfo)) {
-            setRecordTypeId(__typeMapper.readString(__in, recordTypeId__typeInfo, java.lang.String.class));
-        }
-        __in.peekTag();
-        if (__typeMapper.verifyElement(__in, syncDirection__typeInfo)) {
-            setSyncDirection((com.sforce.soap.partner.wsc.EmailSyncDirection)__typeMapper.readObject(__in, syncDirection__typeInfo, com.sforce.soap.partner.wsc.EmailSyncDirection.class));
-        }
-        __in.peekTag();
-        if (__typeMapper.verifyElement(__in, syncFollowed__typeInfo)) {
-            setSyncFollowed(__typeMapper.readBoolean(__in, syncFollowed__typeInfo, boolean.class));
-        }
+        setConflictResolution(__in, __typeMapper);
+        setDataSetFilter(__in, __typeMapper);
+        setFieldMapping(__in, __typeMapper);
+        setMatchPreference(__in, __typeMapper);
+        setName(__in, __typeMapper);
+        setRecordTypeId(__in, __typeMapper);
+        setSyncDirection(__in, __typeMapper);
+        setSyncFollowed(__in, __typeMapper);
     }
 
     @Override

@@ -26,6 +26,7 @@
 package com.sforce.soap.partner.sobject;
 
 import com.sforce.ws.bind.XmlObject;
+import com.sforce.ws.bind.XmlObjectWrapper;
 import com.sforce.ws.wsdl.Constants;
 import com.sforce.ws.parser.XmlInputStream;
 
@@ -90,6 +91,8 @@ public class SObject extends XmlObject implements ISObject {
         Object o = super.getField(name);
         if (!(o instanceof XmlObject)) {
             return o;
+        } else if (o instanceof XmlObjectWrapper) {
+            return ((XmlObjectWrapper)o).asTyped();
         } else if (!(o instanceof SObject)) {
             SObject sObject = new SObject();
             sObject.cloneFrom((XmlObject)o);

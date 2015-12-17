@@ -43,30 +43,6 @@ public final class SObject {
 
     private final HashMap<String, String> fields = new HashMap<String, String>();
     private final HashMap<String, SObject> fkRefs = new HashMap<String, SObject>();
-    
-    private int maxDepth;
-    
-    public SObject() {
-    	maxDepth = MAX_DEPTH;
-    }
-    
-    /**
-     * Create an SObject with a customized max depth
-     * 
-     * @param maxDepth Allows to configure the max depth of foreign key references
-     */
-    public SObject(int maxDepth) {
-    	// If the new specified maxDepth is lower than the default, use the default.
-    	this.maxDepth = (maxDepth < MAX_DEPTH) ? MAX_DEPTH : maxDepth;
-    }
-    
-    public int getMaxDepth() {
-		return maxDepth;
-	}
-
-	public void setMaxDepth(int maxDepth) {
-		this.maxDepth = maxDepth;
-	}
 
     public Set<String> getFieldNames() {
         return Collections.unmodifiableSet(fields.keySet());
@@ -86,9 +62,9 @@ public final class SObject {
 
         fkRefs.put(name, ref);
     }
-    
-    public SObject getFkRef(String fkRef) {
-        return fkRefs.get(fkRef);
+
+    public Map<String, SObject> getFieldReferences() {
+        return Collections.unmodifiableMap(fkRefs);
     }
 
     /**
@@ -118,8 +94,8 @@ public final class SObject {
     }
 
     public void write(XmlOutputStream out, int depth) throws IOException {
-        if (depth > maxDepth) throw new IllegalStateException(
-                "foreign key reference exceeded the maximum allowed depth of " + maxDepth);
+        if (depth > MAX_DEPTH) throw new IllegalStateException(
+                "foreign key reference exceeded the maximum allowed depth of " + MAX_DEPTH);
         
         out.writeStartTag(BulkConnection.NAMESPACE, "sObject");
         for (Map.Entry<String, String> entry : fields.entrySet()) {
@@ -131,7 +107,7 @@ public final class SObject {
             String relationshipName = entry.getKey();
             SObject ref = entry.getValue();
             out.writeStartTag(BulkConnection.NAMESPACE, relationshipName);
-            ref.write(out, depth + 1);
+            ref.write(out, depth++);
             out.writeEndTag(BulkConnection.NAMESPACE, relationshipName);
         }
         out.writeEndTag(BulkConnection.NAMESPACE, "sObject");

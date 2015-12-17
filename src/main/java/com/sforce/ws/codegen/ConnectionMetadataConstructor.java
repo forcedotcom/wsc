@@ -148,7 +148,19 @@ public class ConnectionMetadataConstructor {
     }
 
     public String sobjectNamespace() {
+    	if(definitions.getApiType() == SfdcApiType.Tooling && !hasSobjectNamespace(definitions)){
+    		return "\"" + definitions.getApiType().getNamespace() + "\"";
+    	}
         return definitions.getApiType() == null ? "null" : "\"" + definitions.getApiType().getSobjectNamespace() + "\"";
+    }
+    
+    private boolean hasSobjectNamespace(Definitions definitions){
+    	for(Schema schema : definitions.getTypes().getSchemas()){
+    		if(definitions.getApiType().getSobjectNamespace().equals(schema.getTargetNamespace())){
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     public String dumpQNames() throws ConnectionException {

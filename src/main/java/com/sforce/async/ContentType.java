@@ -35,6 +35,8 @@ package com.sforce.async;
 public enum ContentType {
     XML,
     CSV,
+    JSON,
     ZIP_XML,
-    ZIP_CSV
+    ZIP_CSV,
+    ZIP_JSON
 }

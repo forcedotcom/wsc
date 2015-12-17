@@ -9,7 +9,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>34.0.1-hf1</version>
+  <version>35.2.7-hf1</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
@@ -57,12 +57,32 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-	  <groupId>org.mockito</groupId>
-	  <artifactId>mockito-all</artifactId>
-	  <version>1.9.5</version>
-	  <scope>test</scope>
-	</dependency> 
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <version>1.9.13</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.9.13</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.7.0</version>
+    </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
+    </profile>
+  </profiles>
   <build>
     <resources>
       <resource>
@@ -95,7 +115,6 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <finalName>${project.build.finalName}-uber</finalName>
               <relocations>
                 <!-- repackage antlr to prevent namespace collision on classpath in core app -->
                 <relocation>
@@ -110,9 +129,20 @@
                 <relocation>
                   <pattern>org.stringtemplate</pattern>
                   <shadedPattern>com.sforce.ws.shade.org.stringtemplate</shadedPattern>
-                </relocation> 
+	            </relocation>
+                <!-- jackson is also in core, prevent namespace collission -->
+                <relocation>
+                  <pattern>org.codehaus.jackson</pattern>
+                  <shadedPattern>com.sforce.ws.shade.org.codehaus.jackson</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.commons</pattern>
+                  <shadedPattern>com.sforce.ws.shade.org.apache.commons</shadedPattern>
+                </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>uber</shadedClassifierName>
             </configuration>
           </execution>
         </executions>
@@ -160,6 +190,9 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
+        <configuration>
+          <additionalparam>${javadoc.opts}</additionalparam>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadoc</id>
@@ -170,7 +203,8 @@
           </execution>
         </executions>
       </plugin>
-      <!-- <plugin>
+      <!-- 
+	  <plugin>
         <artifactId>maven-gpg-plugin</artifactId>
         <version>1.2</version>
         <executions>
@@ -183,7 +217,7 @@
           </execution>
         </executions>
       </plugin>
-	  
+	  -->
       <plugin>
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
@@ -206,7 +240,6 @@
           </execution>
         </executions>
 	    </plugin>
-		-->
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-surefire-plugin</artifactId>

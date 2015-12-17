@@ -45,6 +45,8 @@ public interface Constants {
     String PARTNER_SOBJECT_NS = "urn:sobject.partner.soap.sforce.com";
     String TOOLING_NS = "urn:tooling.soap.sforce.com";
 
+    String TOOLING_SOBJECT_NS = "urn:sobject.tooling.soap.sforce.com";
+    
     String META_SFORCE_NS = "http://soap.sforce.com/2006/04/metadata";
     String CROSS_INSTANCE_SFORCE_NS = "http://soap.sforce.com/2006/05/crossinstance";
     String INTERNAL_SFORCE_NS = "http://soap.sforce.com/2007/07/internal";

@@ -709,7 +709,7 @@ public class TypeMapper {
         return isKeyWord(token) ? "_" + token : token;
     }
 
-    private Class<?> getJavaType(QName qName) throws ConnectionException {
+    Class<?> getJavaType(QName qName) throws ConnectionException {
         Class<?> c = typeCache.get(qName);
 
         if (c == null) {
@@ -766,6 +766,11 @@ public class TypeMapper {
         keywords.add("int");
         keywords.add("double");
         keywords.add("boolean");
+        keywords.add("byte");
+        keywords.add("short");
+        keywords.add("long");
+        keywords.add("float");
+        keywords.add("char");
         return keywords;
     }
 

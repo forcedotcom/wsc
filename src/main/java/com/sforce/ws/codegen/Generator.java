@@ -29,6 +29,7 @@ package com.sforce.ws.codegen;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.jar.*;
 
@@ -297,9 +298,21 @@ abstract public class Generator {
     }
 
     protected String getPackageName(Definitions definitions) {
+    	if(definitions.getApiType() == SfdcApiType.Tooling && !hasSobjectNamespace(definitions)){
+    		return NameMapper.getPackageName(definitions.getApiType().getNamespace(), packagePrefix);
+    	}
         return NameMapper.getPackageName(definitions.getApiType().getSobjectNamespace(), packagePrefix);
     }
 
+    private boolean hasSobjectNamespace(Definitions definitions){
+    	for(Schema schema : definitions.getTypes().getSchemas()){
+    		if(schema.getTargetNamespace().equals(definitions.getApiType().getSobjectNamespace())){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     protected ArrayList<String> getRuntimeClasses(ClassLoader cl) throws IOException {
 
         ArrayList<String> classes = new ArrayList<String>();

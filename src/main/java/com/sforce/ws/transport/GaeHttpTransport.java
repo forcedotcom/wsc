@@ -27,27 +27,16 @@ package com.sforce.ws.transport;
 
 import java.io.*;
 import java.net.URL;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.*;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import com.sforce.ws.ConnectorConfig;
-import com.sforce.ws.MessageHandler;
-import com.sforce.ws.tools.VersionInfo;
-import com.sforce.ws.util.Base64;
 
 import com.google.appengine.api.urlfetch.*;
+import com.sforce.ws.ConnectorConfig;
+import com.sforce.ws.tools.VersionInfo;
+import com.sforce.ws.util.Base64;
 
 /**
  * This class is an implementation of Transport using the Google AppEngine
@@ -74,7 +63,8 @@ public class GaeHttpTransport implements Transport {
     this.connection = URLFetchServiceFactory.getURLFetchService();
   }
 
-  public void setConfig(ConnectorConfig config) {
+  @Override
+public void setConfig(ConnectorConfig config) {
     this.config = config;
   }
 
@@ -147,7 +137,7 @@ public class GaeHttpTransport implements Transport {
     }
 
     FetchOptions fetchOptions = FetchOptions.Builder.withDeadline(config
-        .getReadTimeout() / 1000);
+        .getReadTimeout() / 1000).validateCertificate();
     HTTPRequest request = new HTTPRequest(url, HTTPMethod.POST, fetchOptions);
 
     if (httpHeaders == null
@@ -260,7 +250,8 @@ public class GaeHttpTransport implements Transport {
 
   }
 
-  public boolean isSuccessful() {
+  @Override
+public boolean isSuccessful() {
     return successful;
   }
 
