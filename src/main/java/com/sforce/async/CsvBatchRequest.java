@@ -90,7 +90,7 @@ public class CsvBatchRequest {
             if (transport.isSuccessful()) {
                 return BatchRequest.loadBatchInfo(in);
             } else {
-                BulkConnection.parseAndThrowException(in);
+                BulkConnection.parseAndThrowException(in, ContentType.CSV);
             }
         } catch(IOException e) {
             throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);

@@ -78,7 +78,7 @@ public class TransformationSpecRequest {
 
             InputStream result = transport.getContent();
             if (!transport.isSuccessful()) {
-                BulkConnection.parseAndThrowException(result);
+                BulkConnection.parseAndThrowException(result, ContentType.CSV);
             }
         } catch(IOException e) {
             throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);
