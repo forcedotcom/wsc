@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2013-2015, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -128,7 +128,8 @@ public class BulkConnection {
     }
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint) throws AsyncApiException {
-        return createOrUpdateJob(job, endpoint, ContentType.XML);
+        return createOrUpdateJob(job, endpoint, job.getContentType() == null ? ContentType.XML
+            : job.getContentType());
     }
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint, ContentType contentType) throws AsyncApiException {
