@@ -3,7 +3,7 @@
 The Force.com Web Service Connector (WSC) is a high performing web service client stack implemented using a streaming parser. WSC also makes it much easier to use the Force.com API (Web Services/SOAP or Asynchronous/BULK API). 
 
 ## Building WSC
-    git clone git@github.com:forcedotcom/wsc.git
+    git clone https://github.com/forcedotcom/wsc.git
     mvn clean package
     
 To skip the gpg signing, run the following command
@@ -11,7 +11,7 @@ To skip the gpg signing, run the following command
     mvn clean package -Dgpg.skip
 
 ## Generating Stubs From WSDLs
-    java -classpath target/force-wsc-32.1.1-uber.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
+    java -classpath target/force-wsc-36.1.1-uber.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.
