@@ -334,8 +334,8 @@ public class TypeMapper {
 
     private void writeBigDecimal(XmlOutputStream out, TypeInfo info,
 			BigDecimal value, boolean isSet) throws IOException {
-    	String strValue = value.toString();
-    	writeSimpleType(out, info, "" + strValue, isSet, BigDecimal.class.getName());
+    	String strValue = value.toPlainString();
+    	writeSimpleType(out, info, strValue, isSet, BigDecimal.class.getName());
 	}
 
     public String writeDouble(double value) {
