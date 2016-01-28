@@ -79,7 +79,7 @@ public class BatchRequest {
             if (transport.isSuccessful()) {
                 return loadBatchInfo(in);
             } else {
-                BulkConnection.parseAndThrowException(in);
+                BulkConnection.parseAndThrowException(in, ContentType.XML);
             }
         } catch(IOException e) {
             throw new AsyncApiException("Failed to complete request", AsyncExceptionCode.ClientInputError, e);

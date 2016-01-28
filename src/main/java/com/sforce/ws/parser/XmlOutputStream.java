@@ -39,7 +39,7 @@ import com.sforce.ws.wsdl.Constants;
  * @version 1.0
  * @since 1.0  Nov 30, 2005
  */
-public class XmlOutputStream {
+public class XmlOutputStream implements AutoCloseable {
     private MXSerializer serializer = new MXSerializer();
     private OutputStream out;
 
@@ -116,6 +116,7 @@ public class XmlOutputStream {
         serializer.flush();
     }
 
+    @Override
     public void close() throws IOException {
         flush();
         out.close();

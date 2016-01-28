@@ -26,22 +26,40 @@
 
 package com.sforce.async;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.zip.*;
-
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.xml.namespace.QName;
 
-import com.sforce.ws.*;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
+import com.sforce.ws.MessageHandler;
+import com.sforce.ws.MessageHandlerWithHeaders;
+import com.sforce.ws.bind.CalendarCodec;
 import com.sforce.ws.bind.TypeMapper;
-import com.sforce.ws.parser.*;
+import com.sforce.ws.parser.PullParserException;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.*;
-import com.sforce.ws.bind.CalendarCodec;
 
 
 /**
@@ -110,7 +128,8 @@ public class BulkConnection {
     }
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint) throws AsyncApiException {
-        return createOrUpdateJob(job, endpoint, ContentType.XML);
+        return createOrUpdateJob(job, endpoint, job.getContentType() == null ? ContentType.XML
+            : job.getContentType());
     }
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint, ContentType contentType) throws AsyncApiException {
@@ -141,7 +160,7 @@ public class BulkConnection {
                     return result;
                 }
             } else {
-                parseAndThrowException(in);
+                parseAndThrowException(in, contentType);
             }
         } catch (PullParserException e) {
             throw new AsyncApiException("Failed to create job ", AsyncExceptionCode.ClientInputError, e);
@@ -153,14 +172,22 @@ public class BulkConnection {
         return null;
     }
 
-    static void parseAndThrowException(InputStream in) throws AsyncApiException {
+    static void parseAndThrowException(InputStream in, ContentType type) throws AsyncApiException {
         try {
-            AsyncApiException exception = new AsyncApiException();
+            AsyncApiException exception;
+            if (type == ContentType.XML || type == ContentType.ZIP_XML || type == ContentType.CSV || type == ContentType.ZIP_CSV) {
+                exception = new AsyncApiException();
 
-            XmlInputStream xin = new XmlInputStream();
-            xin.setInput(in, "UTF-8");
+                XmlInputStream xin = new XmlInputStream();
+                xin.setInput(in, "UTF-8");
 
-            exception.load(xin, typeMapper);
+                exception.load(xin, typeMapper);
+            } else if (type == ContentType.JSON || type == ContentType.ZIP_JSON) {
+                JsonParser parser = factory.createJsonParser(in);
+                exception = parser.readValueAs(AsyncApiException.class);
+            } else {
+                throw new AsyncApiException("Server error returned in unknown format", AsyncExceptionCode.ClientInputError);
+            }
             throw exception;
 
         } catch (PullParserException e) {
@@ -205,7 +232,7 @@ public class BulkConnection {
             FileUtil.copy(input, out);
 
             InputStream result = transport.getContent();
-            if (!transport.isSuccessful()) parseAndThrowException(result);
+            if (!transport.isSuccessful()) parseAndThrowException(result, jobInfo.getContentType());
             //xml/json content type
             if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON)
                 return deserializeJsonToObject(result, BatchInfo.class);
@@ -331,7 +358,7 @@ public class BulkConnection {
             FileUtil.copy(input, out);
 
             InputStream result = transport.getContent();
-            if (!transport.isSuccessful()) parseAndThrowException(result);
+            if (!transport.isSuccessful()) parseAndThrowException(result, jobInfo.getContentType());
             return BatchRequest.loadBatchInfo(result);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
@@ -365,7 +392,7 @@ public class BulkConnection {
             FileUtil.copy(input, out);
 
             InputStream result = transport.getContent();
-            if (!transport.isSuccessful()) parseAndThrowException(result);
+            if (!transport.isSuccessful()) parseAndThrowException(result, jobInfo.getContentType());
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create transformation specification", AsyncExceptionCode.ClientInputError, e);
         } catch (ConnectionException e) {
@@ -709,7 +736,13 @@ public class BulkConnection {
         }
 
         if (!success) {
-            parseAndThrowException(in);
+            ContentType type = null;
+            if (connection.getContentType().contains(XML_CONTENT_TYPE)) {
+                type = ContentType.XML;
+            } else if (connection.getContentType().contains(JSON_CONTENT_TYPE)) {
+                type = ContentType.JSON;
+            }
+            parseAndThrowException(in, type);
         }
 
         return in;
