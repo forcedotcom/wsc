@@ -26,19 +26,6 @@
 
 package com.sforce.ws.bind;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 import com.sforce.ws.parser.XmlInputStream;
@@ -50,6 +37,19 @@ import com.sforce.ws.wsdl.Restriction;
 import com.sforce.ws.wsdl.SfdcApiType;
 import com.sforce.ws.wsdl.SimpleType;
 import com.sforce.ws.wsdl.Types;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * This class is used at runtime to bind xml document to java object and java objects
@@ -88,6 +88,7 @@ public class TypeMapper {
         map.put(double.class.getName(), new QName(Constants.SCHEMA_NS, "double"));
         map.put(Double.class.getName(), new QName(Constants.SCHEMA_NS, "double"));
         map.put(Object.class.getName(), new QName(Constants.SCHEMA_NS, "anyType"));
+        map.put(BigDecimal.class.getName(), new QName(Constants.SCHEMA_NS, "decimal"));
         return map;
     }
 
@@ -103,7 +104,7 @@ public class TypeMapper {
         map.put(new QName(Constants.SCHEMA_NS, "time"), Time.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "base64Binary"), "byte[]");
         map.put(new QName(Constants.SCHEMA_NS, "double"), double.class.getName());
-        map.put(new QName(Constants.SCHEMA_NS, "decimal"), double.class.getName());
+        map.put(new QName(Constants.SCHEMA_NS, "decimal"), BigDecimal.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "anyType"), Object.class.getName());
         for (SfdcApiType type : SfdcApiType.values()) {
             map.put(new QName(type.getNamespace(), "ID"), String.class.getName());
@@ -117,7 +118,7 @@ public class TypeMapper {
         map.put(new QName(Constants.SCHEMA_NS, "int"), Integer.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "boolean"), Boolean.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "double"), Double.class.getName());
-        map.put(new QName(Constants.SCHEMA_NS, "decimal"), Double.class.getName());
+        map.put(new QName(Constants.SCHEMA_NS, "decimal"), BigDecimal.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "long"), Long.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "float"), Float.class.getName());
         return map;
@@ -329,6 +330,13 @@ public class TypeMapper {
         strValue = writeDouble(value);
         writeSimpleType(out, info, strValue, isSet, double.class.getName());
     }
+    
+
+    private void writeBigDecimal(XmlOutputStream out, TypeInfo info,
+			BigDecimal value, boolean isSet) throws IOException {
+    	String strValue = value.toPlainString();
+    	writeSimpleType(out, info, strValue, isSet, BigDecimal.class.getName());
+	}
 
     public String writeDouble(double value) {
         String strValue;
@@ -394,12 +402,14 @@ public class TypeMapper {
             writeInt(out, info, (Integer)value, true);
         } else if (value instanceof Boolean) {
             writeBoolean(out, info, (Boolean)value, true);
+        } else if (value instanceof BigDecimal) {
+        	writeBigDecimal(out, info, (BigDecimal)value, true);
         } else {
             writeString(out, info, value.toString(), true);
         }
     }
 
-    private void writeNull(XmlOutputStream out, TypeInfo info) throws IOException {
+	private void writeNull(XmlOutputStream out, TypeInfo info) throws IOException {
         out.writeStartTag(getNamespace(info), info.getName());
         out.writeAttribute(Constants.SCHEMA_INSTANCE_NS, "nil", "true");
         out.writeEndTag(getNamespace(info), info.getName());
@@ -478,6 +488,11 @@ public class TypeMapper {
         return parseDouble(strValue);
     }
 
+    public BigDecimal readDecimal(XmlInputStream in, TypeInfo info, Class<?> type) throws IOException, ConnectionException {
+        String strValue = readString(in, info, type);
+        return parseBigDecimal(strValue);
+    }
+
     public double parseDouble(String strValue) {
         double value;
         if ("NaN".equals(strValue)) {
@@ -502,7 +517,7 @@ public class TypeMapper {
         } else if ("double".equals(localType)) {
             return parseDouble(value);
         } else if ("decimal".equals(localType)) {
-            return parseDouble(value);
+            return parseBigDecimal(value);
         } else if ("long".equals(localType)) {
             return Long.parseLong(value);
         } else if ("time".equals(localType)) {
@@ -520,7 +535,11 @@ public class TypeMapper {
         }
     }
 
-    public Object readObject(XmlInputStream in, TypeInfo info, Class<?> type)
+    private BigDecimal parseBigDecimal(String value) {
+		return new BigDecimal(value);
+	}
+
+	public Object readObject(XmlInputStream in, TypeInfo info, Class<?> type)
             throws ConnectionException, IOException {
 
         Object result;
@@ -633,6 +652,8 @@ public class TypeMapper {
             return readBoolean(in, typeInfo, type);
         } else if (type == double.class || type == Double.class) {
             return readDouble(in, typeInfo, type);
+        } else if (type == BigDecimal.class) {
+            return readDecimal(in, typeInfo, type);
         } else if (type == byte[].class) {
             String str = readString(in, typeInfo, type);
             str = str == null ? "" : str;

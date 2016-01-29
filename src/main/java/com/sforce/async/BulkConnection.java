@@ -128,7 +128,8 @@ public class BulkConnection {
     }
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint) throws AsyncApiException {
-        return createOrUpdateJob(job, endpoint, ContentType.XML);
+        return createOrUpdateJob(job, endpoint, job.getContentType() == null ? ContentType.XML
+            : job.getContentType());
     }
 
     private JobInfo createOrUpdateJob(JobInfo job, String endpoint, ContentType contentType) throws AsyncApiException {
