@@ -90,8 +90,6 @@ public class BulkConnection {
     public static final TypeMapper typeMapper = new TypeMapper();
     private static final JsonFactory factory = new JsonFactory(new ObjectMapper());
 
-    public BulkConnection() {
-    }
 
     public BulkConnection(ConnectorConfig config) throws AsyncApiException {
         if (config == null) {
