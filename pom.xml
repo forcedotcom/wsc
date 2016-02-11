@@ -203,7 +203,8 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+      
+	  <plugin>
         <artifactId>maven-gpg-plugin</artifactId>
         <version>1.2</version>
         <executions>
@@ -216,6 +217,7 @@
           </execution>
         </executions>
       </plugin>
+	  
       <plugin>
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>

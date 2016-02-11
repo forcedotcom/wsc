@@ -447,7 +447,12 @@ public class TypeMapper {
         if (config != null && !config.isValidateSchema()) {
             return isElement(in, info);
         } else {
-            verifyTag(getNamespace(info), info.getName(), in.getNamespace(), in.getName());
+            try {
+                verifyTag(getNamespace(info), info.getName(), in.getNamespace(), in.getName());
+            } catch (ConnectionException ce) {
+                return false;
+            }
+
             return true;
         }
     }
