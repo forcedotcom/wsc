@@ -43,8 +43,6 @@ import java.io.IOException;
  */
 public class ExtendedErrorDetails extends XmlObject {
 
-    private XmlObject xmlObject = new XmlObject();
-
     public ExtendedErrorDetails() {
     }
 
@@ -52,22 +50,13 @@ public class ExtendedErrorDetails extends XmlObject {
 	 * @return the details associated with the field. You can find the fields to expect for 
 	 * the given {@link #getExtendedErrorCode()} in the wsdl, or online documentation. 
 	 */
+	@Override
     public Object getField(String name) {
-        return xmlObject.getField(name);
+        return super.getField(name);
     }
 
     public String getExtendedErrorCode() {
-        return (String)xmlObject.getField("extendedErrorCode");
-    }
-
-    @Override
-    public void write(QName element, XmlOutputStream out, TypeMapper typeMapper) throws IOException {
-        xmlObject.write(element, out, typeMapper);
-    }
-
-	@Override
-    public void load(XmlInputStream in, TypeMapper typeMapper) throws IOException, ConnectionException {
-        xmlObject.load(in, typeMapper);
+        return (String)getField("extendedErrorCode");
     }
 }
 
