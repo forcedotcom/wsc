@@ -1,5 +1,6 @@
+extendedErrorDetails(gen) ::= <<
 /*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2005-2016 salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,35 +24,51 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+package $gen.packageName$;
 
-package com.sforce.ws.codegen;
+import com.sforce.ws.bind.XmlObject;
+import com.sforce.ws.bind.TypeMapper;
+import com.sforce.ws.wsdl.Constants;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.ConnectionException;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.io.IOException;
 
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupDir;
+/**
+ * ExtendedErrorDetails is loosely typed. You can use {@link #getField(String)} to get the information 
+ */
+public class ExtendedErrorDetails extends XmlObject {
 
-import com.sforce.ws.codegen.metadata.ClassMetadata;
-import com.sforce.ws.tools.wsdlc;
+    private XmlObject xmlObject = new XmlObject();
 
-public class AggregateCodeGeneratorTest extends TestCase {
-
-    public void testGenerateSObjectSource() throws Exception {
-        String expectedSource = CodeGeneratorTestUtil.fileToString("AggregateResult.java");
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.AGGREGATE_RESULT);
-        assertNotNull(template);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null));
-        assertEquals(expectedSource, template.render());
+    public ExtendedErrorDetails() {
     }
-    
-    public void testGenerateExtendedSource() throws Exception {
-        String expectedSource = CodeGeneratorTestUtil.fileToString("ExtendedErrorDetails.java");
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.EXTENDED_ERROR_DETAILS);
-        assertNotNull(template);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null));
-        assertEquals(expectedSource, template.render());
+
+	/**
+	 * @return the details associated with the field. You can find the fields to expect for 
+	 * the given {@link #getExtendedErrorCode()} in the wsdl, or online documentation. 
+	 */
+    public Object getField(String name) {
+        return xmlObject.getField(name);
     }
-    
+
+    public String getExtendedErrorCode() {
+        return (String)xmlObject.getField("extendedErrorCode");
+    }
+
+    @Override
+    public void write(QName element, XmlOutputStream out, TypeMapper typeMapper) throws IOException {
+        xmlObject.write(element, out, typeMapper);
+    }
+
+	@Override
+    public void load(XmlInputStream in, TypeMapper typeMapper) throws IOException, ConnectionException {
+        xmlObject.load(in, typeMapper);
+    }
 }
+
+>>

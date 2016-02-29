@@ -28,6 +28,7 @@ package com.sforce.ws.bind;
 
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
+import com.sforce.ws.codegen.Generator;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.types.Time;
@@ -39,6 +40,7 @@ import com.sforce.ws.wsdl.SimpleType;
 import com.sforce.ws.wsdl.Types;
 
 import javax.xml.namespace.QName;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -191,6 +193,11 @@ public class TypeMapper {
         		(SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace) ||
         		 SfdcApiType.Tooling.getSobjectNamespace().equals(namespace))) {
             return true;
+        }
+         
+        if (Generator.EXTENDED_ERROR_DETAILS.equalsIgnoreCase(name)) {
+        	//We use a custom template to generate source for it.
+        	return true;
         }
 
         QName type = new QName(namespace, name);

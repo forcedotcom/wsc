@@ -52,6 +52,7 @@ abstract public class Generator {
     private static final int BUFFER_SIZE_16_KIB = 16 * 1024;
 
     private static final String AGGREGATE_RESULT_JAVA = "AggregateResult.java";
+    private static final String EXTENDED_ERROR_DETAILS_JAVA = "ExtendedErrorDetails.java";
     private static final String SOBJECT_JAVA = "SObject.java";
     private static final String ISOBJECT_JAVA = "ISObject.java";
 
@@ -62,6 +63,7 @@ abstract public class Generator {
     public final static String SIMPLE_TYPE = "simpleType";
     public final static String SOBJECT = "sobject";
     public final static String ISOBJECT = "isobject";
+    public final static String EXTENDED_ERROR_DETAILS = "extendedErrorDetails";
 
     public final static String TYPE = "type";
     public final static String TYPE_INTERFACE = "typeinterface";
@@ -150,6 +152,7 @@ abstract public class Generator {
             if (requiresAggregateResultClass(definitions)) {
                 generateAggregateResultClasses(definitions, dir);
             }
+            generateExtendedErrorDetailsClasses(definitions, dir);
         }
     }
 
@@ -183,7 +186,14 @@ abstract public class Generator {
         ST template = templates.getInstanceOf(AGGREGATE_RESULT);
         javaFiles.add(generate(packageName, AGGREGATE_RESULT_JAVA, gen, template, dir));
     }
-
+    
+    protected void generateExtendedErrorDetailsClasses(Definitions definitions, File dir) throws IOException {
+    	String packageName = NameMapper.getPackageName(definitions.getApiType().getNamespace(), packagePrefix);
+    	ClassMetadata gen = new ClassMetadata(packageName, null);
+        ST template = templates.getInstanceOf(EXTENDED_ERROR_DETAILS);
+        javaFiles.add(generate(packageName, EXTENDED_ERROR_DETAILS_JAVA, gen, template, dir));
+    }
+    
     protected void generateClassFromComplexType(Types types, Schema schema, ComplexType complexType, File dir)
             throws IOException {
         ComplexClassMetadata gen = newTypeMetadataConstructor(types, schema, complexType, dir)
