@@ -26,24 +26,12 @@
 package com.sforce.soap.enterprise;
 
 import com.sforce.ws.bind.XmlObject;
-import com.sforce.ws.bind.TypeMapper;
-import com.sforce.ws.wsdl.Constants;
-import com.sforce.ws.parser.XmlInputStream;
-import com.sforce.ws.parser.XmlOutputStream;
-import com.sforce.ws.ConnectionException;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.io.IOException;
+import com.sforce.soap.enterprise.ExtendedErrorCode;
 
 /**
  * ExtendedErrorDetails is loosely typed. You can use {@link #getField(String)} to get the information 
  */
 public class ExtendedErrorDetails extends XmlObject {
-
-    public ExtendedErrorDetails() {
-    }
 
 	/**
 	 * @return the details associated with the field. You can find the fields to expect for 
@@ -54,7 +42,11 @@ public class ExtendedErrorDetails extends XmlObject {
         return super.getField(name);
     }
 
-    public String getExtendedErrorCode() {
-        return (String)getField("extendedErrorCode");
+    public ExtendedErrorCode getExtendedErrorCode() {
+    	String extendedErrorCode = (String)getField("extendedErrorCode");
+    	if (extendedErrorCode != null) {
+    		return ExtendedErrorCode.valueOf(extendedErrorCode);
+    	}
+        return null;
     }
 }

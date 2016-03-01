@@ -70,6 +70,7 @@ public class TypeMapper {
 
     // True if interfaces are generated for the WSDL
     private boolean generateInterfaces;
+    private boolean generateExtendedErrorCodes;
 
     private static HashMap<String, QName> getJavaXmlMapping() {
         HashMap<String, QName> map = new HashMap<String, QName>();
@@ -197,6 +198,7 @@ public class TypeMapper {
          
         if (Generator.EXTENDED_ERROR_DETAILS.equalsIgnoreCase(name)) {
         	//We use a custom template to generate source for it.
+        	setGenerateExtendedErrorCodes(true);
         	return true;
         }
 
@@ -803,6 +805,14 @@ public class TypeMapper {
 
     public boolean generateInterfaces() {
         return generateInterfaces;
+    }
+    
+    public void setGenerateExtendedErrorCodes(boolean generateExtendedErrorCodes) {
+    	this.generateExtendedErrorCodes = generateExtendedErrorCodes;
+    }
+    
+    public boolean getGenerateExtendedErrorCodes() {
+    	return generateExtendedErrorCodes;
     }
 
     public static class PartialArrayException extends ConnectionException {
