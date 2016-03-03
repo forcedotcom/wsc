@@ -1,5 +1,6 @@
+extendedErrorDetails(gen) ::= <<
 /*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2005-2016 salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,35 +24,32 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+package $gen.packageName$;
 
-package com.sforce.ws.codegen;
+import com.sforce.ws.bind.XmlObject;
+import $gen.packageName$.ExtendedErrorCode;
 
-import junit.framework.TestCase;
+/**
+ * ExtendedErrorDetails is loosely typed. You can use {@link #getField(String)} to get the information 
+ */
+public class ExtendedErrorDetails extends XmlObject {
 
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupDir;
-
-import com.sforce.ws.codegen.metadata.ClassMetadata;
-import com.sforce.ws.tools.wsdlc;
-
-public class AggregateCodeGeneratorTest extends TestCase {
-
-    public void testGenerateSObjectSource() throws Exception {
-        String expectedSource = CodeGeneratorTestUtil.fileToString("AggregateResult.java");
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.AGGREGATE_RESULT);
-        assertNotNull(template);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null));
-        assertEquals(expectedSource, template.render());
+	/**
+	 * @return the details associated with the field. You can find the fields to expect for 
+	 * the given {@link #getExtendedErrorCode()} in the wsdl, or online documentation. 
+	 */
+	@Override
+    public Object getField(String name) {
+        return super.getField(name);
     }
-    
-    public void testGenerateExtendedSource() throws Exception {
-        String expectedSource = CodeGeneratorTestUtil.fileToString("ExtendedErrorDetails.java");
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.EXTENDED_ERROR_DETAILS);
-        assertNotNull(template);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null));
-        assertEquals(expectedSource, template.render());
+
+    public ExtendedErrorCode getExtendedErrorCode() {
+    	String extendedErrorCode = (String)getField("extendedErrorCode");
+    	if (extendedErrorCode != null) {
+    		return ExtendedErrorCode.valueOf(extendedErrorCode);
+    	}
+        return null;
     }
-    
 }
+
+>>

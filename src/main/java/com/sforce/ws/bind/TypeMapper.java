@@ -28,6 +28,7 @@ package com.sforce.ws.bind;
 
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
+import com.sforce.ws.codegen.Generator;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.types.Time;
@@ -39,6 +40,7 @@ import com.sforce.ws.wsdl.SimpleType;
 import com.sforce.ws.wsdl.Types;
 
 import javax.xml.namespace.QName;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -68,6 +70,7 @@ public class TypeMapper {
 
     // True if interfaces are generated for the WSDL
     private boolean generateInterfaces;
+    private boolean generateExtendedErrorCodes;
 
     private static HashMap<String, QName> getJavaXmlMapping() {
         HashMap<String, QName> map = new HashMap<String, QName>();
@@ -191,6 +194,12 @@ public class TypeMapper {
         		(SfdcApiType.Enterprise.getSobjectNamespace().equals(namespace) ||
         		 SfdcApiType.Tooling.getSobjectNamespace().equals(namespace))) {
             return true;
+        }
+         
+        if (Generator.EXTENDED_ERROR_DETAILS.equalsIgnoreCase(name)) {
+        	//We use a custom template to generate source for it.
+        	setGenerateExtendedErrorCodes(true);
+        	return true;
         }
 
         QName type = new QName(namespace, name);
@@ -801,6 +810,14 @@ public class TypeMapper {
 
     public boolean generateInterfaces() {
         return generateInterfaces;
+    }
+    
+    public void setGenerateExtendedErrorCodes(boolean generateExtendedErrorCodes) {
+    	this.generateExtendedErrorCodes = generateExtendedErrorCodes;
+    }
+    
+    public boolean getGenerateExtendedErrorCodes() {
+    	return generateExtendedErrorCodes;
     }
 
     public static class PartialArrayException extends ConnectionException {
