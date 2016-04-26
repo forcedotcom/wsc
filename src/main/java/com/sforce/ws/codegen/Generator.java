@@ -75,8 +75,6 @@ abstract public class Generator {
 
     protected final STGroupDir templates;
     protected boolean generateInterfaces;
-    private boolean generateExtendedErrorDetails;
-
 
     public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix) throws Exception {
         this(packagePrefix, templates, interfacePackagePrefix, '$', '$');
@@ -153,9 +151,9 @@ abstract public class Generator {
             if (requiresAggregateResultClass(definitions)) {
                 generateAggregateResultClasses(definitions, dir);
             }
-            if (typeMapper.getGenerateExtendedErrorCodes()) {
-            	generateExtendedErrorDetailsClasses(definitions, dir);
-            }
+        }
+        if (typeMapper.getGenerateExtendedErrorCodes()) {
+        	generateExtendedErrorDetailsClasses(definitions, dir);
         }
     }
 
