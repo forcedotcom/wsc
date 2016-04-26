@@ -90,6 +90,7 @@ public class BulkConnection {
     public static final TypeMapper typeMapper = new TypeMapper();
     private static final JsonFactory factory = new JsonFactory(new ObjectMapper());
 
+
     public BulkConnection(ConnectorConfig config) throws AsyncApiException {
         if (config == null) {
             throw new AsyncApiException("config can not be null", AsyncExceptionCode.ClientInputError);
@@ -327,7 +328,6 @@ public class BulkConnection {
             if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON) {
                 return deserializeJsonToObject(result, BatchInfo.class);
             }
-
             return BatchRequest.loadBatchInfo(result);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
@@ -509,7 +509,6 @@ public class BulkConnection {
             ContentType ct = job.getContentType();
             if (ct != null && ct != ContentType.CSV) { throw new AsyncApiException(
                     "This method can only be used with csv content type", AsyncExceptionCode.ClientInputError); }
-
             final boolean allowZipToBeGzipped = false;
             OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE), allowZipToBeGzipped);
             return new TransformationSpecRequest(transport, out);
