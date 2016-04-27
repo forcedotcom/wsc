@@ -32,7 +32,7 @@ import $gen.packageName$.ExtendedErrorCode;
 /**
  * ExtendedErrorDetails is loosely typed. You can use {@link #getField(String)} to get the information 
  */
-public class ExtendedErrorDetails extends XmlObject implements IExtendedErrorDetails {
+public class ExtendedErrorDetails extends XmlObject $if(gen.generateInterfaces)$implements IExtendedErrorDetails$endif${
 
 	/**
 	 * @return the details associated with the field. You can find the fields to expect for 
@@ -42,7 +42,8 @@ public class ExtendedErrorDetails extends XmlObject implements IExtendedErrorDet
     public Object getField(String name) {
         return super.getField(name);
     }
-
+    
+	$if(gen.generateInterfaces)$@Override$endif$
     public ExtendedErrorCode getExtendedErrorCode() {
     	String extendedErrorCode = (String)getField("extendedErrorCode");
     	if (extendedErrorCode != null) {

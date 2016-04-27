@@ -192,7 +192,9 @@ abstract public class Generator {
     
     protected void generateExtendedErrorDetailsClasses(Definitions definitions, File dir) throws IOException {
     	String packageName = NameMapper.getPackageName(definitions.getApiType().getNamespace(), packagePrefix);
-    	ClassMetadata gen = new ClassMetadata(packageName, null);
+    	// Lot of nulls are fine here since this is used only in the .st file. 
+    	ComplexClassMetadata gen = new ComplexClassMetadata(packageName, null, null, null, null, null, null, null, typeMapper.generateInterfaces(), null, null);
+    	
         ST template = templates.getInstanceOf(EXTENDED_ERROR_DETAILS);
         javaFiles.add(generate(packageName, EXTENDED_ERROR_DETAILS_JAVA, gen, template, dir));
         if (generateInterfaces) {
