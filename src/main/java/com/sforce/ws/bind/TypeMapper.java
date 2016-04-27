@@ -196,8 +196,8 @@ public class TypeMapper {
             return true;
         }
          
-        if (Generator.EXTENDED_ERROR_DETAILS.equalsIgnoreCase(name)) {
-        	//We use a custom template to generate source for it.
+        if (Generator.EXTENDED_ERROR_DETAILS.equalsIgnoreCase(name) && SfdcApiType.getFromNamespace(namespace) != null) {
+        	//We use a custom template to generate source for it for known SfdcApiTypes. For the rest, generate the default classes which won't be able to use getField(...)
         	setGenerateExtendedErrorCodes(true);
         	return true;
         }
