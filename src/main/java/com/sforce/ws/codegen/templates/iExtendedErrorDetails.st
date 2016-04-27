@@ -1,4 +1,4 @@
-extendedErrorDetails(gen) ::= <<
+iExtendedErrorDetails(gen) ::= <<
 /*
  * Copyright (c) 2005-2016 salesforce.com, inc.
  * All rights reserved.
@@ -32,24 +32,15 @@ import $gen.packageName$.ExtendedErrorCode;
 /**
  * ExtendedErrorDetails is loosely typed. You can use {@link #getField(String)} to get the information 
  */
-public class ExtendedErrorDetails extends XmlObject implements IExtendedErrorDetails {
+public interface IExtendedErrorDetails {
 
 	/**
 	 * @return the details associated with the field. You can find the fields to expect for 
 	 * the given {@link #getExtendedErrorCode()} in the wsdl, or online documentation. 
 	 */
-	@Override
-    public Object getField(String name) {
-        return super.getField(name);
-    }
+    public Object getField(String name);
 
-    public ExtendedErrorCode getExtendedErrorCode() {
-    	String extendedErrorCode = (String)getField("extendedErrorCode");
-    	if (extendedErrorCode != null) {
-    		return ExtendedErrorCode.valueOf(extendedErrorCode);
-    	}
-        return null;
-    }
+    public ExtendedErrorCode getExtendedErrorCode();
 }
 
 >>
