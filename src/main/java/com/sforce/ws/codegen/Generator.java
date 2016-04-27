@@ -53,6 +53,7 @@ abstract public class Generator {
 
     private static final String AGGREGATE_RESULT_JAVA = "AggregateResult.java";
     private static final String EXTENDED_ERROR_DETAILS_JAVA = "ExtendedErrorDetails.java";
+    private static final String IEXTENDED_ERROR_DETAILS_JAVA = "IExtendedErrorDetails.java";
     private static final String SOBJECT_JAVA = "SObject.java";
     private static final String ISOBJECT_JAVA = "ISObject.java";
 
@@ -64,6 +65,7 @@ abstract public class Generator {
     public final static String SOBJECT = "sobject";
     public final static String ISOBJECT = "isobject";
     public final static String EXTENDED_ERROR_DETAILS = "extendedErrorDetails";
+    public final static String IEXTENDED_ERROR_DETAILS = "iExtendedErrorDetails";
 
     public final static String TYPE = "type";
     public final static String TYPE_INTERFACE = "typeinterface";
@@ -190,9 +192,15 @@ abstract public class Generator {
     
     protected void generateExtendedErrorDetailsClasses(Definitions definitions, File dir) throws IOException {
     	String packageName = NameMapper.getPackageName(definitions.getApiType().getNamespace(), packagePrefix);
-    	ClassMetadata gen = new ClassMetadata(packageName, null);
+    	// Lot of nulls are fine here since this is used only in the .st file. 
+    	ComplexClassMetadata gen = new ComplexClassMetadata(packageName, null, null, null, null, null, null, null, typeMapper.generateInterfaces(), null, null);
+    	
         ST template = templates.getInstanceOf(EXTENDED_ERROR_DETAILS);
         javaFiles.add(generate(packageName, EXTENDED_ERROR_DETAILS_JAVA, gen, template, dir));
+        if (generateInterfaces) {
+            ST interfc = templates.getInstanceOf(IEXTENDED_ERROR_DETAILS);
+            javaFiles.add(generate(packageName, IEXTENDED_ERROR_DETAILS_JAVA, gen, interfc, dir));
+        }
     }
     
     protected void generateClassFromComplexType(Types types, Schema schema, ComplexType complexType, File dir)
