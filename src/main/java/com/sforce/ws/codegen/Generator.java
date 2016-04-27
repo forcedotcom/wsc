@@ -154,7 +154,7 @@ abstract public class Generator {
                 generateAggregateResultClasses(definitions, dir);
             }
         }
-        if (typeMapper.getGenerateExtendedErrorCodes()) {
+        if (sfdcApiType != null && typeMapper.getGenerateExtendedErrorCodes()) {
         	generateExtendedErrorDetailsClasses(definitions, dir);
         }
     }
