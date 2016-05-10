@@ -170,10 +170,6 @@ public void setConfig(ConnectorConfig config) {
         request.addHeader(new HTTPHeader(entry.getKey(), entry.getValue()));
       }
     }
-        
-    if (config.isTraceMessage()) {
-      config.getTraceStream().println("WSC: Request configured to have headers " + request.getHeaders());
-    }
 
     return request;
   }

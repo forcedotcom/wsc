@@ -51,11 +51,11 @@ public class JdkHttpTransport implements Transport {
     private HttpURLConnection connection;
     private boolean successful;
     private ConnectorConfig config;
-    private URL url;
+	private URL url;
 
     public JdkHttpTransport() {
     }
-        
+		
     public JdkHttpTransport(ConnectorConfig config) {
         setConfig(config);
     }
@@ -145,7 +145,7 @@ public class JdkHttpTransport implements Transport {
             HashMap<String, String> httpHeaders, boolean enableCompression) throws IOException {
 
         if (config.isTraceMessage()) {
-            config.getTraceStream().println("WSC: Creating a new connection to " + url + " Proxy = " +
+            config.getTraceStream().println( "WSC: Creating a new connection to " + url + " Proxy = " +
                     config.getProxy() + " username " + config.getProxyUsername());
         }
 
@@ -187,10 +187,6 @@ public class JdkHttpTransport implements Transport {
 
         if (config.getConnectionTimeout() != 0) {
             connection.setConnectTimeout(config.getConnectionTimeout());
-        }
-        
-        if (config.isTraceMessage()) {
-            config.getTraceStream().println("WSC: Connection configured to have request properties " + connection.getRequestProperties());
         }
 
         return connection;
