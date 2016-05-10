@@ -23,12 +23,10 @@ public class $gen.className$ $gen.typeExtension$ $gen.interfaceExtension${
 
   private $member.javaType$ $member.fieldName$$member.arraySource$;
 
-  $if(!member.booleanJavaType)$
-    $if(gen.generateInterfaces)$@Override$endif$
-    public $member.javaType$ $member.getMethodName$() {
-      return $member.fieldName$;
-    \}
-  $endif$
+  $if(gen.generateInterfaces)$@Override$endif$
+  public $member.javaType$ $member.getMethodName$() {
+    return $member.fieldName$;
+  \}
 
   $if(member.booleanJavaType)$
   $if(gen.generateInterfaces)$@Override$endif$
