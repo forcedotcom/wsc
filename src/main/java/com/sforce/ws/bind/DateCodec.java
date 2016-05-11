@@ -43,6 +43,7 @@ package com.sforce.ws.bind;
  */
 
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -62,6 +63,9 @@ public class DateCodec {
             new SimpleDateFormat("yyyy-MM-dd");
     //  0123456789 0 123456789
 
+    static {
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     public String getValueAsString(Object value) {
         Date date = value instanceof Date ? (Date) value : ((Calendar) value).getTime();
