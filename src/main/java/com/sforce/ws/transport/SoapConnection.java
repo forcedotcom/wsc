@@ -285,6 +285,8 @@ public class SoapConnection {
                     if (connection != null) {
                         setHeader(tag, headerType, result);
                     }
+                } else {
+                    throw new ConnectionException("Unrecognized header: " + tag.toString());
                 }
             }
 
