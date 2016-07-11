@@ -270,8 +270,13 @@ public class SoapConnection {
                "Header".equals(xin.getName());
     }
 
+    private boolean headerEndTag(XmlInputStream xin) throws ConnectionException {
+        return xin.getEventType() == XmlInputStream.END_TAG &&
+                isHeader(xin);
+    }
+
     private void readSoapHeader(XmlInputStream xin) throws IOException, ConnectionException {
-        while (true) {
+        while (!headerEndTag(xin)) {
             xin.peekTag();
 
             if (xin.getEventType() == XmlInputStream.START_TAG) {
@@ -289,12 +294,8 @@ public class SoapConnection {
                     throw new ConnectionException("Unrecognized header: " + tag.toString());
                 }
             }
-
-            if (xin.getEventType() == XmlInputStream.END_TAG && isHeader(xin)) {
-                xin.next();
-                break;
-            }
         }
+        xin.next();
     }
 
     private void setHeader(QName tag, Class headerType, XMLizable result) {
