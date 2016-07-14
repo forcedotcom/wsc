@@ -2444,7 +2444,7 @@ public int nextToken()
             piTargetEnd = pos - 1 + bufAbsoluteStart;
 
             // [17] PITarget ::= Name - (('X' | 'x') ('M' | 'm') ('L' | 'l'))
-            if ((piTargetEnd - piTargetStart) == 3) {
+            if ((piTargetEnd - piTargetStart) == 3 && piTargetEnd < buf.length) {
               if ((buf[piTargetStart] == 'x' || buf[piTargetStart] == 'X')
                   && (buf[piTargetStart + 1] == 'm' || buf[piTargetStart + 1] == 'M')
                   && (buf[piTargetStart + 2] == 'l' || buf[piTargetStart + 2] == 'L')
