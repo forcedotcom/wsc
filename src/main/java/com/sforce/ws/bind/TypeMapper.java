@@ -45,13 +45,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class is used at runtime to bind xml document to java object and java objects
@@ -574,7 +568,7 @@ public class TypeMapper {
     private Object readArray(XmlInputStream in, TypeInfo result__typeInfo, Class<?> type, boolean partialArray)
             throws IOException, ConnectionException {
 
-        ArrayList<Object> results = new ArrayList<Object>();
+        ArrayList<Object> results = new ArrayList<>();
         Class<?> component = type.getComponentType();
         boolean failed = true;
         Exception exception = null;
@@ -590,30 +584,22 @@ public class TypeMapper {
                 }
             }
             failed = false;
-        } catch (IOException e) {
-            if (!partialArray) {
-                throw e;
-            }
-            exception = e;
-        } catch (ConnectionException e) {
+        } catch (IOException | ConnectionException e) {
             if (!partialArray) {
                 throw e;
             }
             exception = e;
         }
 
-        //Bug #230671
-        //if (results.size() == 1 && results.get(0) == null) {
-            //return null;
-        //}
-
         Object array = Array.newInstance(component, results.size());
-        Object arrayResult = results.toArray((Object[]) array);
+        for (int i = 0; i < results.size(); i++) {
+            Array.set(array, i, results.get(i));
+        }
 
         if (failed) {
-            throw new PartialArrayException(exception.getMessage(), exception, arrayResult);
+            throw new PartialArrayException(exception.getMessage(), exception, array);
         } else {
-            return arrayResult;
+            return array;
         }
     }
 
