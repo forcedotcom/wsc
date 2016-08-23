@@ -103,6 +103,7 @@ $gen.memberMetadataList:{ member |
       };
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[$gen.className$ ");
+$gen.superToString$
       for (i = 0; i < MEMBER_NAMES.length; i++) {
         sb.append(' ')
            .append(MEMBER_NAMES[i])
