@@ -87,14 +87,29 @@ $gen.memberMetadataList: { member |
 $gen.memberMetadataList:{ member |
         $member.setMethodName$(__in, __typeMapper);
 }$    }
+
+    private static final String[] MEMBER_NAMES = {
+      $gen.memberMetadataList: { member |
+      "$member.fieldName$",
+}$
+    };
     
     @Override
     public String toString() {
+      Object[] memberValues = {
+      $gen.memberMetadataList: { member |
+        $member.fieldName$,
+}$
+      };
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[$gen.className$ ");
-      $gen.superToString$$gen.memberMetadataList: { member |
-      sb.append(" $member.fieldName$='").append(com.sforce.ws.util.Verbose.toString($member.fieldName$)).append("'\\n");
-}$      sb.append("]\\n");
+      for (i = 0; i < MEMBER_NAMES.length; i++) {
+        sb.append(' ')
+           .append(MEMBER_NAMES[i])
+           .append("='")
+           .append(com.sforce.ws.util.Verbose.toString(memberValues[i]))
+           .append("'\\n");
+      }
       return sb.toString();
     }
     

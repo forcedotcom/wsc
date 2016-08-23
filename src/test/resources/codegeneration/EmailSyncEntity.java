@@ -282,19 +282,40 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
         setSyncFollowed(__in, __typeMapper);
     }
 
+    private static final String[] MEMBER_NAMES = {
+            "conflictResolution",
+            "dataSetFilter",
+            "fieldMapping",
+            "matchPreference",
+            "name",
+            "recordTypeId",
+            "syncDirection",
+            "syncFollowed",
+
+    };
+
     @Override
     public String toString() {
+      Object[] memberValues = {
+              conflictResolution,
+              dataSetFilter,
+              fieldMapping,
+              matchPreference,
+              name,
+              recordTypeId,
+              syncDirection,
+              syncFollowed,
+
+      };
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[EmailSyncEntity ");
-      sb.append(" conflictResolution='").append(com.sforce.ws.util.Verbose.toString(conflictResolution)).append("'\n");
-      sb.append(" dataSetFilter='").append(com.sforce.ws.util.Verbose.toString(dataSetFilter)).append("'\n");
-      sb.append(" fieldMapping='").append(com.sforce.ws.util.Verbose.toString(fieldMapping)).append("'\n");
-      sb.append(" matchPreference='").append(com.sforce.ws.util.Verbose.toString(matchPreference)).append("'\n");
-      sb.append(" name='").append(com.sforce.ws.util.Verbose.toString(name)).append("'\n");
-      sb.append(" recordTypeId='").append(com.sforce.ws.util.Verbose.toString(recordTypeId)).append("'\n");
-      sb.append(" syncDirection='").append(com.sforce.ws.util.Verbose.toString(syncDirection)).append("'\n");
-      sb.append(" syncFollowed='").append(com.sforce.ws.util.Verbose.toString(syncFollowed)).append("'\n");
-      sb.append("]\n");
+      for (i = 0; i < MEMBER_NAMES.length; i++) {
+        sb.append(' ')
+           .append(MEMBER_NAMES[i])
+           .append("='")
+           .append(com.sforce.ws.util.Verbose.toString(memberValues[i]))
+           .append("'\n");
+      }
       return sb.toString();
     }
 
