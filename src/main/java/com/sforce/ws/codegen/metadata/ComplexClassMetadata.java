@@ -15,6 +15,7 @@
  */
 package com.sforce.ws.codegen.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,6 +69,19 @@ public class ComplexClassMetadata extends ClassMetadata {
 
     public List<MemberMetadata> getMemberMetadataList() {
         return this.memberMetadataList;
+    }
+
+    private final static int MAX_SPLIT_SIZE = 500;
+    public List<List<MemberMetadata>> getSplitMemberMetadataList() {
+        int start = 0;
+        int end = 0;
+        ArrayList<List<MemberMetadata>> result = new ArrayList<>(1+(memberMetadataList.size()/MAX_SPLIT_SIZE));
+        while (start < memberMetadataList.size()) {
+            end = Math.min(start+MAX_SPLIT_SIZE, memberMetadataList.size());
+            result.add(memberMetadataList.subList(start, end));
+            start = end;
+        }
+        return result;
     }
 
     public boolean getGenerateInterfaces() {
