@@ -299,41 +299,30 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
         setSyncFollowed(__in, __typeMapper);
     }
 
-    private static final String[] MEMBER_NAMES = {
-            "conflictResolution",
-            "dataSetFilter",
-            "fieldMapping",
-            "matchPreference",
-            "name",
-            "recordTypeId",
-            "syncDirection",
-            "syncFollowed",
-
-    };
-
     @Override
     public String toString() {
-      Object[] memberValues = {
-              conflictResolution,
-              dataSetFilter,
-              fieldMapping,
-              matchPreference,
-              name,
-              recordTypeId,
-              syncDirection,
-              syncFollowed,
-
-      };
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[EmailSyncEntity ");
-      for (i = 0; i < MEMBER_NAMES.length; i++) {
-        sb.append(' ')
-           .append(MEMBER_NAMES[i])
-           .append("='")
-           .append(com.sforce.ws.util.Verbose.toString(memberValues[i]))
-           .append("'\n");
-      }
+      toString1(sb);
+
       return sb.toString();
+    }
+
+    private void toString1(StringBuilder sb) {
+      toStringHelper(sb, "conflictResolution", conflictResolution);
+      toStringHelper(sb, "dataSetFilter", dataSetFilter);
+      toStringHelper(sb, "fieldMapping", fieldMapping);
+      toStringHelper(sb, "matchPreference", matchPreference);
+      toStringHelper(sb, "name", name);
+      toStringHelper(sb, "recordTypeId", recordTypeId);
+      toStringHelper(sb, "syncDirection", syncDirection);
+      toStringHelper(sb, "syncFollowed", syncFollowed);
+
+    }
+
+
+    private void toStringHelper(StringBuilder sb, String name, Object value) {
+      sb.append('"').append(name).append('"').append('=').append(com.sforce.ws.util.Verbose.toString(value));
     }
 
     @SuppressWarnings("unchecked")

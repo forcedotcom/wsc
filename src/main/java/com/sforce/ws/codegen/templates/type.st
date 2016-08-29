@@ -88,30 +88,25 @@ $gen.memberMetadataList:{ member |
         $member.setMethodName$(__in, __typeMapper);
 }$    }
 
-    private static final String[] MEMBER_NAMES = {
-      $gen.memberMetadataList: { member |
-      "$member.fieldName$",
-}$
-    };
-    
     @Override
     public String toString() {
-      Object[] memberValues = {
-      $gen.memberMetadataList: { member |
-        $member.fieldName$,
-}$
-      };
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[$gen.className$ ");
-$gen.superToString$
-      for (i = 0; i < MEMBER_NAMES.length; i++) {
-        sb.append(' ')
-           .append(MEMBER_NAMES[i])
-           .append("='")
-           .append(com.sforce.ws.util.Verbose.toString(memberValues[i]))
-           .append("'\\n");
-      }
+      $gen.superToString$
+      $gen.splitMemberMetadataList: { split | toString$i$(sb);
+}$
       return sb.toString();
+    }
+
+$gen.splitMemberMetadataList: { split |
+    private void toString$i$(StringBuilder sb) {
+      $split:{ member | toStringHelper(sb, "$member.fieldName$", $member.fieldName$);
+}$
+    \}
+}$
+    
+    private void toStringHelper(StringBuilder sb, String name, Object value) {
+      sb.append('"').append(name).append('"').append('=').append(com.sforce.ws.util.Verbose.toString(value));
     }
     
     $if(gen.generateInterfaces && gen.hasArrayField)$
