@@ -286,16 +286,26 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable {
     public String toString() {
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[EmailSyncEntity ");
-      sb.append(" conflictResolution='").append(com.sforce.ws.util.Verbose.toString(conflictResolution)).append("'\n");
-      sb.append(" dataSetFilter='").append(com.sforce.ws.util.Verbose.toString(dataSetFilter)).append("'\n");
-      sb.append(" fieldMapping='").append(com.sforce.ws.util.Verbose.toString(fieldMapping)).append("'\n");
-      sb.append(" matchPreference='").append(com.sforce.ws.util.Verbose.toString(matchPreference)).append("'\n");
-      sb.append(" name='").append(com.sforce.ws.util.Verbose.toString(name)).append("'\n");
-      sb.append(" recordTypeId='").append(com.sforce.ws.util.Verbose.toString(recordTypeId)).append("'\n");
-      sb.append(" syncDirection='").append(com.sforce.ws.util.Verbose.toString(syncDirection)).append("'\n");
-      sb.append(" syncFollowed='").append(com.sforce.ws.util.Verbose.toString(syncFollowed)).append("'\n");
-      sb.append("]\n");
+      toString1(sb);
+
       return sb.toString();
+    }
+
+    private void toString1(StringBuilder sb) {
+      toStringHelper(sb, "conflictResolution", conflictResolution);
+      toStringHelper(sb, "dataSetFilter", dataSetFilter);
+      toStringHelper(sb, "fieldMapping", fieldMapping);
+      toStringHelper(sb, "matchPreference", matchPreference);
+      toStringHelper(sb, "name", name);
+      toStringHelper(sb, "recordTypeId", recordTypeId);
+      toStringHelper(sb, "syncDirection", syncDirection);
+      toStringHelper(sb, "syncFollowed", syncFollowed);
+
+    }
+
+
+    private void toStringHelper(StringBuilder sb, String name, Object value) {
+      sb.append('"').append(name).append('"').append('=').append(com.sforce.ws.util.Verbose.toString(value));
     }
 
 }

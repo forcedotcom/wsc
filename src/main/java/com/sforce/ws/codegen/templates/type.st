@@ -87,15 +87,26 @@ $gen.memberMetadataList: { member |
 $gen.memberMetadataList:{ member |
         $member.setMethodName$(__in, __typeMapper);
 }$    }
-    
+
     @Override
     public String toString() {
       java.lang.StringBuilder sb = new java.lang.StringBuilder();
       sb.append("[$gen.className$ ");
-      $gen.superToString$$gen.memberMetadataList: { member |
-      sb.append(" $member.fieldName$='").append(com.sforce.ws.util.Verbose.toString($member.fieldName$)).append("'\\n");
-}$      sb.append("]\\n");
+      $gen.superToString$
+      $gen.splitMemberMetadataList: { split | toString$i$(sb);
+}$
       return sb.toString();
+    }
+
+$gen.splitMemberMetadataList: { split |
+    private void toString$i$(StringBuilder sb) {
+      $split:{ member | toStringHelper(sb, "$member.fieldName$", $member.fieldName$);
+}$
+    \}
+}$
+    
+    private void toStringHelper(StringBuilder sb, String name, Object value) {
+      sb.append('"').append(name).append('"').append('=').append(com.sforce.ws.util.Verbose.toString(value));
     }
     
     $if(gen.generateInterfaces && gen.hasArrayField)$
