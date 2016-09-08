@@ -31,12 +31,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import com.sforce.ws.tools.ToolsException;
 import com.sforce.ws.util.Verbose;
 
 /**
- * 
  * @author hhildebrand
  * @since 184
  */
@@ -44,7 +45,7 @@ class Compiler {
     private Object main;
     private Method method;
 
-    public Compiler() throws ToolsException { 
+    public Compiler() throws ToolsException {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         if (loader == null) {
@@ -55,30 +56,16 @@ class Compiler {
             findCompiler(loader);
         } catch (ClassNotFoundException e) {
             findCompilerInToolsJar(loader);
-        } catch (NoSuchMethodException e) {
-            throwToolsexception(e);
-        } catch (IllegalAccessException e) {
-            throwToolsexception(e);
-        } catch (InstantiationException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
             throwToolsexception(e);
         }
     }
 
     private void findCompilerInToolsJar(ClassLoader loader) throws ToolsException {
         try {
-            ToolsJarClassLoader tloader = new ToolsJarClassLoader(loader);
+            ClassLoader tloader = new URLClassLoader(new URL[]{toolsJar()}, loader);
             findCompiler(tloader);
-       } catch (MalformedURLException e) {
-            throwToolsexception(e);
-        } catch (NoSuchMethodException e) {
-            throwToolsexception(e);
-        } catch (IllegalAccessException e) {
-            throwToolsexception(e);
-        } catch (InstantiationException e) {
-            throwToolsexception(e);
-        } catch (ClassNotFoundException e) {
-            throwToolsexception(e);
-        } catch (IOException e) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
             throwToolsexception(e);
         }
     }
@@ -106,8 +93,9 @@ class Compiler {
 
         Verbose.log("Compiling to target " + target + "... ");
 
-        String[] args = { "-g", "-d", dir.getAbsolutePath(), "-sourcepath", dir.getAbsolutePath(),
-                "-target", target, "-source", target };
+        String[] args =
+                {"-g", "-d", dir.getAbsolutePath(), "-sourcepath", dir.getAbsolutePath(), "-target", target, "-source",
+                 target};
 
         String[] call = new String[args.length + files.length];
 
@@ -120,12 +108,23 @@ class Compiler {
             if (result != 0) {
                 throw new ToolsException("Failed to compile");
             }
-        } catch (IllegalAccessException e) {
-            throw new ToolsException("Failed to compile: " + e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ToolsException("Failed to compile: " + e);
         }
 
         Verbose.log("Compiled " + files.length + " java files.");
+    }
+
+    private static URL toolsJar() throws MalformedURLException {
+        String javaHome = System.getProperty("java.home");
+        if (javaHome.endsWith("jre")) {
+            javaHome = javaHome.substring(0, javaHome.length() - 3);
+        }
+        if (!javaHome.endsWith("/")) {
+            javaHome = javaHome + "/";
+        }
+        String tj = javaHome + "lib/tools.jar";
+        File tjf = new File(tj);
+        return tjf.toURI().toURL();
     }
 }

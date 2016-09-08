@@ -9,7 +9,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>38.0.1</version>
+  <version>38.0.2</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
@@ -246,6 +246,7 @@
 			<version>2.7.1</version>
 			<configuration>
 				<forkMode>always</forkMode>
+                <useManifestOnlyJar>false</useManifestOnlyJar>
 			</configuration>
 		</plugin>
     </plugins>
