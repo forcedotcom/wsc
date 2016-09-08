@@ -95,6 +95,7 @@ $gen.memberMetadataList:{ member |
       $gen.superToString$
       $gen.splitMemberMetadataList: { split | toString$i$(sb);
 }$
+      sb.append("]\\n");
       return sb.toString();
     }
 
@@ -106,7 +107,7 @@ $gen.splitMemberMetadataList: { split |
 }$
     
     private void toStringHelper(StringBuilder sb, String name, Object value) {
-      sb.append('"').append(name).append('"').append('=').append(com.sforce.ws.util.Verbose.toString(value));
+      sb.append(' ').append(name).append("='").append(com.sforce.ws.util.Verbose.toString(value)).append("'\\n");
     }
     
     $if(gen.generateInterfaces && gen.hasArrayField)$
