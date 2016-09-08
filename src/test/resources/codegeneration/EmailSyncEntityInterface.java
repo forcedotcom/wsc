@@ -305,6 +305,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       sb.append("[EmailSyncEntity ");
       toString1(sb);
 
+      sb.append("]\n");
       return sb.toString();
     }
 
@@ -322,7 +323,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
 
 
     private void toStringHelper(StringBuilder sb, String name, Object value) {
-      sb.append('"').append(name).append('"').append('=').append(com.sforce.ws.util.Verbose.toString(value));
+      sb.append(' ').append(name).append("='").append(com.sforce.ws.util.Verbose.toString(value)).append("'\n");
     }
 
     @SuppressWarnings("unchecked")
