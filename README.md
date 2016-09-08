@@ -11,7 +11,7 @@ To skip the gpg signing, run the following command
     mvn clean package -Dgpg.skip
 
 ## Generating Stubs From WSDLs
-    java -classpath target/force-wsc-38.0.2-uber.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
+    java -classpath target/force-wsc-38.0.3-uber.jar com.sforce.ws.tools.wsdlc <inputwsdlfile> <outputjarfile>
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.
