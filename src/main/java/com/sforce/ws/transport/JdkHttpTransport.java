@@ -214,10 +214,7 @@ public class JdkHttpTransport implements Transport {
         statusCode = connection.getResponseCode();
         successful = statusCode < 400;
         
-        headers = new HashMap<String, Collection<String>>();
-        for (Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
-            headers.put(entry.getKey(), entry.getValue());
-        }
+        headers = new HashMap<String, Collection<String>>(connection.getHeaderFields());
 
         String encoding = connection.getHeaderField("Content-Encoding");
 
