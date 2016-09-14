@@ -26,12 +26,10 @@
 
 package com.sforce.ws.transport;
 
-import com.sforce.ws.ConnectorConfig;
+import java.io.*;
+import java.util.*;
 
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.HashMap;
+import com.sforce.ws.ConnectorConfig;
 
 /**
  * This interface defines a Transport.
@@ -65,9 +63,24 @@ public interface Transport {
 
     /**
      * checks whether the response from the remote server is successful or not.
+     * This method must be called after getContent.
      * @return true if the call was successful
      */
     boolean isSuccessful();
+    
+    /**
+     * returns the status code received from the endpoint. This method must be
+     * called after getContent.
+     * @return the HTTP status code
+     */
+    int getStatusCode();
+    
+    /**
+     * return the response headers received from the endpoint. This method
+     * must be called after getContent.
+     * @return
+     */
+    Map<String, Collection<String>> getHeaders(); 
 
     OutputStream connect(String endpoint, HashMap<String, String> headers) throws IOException;
 

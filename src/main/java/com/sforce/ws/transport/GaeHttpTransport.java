@@ -58,6 +58,8 @@ public class GaeHttpTransport implements Transport {
   private URL url;
 
   private ByteArrayOutputStream output;
+  private int statusCode;
+  private Map<String, Collection<String>> headers;
 
   public GaeHttpTransport() {
     this.connection = URLFetchServiceFactory.getURLFetchService();
@@ -230,7 +232,20 @@ public void setConfig(ConnectorConfig config) {
       }
       in = new ByteArrayInputStream(bytes);
 
-      this.successful = resp.getResponseCode() < 400;
+      this.statusCode = resp.getResponseCode();
+      this.successful = this.statusCode < 400;
+      
+      this.headers = new HashMap<String, Collection<String>>();
+      for (HTTPHeader header : resp.getHeadersUncombined()) {
+          String key = header.getName();
+          String value = header.getValue();
+          if (headers.containsKey(key)) {
+              headers.get(key).add(value);
+          } else {
+              headers.put(header.getName(), Arrays.asList(value));
+          }
+      }
+      
       String encoding = getHeader(resp, "Content-Encoding");
 
       if (config.getMaxResponseSize() > 0) {
@@ -255,8 +270,18 @@ public void setConfig(ConnectorConfig config) {
   }
 
   @Override
-public boolean isSuccessful() {
+  public boolean isSuccessful() {
     return successful;
+  }
+
+  @Override
+  public int getStatusCode() {
+    return statusCode;
+  }
+
+  @Override
+  public Map<String, Collection<String>> getHeaders() {
+    return headers;
   }
 
 }
