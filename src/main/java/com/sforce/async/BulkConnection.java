@@ -736,10 +736,13 @@ public class BulkConnection {
 
         if (!success) {
             ContentType type = null;
-            if (connection.getContentType().contains(XML_CONTENT_TYPE)) {
-                type = ContentType.XML;
-            } else if (connection.getContentType().contains(JSON_CONTENT_TYPE)) {
-                type = ContentType.JSON;
+            String contentTypeHeader = connection.getContentType();
+            if (contentTypeHeader != null) {
+                if (contentTypeHeader.contains(XML_CONTENT_TYPE)) {
+                    type = ContentType.XML;
+                } else if (contentTypeHeader.contains(JSON_CONTENT_TYPE)) {
+                    type = ContentType.JSON;
+                }
             }
             parseAndThrowException(in, type);
         }
