@@ -32,6 +32,7 @@ public enum OperationEnum {
     update,
     delete,
     hardDelete,
-    query
+    query,
+    queryAll
 }
 
