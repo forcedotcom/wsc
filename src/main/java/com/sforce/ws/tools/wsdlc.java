@@ -79,6 +79,12 @@ public class wsdlc extends Generator {
                            STGroupDir templates, String destDir, boolean compile) throws Exception, ToolsException,
             MalformedURLException, WsdlParseException, IOException {
         wsdlc wsc = new wsdlc(packagePrefix, templates);
+        
+        if(destJarFilename.contains("/") == false)
+        {
+        	destJarFilename = System.getProperty("user.dir")+"/"+destJarFilename;
+        }
+        
         File destJar = new File(destJarFilename);
         if (destJar.exists()) {
             if (!destJar.delete()) { throw new ToolsException(String.format(
