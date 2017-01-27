@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013, salesforce.com, inc.
+/*
+ * Copyright (c) 2017, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -32,11 +32,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 import com.sforce.ws.bind.XMLizable;
 import com.sforce.ws.tools.wsdlc;
@@ -59,28 +56,14 @@ public class ToStringTest {
         File wsdl = CodeGeneratorTestUtil.getFileFromResource("ToStringTest.wsdl");
 
         tempPath = Files.createTempDirectory("ToStringTest");
-        wsdlc.run(wsdl.getAbsolutePath(), "test.jar", null, false, new STGroupDir(TEMPLATE_DIR, '$', '$'),
-                  tempPath.toAbsolutePath().toString(), true);
-        tempPath.resolve("test.jar");
+        wsdlc.run(wsdl.getAbsolutePath(), tempPath.resolve("test.jar").toString(), null, false,
+                  new STGroupDir(TEMPLATE_DIR, '$', '$'), tempPath.toAbsolutePath().toString(), true);
         classLoader = new URLClassLoader(new URL[]{tempPath.toUri().toURL()}, ToStringTest.class.getClassLoader());
     }
 
     @AfterClass
     public static void cleanup() throws IOException {
-        Files.walkFileTree(tempPath, new SimpleFileVisitor<Path>() {
-
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        CodeGeneratorTestUtil.cleanupDirectory(tempPath);
     }
 
     @Test
