@@ -275,7 +275,6 @@ public class PartnerConnection {
        throws com.sforce.ws.ConnectionException {
     com.sforce.ws.transport.SoapConnection __connection = newConnection();
     com.sforce.soap.partner.wsc130.Retrieve_element __request = new com.sforce.soap.partner.wsc130.Retrieve_element();
-    com.sforce.soap.partner.wsc130.RetrieveResponse_element __response = new com.sforce.soap.partner.wsc130.RetrieveResponse_element();
 
     __request.setFieldList(fieldList);
     __request.setSObjectType(sObjectType);
@@ -288,7 +287,7 @@ public class PartnerConnection {
 
     addHeaders(__connection);
 
-    __response = (com.sforce.soap.partner.wsc130.RetrieveResponse_element) __connection.send("",
+    com.sforce.soap.partner.wsc130.RetrieveResponse_element __response = (com.sforce.soap.partner.wsc130.RetrieveResponse_element) __connection.send("",
        retrieve_qname, __request, retrieveResponse_qname,
        com.sforce.soap.partner.wsc130.RetrieveResponse_element.class);
 

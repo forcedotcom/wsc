@@ -88,7 +88,6 @@ $gen.operations: { op |
        throws com.sforce.ws.ConnectionException {
     com.sforce.ws.transport.SoapConnection __connection = newConnection();
     $op.requestType$ __request = new $op.requestType$();
-    $if(op.hasReturnType)$$op.responseType$ __response = new $op.responseType$();$endif$
 
 $op.elements: { ael |
     __request.$ael.setMethod$($ael.name$);
@@ -98,7 +97,7 @@ $op.headers: { header |
     }$
     addHeaders(__connection);
 
-    $if(op.hasReturnType)$__response = ($op.responseType$) $endif$__connection.send($op.soapAction$,
+    $if(op.hasReturnType)$$op.responseType$ __response = ($op.responseType$) $endif$__connection.send($op.soapAction$,
        $op.requestName$, __request, $op.responseName$,
        $op.responseType$.class);
 
