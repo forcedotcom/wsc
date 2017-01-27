@@ -28,63 +28,60 @@ package com.sforce.ws.codegen;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicReference;
 
-import com.sforce.ws.bind.XMLizable;
 import com.sforce.ws.tools.wsdlc;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.stringtemplate.v4.STGroupDir;
 
 import static com.sforce.ws.tools.wsdlc.TEMPLATE_DIR;
 
 @SuppressWarnings("unchecked")
-public class ToStringTest {
-    private static ClassLoader classLoader;
+public class VoidReturnTest {
     private static Path tempPath;
 
-    @BeforeClass
-    public static void init() throws Exception {
-        File wsdl = CodeGeneratorTestUtil.getFileFromResource("ToStringTest.wsdl");
-
-        tempPath = Files.createTempDirectory("ToStringTest");
-        wsdlc.run(wsdl.getAbsolutePath(), tempPath.resolve("test.jar").toString(), null, false,
-                  new STGroupDir(TEMPLATE_DIR, '$', '$'), tempPath.toAbsolutePath().toString(), true);
-        classLoader = new URLClassLoader(new URL[]{tempPath.toUri().toURL()}, ToStringTest.class.getClassLoader());
+    @Before
+    public void setUp() throws Exception {
+        tempPath = Files.createTempDirectory(getClass().getSimpleName());
     }
 
-    @AfterClass
-    public static void cleanup() throws IOException {
+    @After
+    public void tearDown() throws IOException {
         CodeGeneratorTestUtil.cleanupDirectory(tempPath);
     }
 
     @Test
-    public void testMultipleAttributes()
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException,
-                   NoSuchMethodException {
-        Class<? extends XMLizable> type =
-                (Class<? extends XMLizable>) classLoader.loadClass("com.sforce.soap.purchaseOrder.USAddress");
-        XMLizable object = type.newInstance();
-        PropertyUtils.setProperty(object, "name", "foo");
-        PropertyUtils.setProperty(object, "street", "bar");
-        PropertyUtils.setProperty(object, "city", "baz");
-        PropertyUtils.setProperty(object, "state", "foo");
-        PropertyUtils.setProperty(object, "zip", new BigDecimal(12345));
-        Assert.assertEquals("[USAddress  name='foo'\n street='bar'\n city='baz'\n state='foo'\n zip='12345'\n]\n",
-                            object.toString());
-    }
+    public void testVoidReturnValue() throws Exception {
+        File wsdl = CodeGeneratorTestUtil.getFileFromResource("VoidReturnTest.wsdl");
+        File connection = CodeGeneratorTestUtil.getFileFromResource("codegeneration/VoidReturnConnection.txt");
 
-    @Test
-    public void testBigType() throws ClassNotFoundException {
-        classLoader.loadClass("com.sforce.soap.purchaseOrder.BigType");
+        wsdlc.run(wsdl.getAbsolutePath(), tempPath.resolve("test.jar").toAbsolutePath().toString(), null, false,
+                  new STGroupDir(TEMPLATE_DIR, '$', '$'), tempPath.toAbsolutePath().toString(), true);
+
+        final AtomicReference<File> generatedConnection = new AtomicReference<>();
+
+        Files.walkFileTree(tempPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (file.endsWith("SoapConnection.java")) {
+                    generatedConnection.set(file.toFile());
+                    return FileVisitResult.TERMINATE;
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        Assert.assertNotNull(generatedConnection.get());
+        Assert.assertEquals(CodeGeneratorTestUtil.getSourceAsStr(connection),
+                            CodeGeneratorTestUtil.getSourceAsStr(generatedConnection.get()));
     }
 
 }

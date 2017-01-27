@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://doc.sample.com/docSample"
+                  targetNamespace="http://doc.sample.com/docSample"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:types>
+
+
+        <s:schema elementFormDefault="qualified" targetNamespace="http://doc.sample.com/docSample">
+            <s:element name="EchoString">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="input" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+
+            <s:element name="Response">
+                <s:complexType>
+                </s:complexType>
+            </s:element>
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="EchoStringSoapIn">
+        <wsdl:part name="parameters" element="tns:EchoString" />
+    </wsdl:message>
+    <wsdl:message name="EchoStringSoapOut">
+        <wsdl:part name="output" element="tns:Response" />
+    </wsdl:message>
+    <wsdl:portType name="DocSamplePortType">
+        <wsdl:operation name="EchoString">
+            <wsdl:input message="tns:EchoStringSoapIn" />
+            <wsdl:output message="tns:EchoStringSoapOut" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="DocSampleBinding" type="tns:DocSamplePortType">
+        <wsdl:operation name="EchoString">
+            <soap:operation soapAction="urn:dotnet.callouttest.soap.sforce.com/EchoString" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="DocSample">
+        <wsdl:port name="DocSamplePort" binding="tns:DocSampleBinding">
+            <soap:address location="http://www.qaresponder.info/WebServices/DocSample.asmx" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
