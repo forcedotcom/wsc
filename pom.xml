@@ -172,6 +172,11 @@
           <includes>
             <include>**</include>
           </includes>
+          <archive>
+            <manifest>
+              <mainClass>com.sforce.ws.tools.wsdlc</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
       <plugin>
