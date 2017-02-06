@@ -84,6 +84,7 @@
     </profile>
   </profiles>
   <build>
+  <defaultGoal>install</defaultGoal>
     <resources>
       <resource>
         <filtering>false</filtering>
