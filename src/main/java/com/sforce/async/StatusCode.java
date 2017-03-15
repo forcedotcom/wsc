@@ -780,5 +780,5 @@ public enum StatusCode {
    */
    WRONG_CONTROLLER_TYPE,
 
-
+    FIELD_FILTER_VALIDATION_EXCEPTION,
 }
