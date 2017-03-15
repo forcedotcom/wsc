@@ -25,10 +25,6 @@
  */
 
 package com.sforce.async;
-
-/**
- * Generated enum, please do not edit.
- */
 public enum JobStateEnum {
 
   
@@ -51,4 +47,10 @@ public enum JobStateEnum {
    * Enumeration  : Failed
    */
    Failed,
+   
+   /**
+    * Enumeration : UploadComplete
+    * This state is used by the users to indicate that all the data has been uploaded and it's safe to start processing.
+    */
+   UploadComplete,
 }
