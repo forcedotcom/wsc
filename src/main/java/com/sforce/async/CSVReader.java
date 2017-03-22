@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2017, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -47,7 +47,7 @@ public class CSVReader {
     private StreamTokenizer parser;
     private char[] separators;
     private boolean ignoreBlankRecords = true;
-    private int maxSizeOfIndividualCell = 32000;
+    private int maxSizeOfIndividualCell = 131072;
     private int maxColumnsPerRow = 5000;
     private int maxRowSizeInCharacters = 400000; //400K of characters in a row..
 
