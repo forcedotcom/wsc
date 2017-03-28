@@ -53,4 +53,16 @@ public enum JobStateEnum {
     * This state is used by the users to indicate that all the data has been uploaded and it's safe to start processing.
     */
    UploadComplete,
+
+    /**
+     * This state is used by bulk api v2. Its used to indicate that job
+     * processing is in progress.
+     */
+    InProgress,
+
+    /**
+     * This state is used by bulk api v2. This state indicates that the job
+     * processing is complete.
+     */
+    JobComplete
 }
