@@ -198,7 +198,7 @@ public class XmlObject implements XMLizable {
         XmlObject item = null;
 
         for (XmlObject child : children) {
-            if (child.getName().getLocalPart().equalsIgnoreCase(name)) {
+            if (child.getName().getLocalPart().equals(name)) {
                 item = child;
                 break;
             }
