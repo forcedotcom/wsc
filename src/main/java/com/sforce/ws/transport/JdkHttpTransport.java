@@ -52,6 +52,8 @@ public class JdkHttpTransport implements Transport {
     private boolean successful;
     private ConnectorConfig config;
     private URL url;
+    private int statusCode;
+    private Map<String, Collection<String>> headers;
 
     public JdkHttpTransport() {
     }
@@ -209,7 +211,10 @@ public class JdkHttpTransport implements Transport {
             }
         }
 
-        successful = connection.getResponseCode() < 400;
+        statusCode = connection.getResponseCode();
+        successful = statusCode < 400;
+        
+        headers = new HashMap<String, Collection<String>>(connection.getHeaderFields());
 
         String encoding = connection.getHeaderField("Content-Encoding");
 
@@ -255,6 +260,16 @@ public class JdkHttpTransport implements Transport {
     @Override
     public boolean isSuccessful() {
         return successful;
+    }
+
+    @Override
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    @Override
+    public Map<String, Collection<String>> getHeaders() {
+        return headers;
     }
 
 }
