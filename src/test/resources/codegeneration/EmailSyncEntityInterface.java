@@ -49,7 +49,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldConflictResolution(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldConflictResolution(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("conflictResolution", "urn:partner.soap.sforce.com","conflictResolution","urn:partner.soap.sforce.com","EmailSyncConflictResolution",1,1,true), conflictResolution, conflictResolution__is_set);
     }
 
@@ -80,7 +80,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldDataSetFilter(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldDataSetFilter(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("dataSetFilter", "urn:partner.soap.sforce.com","dataSetFilter","http://www.w3.org/2001/XMLSchema","string",0,1,true), dataSetFilter, dataSetFilter__is_set);
     }
 
@@ -111,7 +111,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldFieldMapping(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldFieldMapping(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("fieldMapping", "urn:partner.soap.sforce.com","fieldMapping","urn:partner.soap.sforce.com","EmailSyncFieldMapping",0,-1,true), fieldMapping, fieldMapping__is_set);
     }
 
@@ -142,7 +142,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldMatchPreference(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldMatchPreference(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("matchPreference", "urn:partner.soap.sforce.com","matchPreference","urn:partner.soap.sforce.com","EmailSyncMatchPreference",1,1,true), matchPreference, matchPreference__is_set);
     }
 
@@ -173,7 +173,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldName(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldName(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("name", "urn:partner.soap.sforce.com","name","http://www.w3.org/2001/XMLSchema","string",1,1,true), name, name__is_set);
     }
 
@@ -204,7 +204,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldRecordTypeId(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldRecordTypeId(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("recordTypeId", "urn:partner.soap.sforce.com","recordTypeId","urn:partner.soap.sforce.com","ID",1,1,true), recordTypeId, recordTypeId__is_set);
     }
 
@@ -235,7 +235,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldSyncDirection(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldSyncDirection(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("syncDirection", "urn:partner.soap.sforce.com","syncDirection","urn:partner.soap.sforce.com","EmailSyncDirection",1,1,true), syncDirection, syncDirection__is_set);
     }
 
@@ -271,7 +271,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       }
     }
 
-    protected void writeFieldSyncFollowed(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    private void writeFieldSyncFollowed(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
       __typeMapper.writeObject(__out, getTypeInfo("syncFollowed", "urn:partner.soap.sforce.com","syncFollowed","http://www.w3.org/2001/XMLSchema","boolean",1,1,true), syncFollowed, syncFollowed__is_set);
     }
 
@@ -289,14 +289,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void writeFields(com.sforce.ws.parser.XmlOutputStream __out,
          com.sforce.ws.bind.TypeMapper __typeMapper)
          throws java.io.IOException {
-       writeFieldConflictResolution(__out, __typeMapper);
-       writeFieldDataSetFilter(__out, __typeMapper);
-       writeFieldFieldMapping(__out, __typeMapper);
-       writeFieldMatchPreference(__out, __typeMapper);
-       writeFieldName(__out, __typeMapper);
-       writeFieldRecordTypeId(__out, __typeMapper);
-       writeFieldSyncDirection(__out, __typeMapper);
-       writeFieldSyncFollowed(__out, __typeMapper);
+       writeFields1(__out, __typeMapper);
     }
 
     @Override
@@ -309,14 +302,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
 
     protected void loadFields(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
-        setConflictResolution(__in, __typeMapper);
-        setDataSetFilter(__in, __typeMapper);
-        setFieldMapping(__in, __typeMapper);
-        setMatchPreference(__in, __typeMapper);
-        setName(__in, __typeMapper);
-        setRecordTypeId(__in, __typeMapper);
-        setSyncDirection(__in, __typeMapper);
-        setSyncFollowed(__in, __typeMapper);
+        loadFields1(__in, __typeMapper);
     }
 
     @Override
@@ -329,7 +315,35 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       return sb.toString();
     }
 
-    private void toString1(StringBuilder sb) {
+    private void toStringHelper(StringBuilder sb, String name, Object value) {
+      sb.append(' ').append(name).append("='").append(com.sforce.ws.util.Verbose.toString(value)).append("'\n");
+    }
+
+    private void writeFields1(com.sforce.ws.parser.XmlOutputStream __out,
+         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+      writeFieldConflictResolution(__out, __typeMapper);
+      writeFieldDataSetFilter(__out, __typeMapper);
+      writeFieldFieldMapping(__out, __typeMapper);
+      writeFieldMatchPreference(__out, __typeMapper);
+      writeFieldName(__out, __typeMapper);
+      writeFieldRecordTypeId(__out, __typeMapper);
+      writeFieldSyncDirection(__out, __typeMapper);
+      writeFieldSyncFollowed(__out, __typeMapper);
+    }
+
+private void loadFields1(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      setConflictResolution(__in, __typeMapper);
+      setDataSetFilter(__in, __typeMapper);
+      setFieldMapping(__in, __typeMapper);
+      setMatchPreference(__in, __typeMapper);
+      setName(__in, __typeMapper);
+      setRecordTypeId(__in, __typeMapper);
+      setSyncDirection(__in, __typeMapper);
+      setSyncFollowed(__in, __typeMapper);
+    }
+
+private void toString1(StringBuilder sb) {
       toStringHelper(sb, "conflictResolution", conflictResolution);
       toStringHelper(sb, "dataSetFilter", dataSetFilter);
       toStringHelper(sb, "fieldMapping", fieldMapping);
@@ -341,10 +355,6 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
 
     }
 
-
-    private void toStringHelper(StringBuilder sb, String name, Object value) {
-      sb.append(' ').append(name).append("='").append(com.sforce.ws.util.Verbose.toString(value)).append("'\n");
-    }
 
     @SuppressWarnings("unchecked")
     private <T,U> T[] castArray(Class<T> clazz, U[] array) {
