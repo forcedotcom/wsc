@@ -62,7 +62,7 @@ $endif$
     \}
   \}
 
-  protected void $member.writeMethodName$(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+  private void $member.writeMethodName$(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
     __typeMapper.writeObject(__out, getTypeInfo("$member.fieldName$", $member.typeInfo$), $member.fieldName$, $member.fieldName$__is_set);
   \}
 
@@ -82,8 +82,7 @@ $endif$
          com.sforce.ws.bind.TypeMapper __typeMapper)
          throws java.io.IOException {
        $gen.superWrite$
-$gen.memberMetadataList: { member |
-       $member.writeMethodName$(__out, __typeMapper);
+       $gen.splitMemberMetadataList: { split | writeFields$i$(__out, __typeMapper);
 }$    }
 
     @Override
@@ -97,8 +96,7 @@ $gen.memberMetadataList: { member |
     protected void loadFields(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
         $gen.superLoad$
-$gen.memberMetadataList:{ member |
-        $member.setMethodName$(__in, __typeMapper);
+        $gen.splitMemberMetadataList: { split | loadFields$i$(__in, __typeMapper);
 }$    }
 
     @Override
@@ -112,16 +110,25 @@ $gen.memberMetadataList:{ member |
       return sb.toString();
     }
 
-$gen.splitMemberMetadataList: { split |
-    private void toString$i$(StringBuilder sb) {
-      $split:{ member | toStringHelper(sb, "$member.fieldName$", $member.fieldName$);
-}$
-    \}
-}$
-    
     private void toStringHelper(StringBuilder sb, String name, Object value) {
       sb.append(' ').append(name).append("='").append(com.sforce.ws.util.Verbose.toString(value)).append("'\\n");
     }
+
+$gen.splitMemberMetadataList: { split |
+    private void writeFields$i$(com.sforce.ws.parser.XmlOutputStream __out,
+         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+      $split:{ member | $member.writeMethodName$(__out, __typeMapper);
+}$    \}
+
+    private void loadFields$i$(com.sforce.ws.parser.XmlInputStream __in,
+        com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
+      $split:{ member | $member.setMethodName$(__in, __typeMapper);
+}$    \}
+
+    private void toString$i$(StringBuilder sb) {
+      $split:{ member | toStringHelper(sb, "$member.fieldName$", $member.fieldName$);
+}$    \}
+}$
     
     $if(gen.generateInterfaces && gen.hasArrayField)$
     @SuppressWarnings("unchecked")
