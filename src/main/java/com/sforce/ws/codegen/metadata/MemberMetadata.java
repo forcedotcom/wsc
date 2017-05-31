@@ -34,6 +34,7 @@ public class MemberMetadata {
     private final String loadType;
     private final String loadMethod;
     private final boolean isArray;
+    private final String writeMethodName;
 
     // Either the interface corresponding to the javaType field if both interfaces are generated for the WSDL and
     // the javaType corresponds to a complex class
@@ -41,7 +42,7 @@ public class MemberMetadata {
 
     public MemberMetadata(String elementDoc, String javaType, String fieldName, String typeInfo, String arraySource,
                           String getMethod, String boolMemberType, String boolMethod, String setMethod, String writeMethod,
-                          String loadType, String loadMethod, String javaTypeInterface, boolean isArray) {
+                          String loadType, String loadMethod, String javaTypeInterface, boolean isArray, String writeMethodName) {
         this.elementDoc = elementDoc;
         this.javaType = javaType;
         this.fieldName = fieldName;
@@ -56,14 +57,15 @@ public class MemberMetadata {
         this.loadMethod = loadMethod;
         this.javaTypeInterface = javaTypeInterface;
         this.isArray = isArray;
+        this.writeMethodName = writeMethodName; 
     }
 
     public static MemberMetadata newInstance(String elementDoc, String javaType, String fieldName, String typeInfo,
                                              String arraySource, String getMethodName, String boolMemberType, String boolMethodName,
                                              String setMethodName, String writeMethod, String loadType, String loadMethod, boolean isComplexType,
-                                             String javaTypeInterface, boolean isArray) {
+                                             String javaTypeInterface, boolean isArray, String writeMethodName) {
         return new MemberMetadata(elementDoc, javaType, fieldName, typeInfo, arraySource, getMethodName,
-                boolMemberType, boolMethodName, setMethodName, writeMethod, loadType, loadMethod, javaTypeInterface, isArray);
+                boolMemberType, boolMethodName, setMethodName, writeMethod, loadType, loadMethod, javaTypeInterface, isArray, writeMethodName);
     }
 
     public String getElementDoc() {
@@ -100,6 +102,10 @@ public class MemberMetadata {
 
     public String getSetMethodName() {
         return this.setMethod;
+    }
+    
+    public String getWriteMethodName() {
+    	return this.writeMethodName;
     }
 
     public String getWriteMethod() {
