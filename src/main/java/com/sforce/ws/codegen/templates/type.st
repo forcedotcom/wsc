@@ -17,9 +17,6 @@ public class $gen.className$ $gen.typeExtension$ $gen.interfaceExtension${
    * element : $member.elementDoc$
    * java type: $member.javaType$
    */
-  private static final com.sforce.ws.bind.TypeInfo $member.fieldName$__typeInfo =
-    new com.sforce.ws.bind.TypeInfo($member.typeInfo$);
-
   private boolean $member.fieldName$__is_set = false;
 
   private $member.javaType$ $member.fieldName$$member.arraySource$;
@@ -49,9 +46,13 @@ $endif$
   protected void $member.setMethodName$(com.sforce.ws.parser.XmlInputStream __in,
       com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
     __in.peekTag();
-    if (__typeMapper.$member.loadType$(__in, $member.fieldName$__typeInfo)) {
-      $member.setMethodName$($member.cast$__typeMapper.$member.loadMethod$(__in, $member.fieldName$__typeInfo, $member.javaType$.class));
+    if (__typeMapper.$member.loadType$(__in, new com.sforce.ws.bind.TypeInfo($member.typeInfo$))) {
+      $member.setMethodName$($member.cast$__typeMapper.$member.loadMethod$(__in, new com.sforce.ws.bind.TypeInfo($member.typeInfo$), $member.javaType$.class));
     \}
+  \}
+
+  protected void $member.writeMethodName$(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
+    __typeMapper.writeObject(__out, new com.sforce.ws.bind.TypeInfo($member.typeInfo$), $member.fieldName$, $member.fieldName$__is_set);
   \}
 
    }$    /**
@@ -71,7 +72,7 @@ $endif$
          throws java.io.IOException {
        $gen.superWrite$
 $gen.memberMetadataList: { member |
-       __typeMapper.$member.writeMethod$(__out, $member.fieldName$__typeInfo, $member.fieldName$, $member.fieldName$__is_set);
+       $member.writeMethodName$(__out, __typeMapper);
 }$    }
 
     @Override

@@ -146,7 +146,7 @@ public class TypeMetadataConstructor {
             // TODO Get rid of the second javaType, it will always be boolean
             memberMetadataList.add(MemberMetadata.newInstance(elementDoc(e), javaType(e), fieldName(e), typeInfo(e),
                     initArray(e), getMethod(e), javaType(e), booleanGetMethod(e), setMethod(e), writeMethod(e),
-                    loadType(e), loadMethod(e), isComplexType(e), javaTypeInterface(e), isArray(e)));
+                    loadType(e), loadMethod(e), isComplexType(e), javaTypeInterface(e), isArray(e), writeMethodName(e)));
         }
 
         return new ComplexClassMetadata(packageName, className, baseClass(), xsiType(), superWrite(), superLoad(),
@@ -212,6 +212,10 @@ public class TypeMetadataConstructor {
         return "set" + NameMapper.getMethodName(element.getName());
     }
 
+    public String writeMethodName(Element element) {
+        return "writeField" + NameMapper.getMethodName(element.getName());
+    }
+    
     public String superLoad() {
         if (!complexType.hasBaseClass()) { return ""; }
 
