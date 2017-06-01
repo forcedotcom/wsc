@@ -13,7 +13,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
 
     /* Cache the typeInfo instead of declaring static fields throughout*/
     private java.util.Map<String, com.sforce.ws.bind.TypeInfo> typeInfoCache = new java.util.HashMap<String, com.sforce.ws.bind.TypeInfo>();
-    private com.sforce.ws.bind.TypeInfo getTypeInfo(String fieldName, String namespace, String name, String typeNS, String type, int minOcc, int maxOcc, boolean elementForm) {
+    private com.sforce.ws.bind.TypeInfo _lookupTypeInfo(String fieldName, String namespace, String name, String typeNS, String type, int minOcc, int maxOcc, boolean elementForm) {
       com.sforce.ws.bind.TypeInfo typeInfo = typeInfoCache.get(fieldName);
       if (typeInfo == null) {
         typeInfo = new com.sforce.ws.bind.TypeInfo(namespace, name, typeNS, type, minOcc, maxOcc, elementForm);
@@ -44,13 +44,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setConflictResolution(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.verifyElement(__in, getTypeInfo("conflictResolution", "urn:partner.soap.sforce.com","conflictResolution","urn:partner.soap.sforce.com","EmailSyncConflictResolution",1,1,true))) {
-        setConflictResolution((com.sforce.soap.partner.wsc.EmailSyncConflictResolution)__typeMapper.readObject(__in, getTypeInfo("conflictResolution", "urn:partner.soap.sforce.com","conflictResolution","urn:partner.soap.sforce.com","EmailSyncConflictResolution",1,1,true), com.sforce.soap.partner.wsc.EmailSyncConflictResolution.class));
+      if (__typeMapper.verifyElement(__in, _lookupTypeInfo("conflictResolution", "urn:partner.soap.sforce.com","conflictResolution","urn:partner.soap.sforce.com","EmailSyncConflictResolution",1,1,true))) {
+        setConflictResolution((com.sforce.soap.partner.wsc.EmailSyncConflictResolution)__typeMapper.readObject(__in, _lookupTypeInfo("conflictResolution", "urn:partner.soap.sforce.com","conflictResolution","urn:partner.soap.sforce.com","EmailSyncConflictResolution",1,1,true), com.sforce.soap.partner.wsc.EmailSyncConflictResolution.class));
       }
     }
 
     private void writeFieldConflictResolution(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("conflictResolution", "urn:partner.soap.sforce.com","conflictResolution","urn:partner.soap.sforce.com","EmailSyncConflictResolution",1,1,true), conflictResolution, conflictResolution__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("conflictResolution", "urn:partner.soap.sforce.com","conflictResolution","urn:partner.soap.sforce.com","EmailSyncConflictResolution",1,1,true), conflictResolution, conflictResolution__is_set);
     }
 
     /**
@@ -75,13 +75,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setDataSetFilter(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.isElement(__in, getTypeInfo("dataSetFilter", "urn:partner.soap.sforce.com","dataSetFilter","http://www.w3.org/2001/XMLSchema","string",0,1,true))) {
-        setDataSetFilter(__typeMapper.readString(__in, getTypeInfo("dataSetFilter", "urn:partner.soap.sforce.com","dataSetFilter","http://www.w3.org/2001/XMLSchema","string",0,1,true), java.lang.String.class));
+      if (__typeMapper.isElement(__in, _lookupTypeInfo("dataSetFilter", "urn:partner.soap.sforce.com","dataSetFilter","http://www.w3.org/2001/XMLSchema","string",0,1,true))) {
+        setDataSetFilter(__typeMapper.readString(__in, _lookupTypeInfo("dataSetFilter", "urn:partner.soap.sforce.com","dataSetFilter","http://www.w3.org/2001/XMLSchema","string",0,1,true), java.lang.String.class));
       }
     }
 
     private void writeFieldDataSetFilter(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("dataSetFilter", "urn:partner.soap.sforce.com","dataSetFilter","http://www.w3.org/2001/XMLSchema","string",0,1,true), dataSetFilter, dataSetFilter__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("dataSetFilter", "urn:partner.soap.sforce.com","dataSetFilter","http://www.w3.org/2001/XMLSchema","string",0,1,true), dataSetFilter, dataSetFilter__is_set);
     }
 
     /**
@@ -106,13 +106,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setFieldMapping(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.isElement(__in, getTypeInfo("fieldMapping", "urn:partner.soap.sforce.com","fieldMapping","urn:partner.soap.sforce.com","EmailSyncFieldMapping",0,-1,true))) {
-        setFieldMapping((com.sforce.soap.partner.wsc.EmailSyncFieldMapping[])__typeMapper.readObject(__in, getTypeInfo("fieldMapping", "urn:partner.soap.sforce.com","fieldMapping","urn:partner.soap.sforce.com","EmailSyncFieldMapping",0,-1,true), com.sforce.soap.partner.wsc.EmailSyncFieldMapping[].class));
+      if (__typeMapper.isElement(__in, _lookupTypeInfo("fieldMapping", "urn:partner.soap.sforce.com","fieldMapping","urn:partner.soap.sforce.com","EmailSyncFieldMapping",0,-1,true))) {
+        setFieldMapping((com.sforce.soap.partner.wsc.EmailSyncFieldMapping[])__typeMapper.readObject(__in, _lookupTypeInfo("fieldMapping", "urn:partner.soap.sforce.com","fieldMapping","urn:partner.soap.sforce.com","EmailSyncFieldMapping",0,-1,true), com.sforce.soap.partner.wsc.EmailSyncFieldMapping[].class));
       }
     }
 
     private void writeFieldFieldMapping(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("fieldMapping", "urn:partner.soap.sforce.com","fieldMapping","urn:partner.soap.sforce.com","EmailSyncFieldMapping",0,-1,true), fieldMapping, fieldMapping__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("fieldMapping", "urn:partner.soap.sforce.com","fieldMapping","urn:partner.soap.sforce.com","EmailSyncFieldMapping",0,-1,true), fieldMapping, fieldMapping__is_set);
     }
 
     /**
@@ -137,13 +137,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setMatchPreference(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.verifyElement(__in, getTypeInfo("matchPreference", "urn:partner.soap.sforce.com","matchPreference","urn:partner.soap.sforce.com","EmailSyncMatchPreference",1,1,true))) {
-        setMatchPreference((com.sforce.soap.partner.wsc.EmailSyncMatchPreference)__typeMapper.readObject(__in, getTypeInfo("matchPreference", "urn:partner.soap.sforce.com","matchPreference","urn:partner.soap.sforce.com","EmailSyncMatchPreference",1,1,true), com.sforce.soap.partner.wsc.EmailSyncMatchPreference.class));
+      if (__typeMapper.verifyElement(__in, _lookupTypeInfo("matchPreference", "urn:partner.soap.sforce.com","matchPreference","urn:partner.soap.sforce.com","EmailSyncMatchPreference",1,1,true))) {
+        setMatchPreference((com.sforce.soap.partner.wsc.EmailSyncMatchPreference)__typeMapper.readObject(__in, _lookupTypeInfo("matchPreference", "urn:partner.soap.sforce.com","matchPreference","urn:partner.soap.sforce.com","EmailSyncMatchPreference",1,1,true), com.sforce.soap.partner.wsc.EmailSyncMatchPreference.class));
       }
     }
 
     private void writeFieldMatchPreference(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("matchPreference", "urn:partner.soap.sforce.com","matchPreference","urn:partner.soap.sforce.com","EmailSyncMatchPreference",1,1,true), matchPreference, matchPreference__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("matchPreference", "urn:partner.soap.sforce.com","matchPreference","urn:partner.soap.sforce.com","EmailSyncMatchPreference",1,1,true), matchPreference, matchPreference__is_set);
     }
 
     /**
@@ -168,13 +168,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setName(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.verifyElement(__in, getTypeInfo("name", "urn:partner.soap.sforce.com","name","http://www.w3.org/2001/XMLSchema","string",1,1,true))) {
-        setName(__typeMapper.readString(__in, getTypeInfo("name", "urn:partner.soap.sforce.com","name","http://www.w3.org/2001/XMLSchema","string",1,1,true), java.lang.String.class));
+      if (__typeMapper.verifyElement(__in, _lookupTypeInfo("name", "urn:partner.soap.sforce.com","name","http://www.w3.org/2001/XMLSchema","string",1,1,true))) {
+        setName(__typeMapper.readString(__in, _lookupTypeInfo("name", "urn:partner.soap.sforce.com","name","http://www.w3.org/2001/XMLSchema","string",1,1,true), java.lang.String.class));
       }
     }
 
     private void writeFieldName(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("name", "urn:partner.soap.sforce.com","name","http://www.w3.org/2001/XMLSchema","string",1,1,true), name, name__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("name", "urn:partner.soap.sforce.com","name","http://www.w3.org/2001/XMLSchema","string",1,1,true), name, name__is_set);
     }
 
     /**
@@ -199,13 +199,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setRecordTypeId(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.verifyElement(__in, getTypeInfo("recordTypeId", "urn:partner.soap.sforce.com","recordTypeId","urn:partner.soap.sforce.com","ID",1,1,true))) {
-        setRecordTypeId(__typeMapper.readString(__in, getTypeInfo("recordTypeId", "urn:partner.soap.sforce.com","recordTypeId","urn:partner.soap.sforce.com","ID",1,1,true), java.lang.String.class));
+      if (__typeMapper.verifyElement(__in, _lookupTypeInfo("recordTypeId", "urn:partner.soap.sforce.com","recordTypeId","urn:partner.soap.sforce.com","ID",1,1,true))) {
+        setRecordTypeId(__typeMapper.readString(__in, _lookupTypeInfo("recordTypeId", "urn:partner.soap.sforce.com","recordTypeId","urn:partner.soap.sforce.com","ID",1,1,true), java.lang.String.class));
       }
     }
 
     private void writeFieldRecordTypeId(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("recordTypeId", "urn:partner.soap.sforce.com","recordTypeId","urn:partner.soap.sforce.com","ID",1,1,true), recordTypeId, recordTypeId__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("recordTypeId", "urn:partner.soap.sforce.com","recordTypeId","urn:partner.soap.sforce.com","ID",1,1,true), recordTypeId, recordTypeId__is_set);
     }
 
     /**
@@ -230,13 +230,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setSyncDirection(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.verifyElement(__in, getTypeInfo("syncDirection", "urn:partner.soap.sforce.com","syncDirection","urn:partner.soap.sforce.com","EmailSyncDirection",1,1,true))) {
-        setSyncDirection((com.sforce.soap.partner.wsc.EmailSyncDirection)__typeMapper.readObject(__in, getTypeInfo("syncDirection", "urn:partner.soap.sforce.com","syncDirection","urn:partner.soap.sforce.com","EmailSyncDirection",1,1,true), com.sforce.soap.partner.wsc.EmailSyncDirection.class));
+      if (__typeMapper.verifyElement(__in, _lookupTypeInfo("syncDirection", "urn:partner.soap.sforce.com","syncDirection","urn:partner.soap.sforce.com","EmailSyncDirection",1,1,true))) {
+        setSyncDirection((com.sforce.soap.partner.wsc.EmailSyncDirection)__typeMapper.readObject(__in, _lookupTypeInfo("syncDirection", "urn:partner.soap.sforce.com","syncDirection","urn:partner.soap.sforce.com","EmailSyncDirection",1,1,true), com.sforce.soap.partner.wsc.EmailSyncDirection.class));
       }
     }
 
     private void writeFieldSyncDirection(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("syncDirection", "urn:partner.soap.sforce.com","syncDirection","urn:partner.soap.sforce.com","EmailSyncDirection",1,1,true), syncDirection, syncDirection__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("syncDirection", "urn:partner.soap.sforce.com","syncDirection","urn:partner.soap.sforce.com","EmailSyncDirection",1,1,true), syncDirection, syncDirection__is_set);
     }
 
     /**
@@ -266,13 +266,13 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     protected void setSyncFollowed(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       __in.peekTag();
-      if (__typeMapper.verifyElement(__in, getTypeInfo("syncFollowed", "urn:partner.soap.sforce.com","syncFollowed","http://www.w3.org/2001/XMLSchema","boolean",1,1,true))) {
-        setSyncFollowed(__typeMapper.readBoolean(__in, getTypeInfo("syncFollowed", "urn:partner.soap.sforce.com","syncFollowed","http://www.w3.org/2001/XMLSchema","boolean",1,1,true), boolean.class));
+      if (__typeMapper.verifyElement(__in, _lookupTypeInfo("syncFollowed", "urn:partner.soap.sforce.com","syncFollowed","http://www.w3.org/2001/XMLSchema","boolean",1,1,true))) {
+        setSyncFollowed(__typeMapper.readBoolean(__in, _lookupTypeInfo("syncFollowed", "urn:partner.soap.sforce.com","syncFollowed","http://www.w3.org/2001/XMLSchema","boolean",1,1,true), boolean.class));
       }
     }
 
     private void writeFieldSyncFollowed(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-      __typeMapper.writeObject(__out, getTypeInfo("syncFollowed", "urn:partner.soap.sforce.com","syncFollowed","http://www.w3.org/2001/XMLSchema","boolean",1,1,true), syncFollowed, syncFollowed__is_set);
+      __typeMapper.writeObject(__out, _lookupTypeInfo("syncFollowed", "urn:partner.soap.sforce.com","syncFollowed","http://www.w3.org/2001/XMLSchema","boolean",1,1,true), syncFollowed, syncFollowed__is_set);
     }
 
     /**

@@ -14,7 +14,7 @@ public class $gen.className$ $gen.typeExtension$ $gen.interfaceExtension${
     
     /* Cache the typeInfo instead of declaring static fields throughout*/
     private java.util.Map<String, com.sforce.ws.bind.TypeInfo> typeInfoCache = new java.util.HashMap<String, com.sforce.ws.bind.TypeInfo>();
-    private com.sforce.ws.bind.TypeInfo getTypeInfo(String fieldName, String namespace, String name, String typeNS, String type, int minOcc, int maxOcc, boolean elementForm) {
+    private com.sforce.ws.bind.TypeInfo _lookupTypeInfo(String fieldName, String namespace, String name, String typeNS, String type, int minOcc, int maxOcc, boolean elementForm) {
       com.sforce.ws.bind.TypeInfo typeInfo = typeInfoCache.get(fieldName);
       if (typeInfo == null) {
         typeInfo = new com.sforce.ws.bind.TypeInfo(namespace, name, typeNS, type, minOcc, maxOcc, elementForm);
@@ -57,13 +57,13 @@ $endif$
   protected void $member.setMethodName$(com.sforce.ws.parser.XmlInputStream __in,
       com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
     __in.peekTag();
-    if (__typeMapper.$member.loadType$(__in, getTypeInfo("$member.fieldName$", $member.typeInfo$))) {
-      $member.setMethodName$($member.cast$__typeMapper.$member.loadMethod$(__in, getTypeInfo("$member.fieldName$", $member.typeInfo$), $member.javaType$.class));
+    if (__typeMapper.$member.loadType$(__in, _lookupTypeInfo("$member.fieldName$", $member.typeInfo$))) {
+      $member.setMethodName$($member.cast$__typeMapper.$member.loadMethod$(__in, _lookupTypeInfo("$member.fieldName$", $member.typeInfo$), $member.javaType$.class));
     \}
   \}
 
   private void $member.writeMethodName$(com.sforce.ws.parser.XmlOutputStream __out, com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException {
-    __typeMapper.writeObject(__out, getTypeInfo("$member.fieldName$", $member.typeInfo$), $member.fieldName$, $member.fieldName$__is_set);
+    __typeMapper.writeObject(__out, _lookupTypeInfo("$member.fieldName$", $member.typeInfo$), $member.fieldName$, $member.fieldName$__is_set);
   \}
 
    }$    /**
