@@ -13,7 +13,7 @@ public class $gen.className$ $gen.typeExtension$ $gen.interfaceExtension${
     public $gen.className$() {}
     
     /* Cache the typeInfo instead of declaring static fields throughout*/
-    private java.util.Map<String, com.sforce.ws.bind.TypeInfo> typeInfoCache = new java.util.HashMap<String, com.sforce.ws.bind.TypeInfo>();
+    private transient java.util.Map<String, com.sforce.ws.bind.TypeInfo> typeInfoCache = new java.util.HashMap<String, com.sforce.ws.bind.TypeInfo>();
     private com.sforce.ws.bind.TypeInfo _lookupTypeInfo(String fieldName, String namespace, String name, String typeNS, String type, int minOcc, int maxOcc, boolean elementForm) {
       com.sforce.ws.bind.TypeInfo typeInfo = typeInfoCache.get(fieldName);
       if (typeInfo == null) {

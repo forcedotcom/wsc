@@ -12,7 +12,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
     public EmailSyncEntity() {}
 
     /* Cache the typeInfo instead of declaring static fields throughout*/
-    private java.util.Map<String, com.sforce.ws.bind.TypeInfo> typeInfoCache = new java.util.HashMap<String, com.sforce.ws.bind.TypeInfo>();
+    private transient java.util.Map<String, com.sforce.ws.bind.TypeInfo> typeInfoCache = new java.util.HashMap<String, com.sforce.ws.bind.TypeInfo>();
     private com.sforce.ws.bind.TypeInfo _lookupTypeInfo(String fieldName, String namespace, String name, String typeNS, String type, int minOcc, int maxOcc, boolean elementForm) {
       com.sforce.ws.bind.TypeInfo typeInfo = typeInfoCache.get(fieldName);
       if (typeInfo == null) {
@@ -331,7 +331,7 @@ public class EmailSyncEntity implements com.sforce.ws.bind.XMLizable , IEmailSyn
       writeFieldSyncFollowed(__out, __typeMapper);
     }
 
-private void loadFields1(com.sforce.ws.parser.XmlInputStream __in,
+    private void loadFields1(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
       setConflictResolution(__in, __typeMapper);
       setDataSetFilter(__in, __typeMapper);
@@ -343,7 +343,7 @@ private void loadFields1(com.sforce.ws.parser.XmlInputStream __in,
       setSyncFollowed(__in, __typeMapper);
     }
 
-private void toString1(StringBuilder sb) {
+    private void toString1(StringBuilder sb) {
       toStringHelper(sb, "conflictResolution", conflictResolution);
       toStringHelper(sb, "dataSetFilter", dataSetFilter);
       toStringHelper(sb, "fieldMapping", fieldMapping);
@@ -352,7 +352,6 @@ private void toString1(StringBuilder sb) {
       toStringHelper(sb, "recordTypeId", recordTypeId);
       toStringHelper(sb, "syncDirection", syncDirection);
       toStringHelper(sb, "syncFollowed", syncFollowed);
-
     }
 
 
