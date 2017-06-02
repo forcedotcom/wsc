@@ -11,14 +11,14 @@ To skip the gpg signing, run the following command
     mvn clean package -Dgpg.skip
 
 ## Generating Stubs From WSDLs
-    java -jar target/force-wsc-40.1.0-uber.jar <inputwsdlfile> <outputjarfile>
+    java -jar target/force-wsc-40.1.1-uber.jar <inputwsdlfile> <outputjarfile>
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.
 
 In case you run into a "ClassNotFoundException" try adding tools.jar to your class path
 
-    java -classpath "${JAVA_HOME}lib/tools.jar:target/force-wsc-40.1.0-uber.jar" com.sforce.ws.tools.wsdlc <inputwsdlfile>  <outputjarfile>
+    java -classpath "${JAVA_HOME}lib/tools.jar:target/force-wsc-40.1.1-uber.jar" com.sforce.ws.tools.wsdlc <inputwsdlfile>  <outputjarfile>
 
 ## Write Application Code
 The following sample illustrates creating a connection and creating a new Account SObject.  Login is automatically handled by the Connector.
