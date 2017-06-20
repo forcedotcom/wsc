@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -586,6 +587,11 @@ public class BulkConnection {
                 Result[] results = deserializeJsonToObject(stream, Result[].class);
                 batchResult.setResult(results);
                 return batchResult;
+            } else if (contentType == ContentType.CSV || contentType == ContentType.ZIP_CSV) {
+                BatchResult batchResult = new BatchResult();
+                Result[] results = deserializeCsvResults(stream);
+                batchResult.setResult(results);
+                return batchResult;
             } else {
                 XmlInputStream xin = new XmlInputStream();
                 xin.setInput(stream, "UTF-8");
@@ -806,6 +812,53 @@ public class BulkConnection {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         return mapper.readValue(in, tmpClass);
+    }
+
+    static Result[] deserializeCsvResults (InputStream in) throws IOException, ConnectionException {
+        CSVReader reader = new CSVReader(in, "UTF-8");
+        int idIx, successIx, createdIx, errorIx;
+        idIx = successIx = createdIx = errorIx = -1;
+        ArrayList<String> record = reader.nextRecord();
+        for (int i = 0; i < record.size(); i++) {
+            switch (record.get(i)) {
+                case "Id":
+                    idIx = i;
+                    break;
+                case "Success":
+                    successIx = i;
+                    break;
+                case "Created":
+                    createdIx = i;
+                    break;
+                case "Error":
+                    errorIx = i;
+                    break;
+            }
+        }
+        ArrayList<Result> results = new ArrayList<Result>();
+        record = reader.nextRecord();
+        while (record != null) {
+            Result result = new Result();
+            result.setId(record.get(idIx));
+            result.setSuccess(Boolean.parseBoolean(record.get(successIx)));
+            result.setCreated(Boolean.parseBoolean(record.get(createdIx)));
+            String error = record.get(errorIx);
+            if (!error.isEmpty()) {
+                String[] parts = error.split(":", 2);
+                Error error_obj = new Error();
+                if (parts.length == 2 && !parts[0].isEmpty()) {
+                    error_obj.setStatusCode(StatusCode.valueOf(parts[0]));
+                    error_obj.setMessage(parts[1]);
+                } else {
+                    error_obj.setMessage(error);
+                }
+                result.setErrors(new Error[] { error_obj });
+            }
+            results.add(result);
+            record = reader.nextRecord();
+        }
+
+        return results.toArray(new Result[0]);
     }
 
     public JobInfo abortJob(String jobId) throws AsyncApiException {
