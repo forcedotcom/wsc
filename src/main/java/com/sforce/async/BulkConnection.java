@@ -843,7 +843,7 @@ public class BulkConnection {
             result.setSuccess(Boolean.parseBoolean(record.get(successIx)));
             result.setCreated(Boolean.parseBoolean(record.get(createdIx)));
             String error = record.get(errorIx);
-            if (!error.isEmpty()) {
+            if (error != null && !error.isEmpty()) {
                 String[] parts = error.split(":", 2);
                 Error error_obj = new Error();
                 if (parts.length == 2 && !parts[0].isEmpty()) {
