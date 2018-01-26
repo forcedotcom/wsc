@@ -39,6 +39,9 @@ import com.sforce.ws.tools.VersionInfo;
 import com.sforce.ws.util.Base64;
 import com.sforce.ws.util.FileUtil;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+
 /**
  * This class is an implementation of Transport using the build in
  * JDK URLConnection.
@@ -126,6 +129,10 @@ public class JdkHttpTransport implements Transport {
         url = new URL(uri);
 
         connection = createConnection(config, url, httpHeaders, enableCompression);
+        SSLContext sslContext = config.getSslContext();
+        if (sslContext != null && connection instanceof HttpsURLConnection) {
+            ((HttpsURLConnection)connection).setSSLSocketFactory(sslContext.getSocketFactory());
+        }
         connection.setRequestMethod("POST");
         connection.setDoInput(true);
         connection.setDoOutput(true);

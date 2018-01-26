@@ -37,6 +37,8 @@ import com.sforce.ws.transport.TransportFactory;
 import com.sforce.ws.util.Base64;
 import com.sforce.ws.util.Verbose;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * This class contains a set of configuration properties
  * 
@@ -154,8 +156,17 @@ public class ConnectorConfig {
     private SessionRenewer sessionRenewer;
     private String ntlmDomain;
 	private TransportFactory transportFactory;
+	  private SSLContext sslContext;
 
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
+
+    public void setSslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
+    }
+
+    public SSLContext getSslContext() {
+        return sslContext;
+    }
 
     public Class getTransport() {
         return transport;
