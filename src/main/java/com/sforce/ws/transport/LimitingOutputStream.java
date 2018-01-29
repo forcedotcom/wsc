@@ -30,36 +30,61 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class LimitingOutputStream extends OutputStream {
-    private int size = 0;
+	@Deprecated
+	private int size = 0;
+	private long sizeLong = 0L;
+    @Deprecated
     private int maxSize;
+    private long maxSizeLong;
     private OutputStream out;
+    private static final String MAX_SIZE_EXCEEDED_ERROR =  "Exceeded max size limit of %d%n with request size %d%n";
 
+    /**
+     * Please use {@link com.sforce.ws.transport.LimitingOutputStream#LimitingOutputStream(long, OutputStream) instead.
+     */
+    @Deprecated
     public LimitingOutputStream(int maxSize, OutputStream out) {
         this.maxSize = maxSize;
+        this.maxSizeLong = maxSize;
         this.out = out;
     }
+    
+    public LimitingOutputStream(long maxSize, OutputStream out) {
+        this.maxSizeLong = maxSize;
+        this.out = out;
+    } 
 
+    /**
+     * Please use @see {@link com.sforce.ws.transport.LimitingOutputStream#getSizeLong() instead.
+     */
+    @Deprecated
     public int getSize() {
         return size;
+    }
+    
+    public long getSizeLong() {
+        return sizeLong;
     }
 
     @Override
     public void write(int b) throws IOException {
         size++;
+        sizeLong++;
         checkSizeLimit();
         out.write(b);
     }
 
     private void checkSizeLimit() throws IOException {
-        if (size > maxSize) {
-            throw new IOException("Exceeded max size limit of " +
-                    maxSize + " with request size " + size);
-        }
+    	if (sizeLong > maxSizeLong) {
+            throw new IOException(String.format(MAX_SIZE_EXCEEDED_ERROR, maxSizeLong, sizeLong));
+    	}
     }
 
     @Override
     public void write(byte b[]) throws IOException {
-        size += b.length;
+    	int length = b.length;
+        size += length;
+        sizeLong += length;
         checkSizeLimit();
         out.write(b);
     }
@@ -67,6 +92,7 @@ public class LimitingOutputStream extends OutputStream {
     @Override
     public void write(byte b[], int off, int len) throws IOException {
         size += len;
+        sizeLong += len;
         checkSizeLimit();
         out.write(b, off, len);
     }
