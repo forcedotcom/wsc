@@ -18,7 +18,7 @@ To skip the gpg signing, run the following command
 
 In case you run into a "ClassNotFoundException" try adding tools.jar to your class path
 
-    java -classpath "${JAVA_HOME}lib/tools.jar:target/force-wsc-42.0.0-uber.jar" com.sforce.ws.tools.wsdlc <inputwsdlfile>  <outputjarfile>
+    java -classpath "${JAVA_HOME}lib/tools.jar;target/force-wsc-42.0.0-uber.jar" com.sforce.ws.tools.wsdlc <inputwsdlfile>  <outputjarfile>
 
 ## Write Application Code
 The following sample illustrates creating a connection and creating a new Account SObject.  Login is automatically handled by the Connector.
