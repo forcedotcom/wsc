@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.xml.namespace.QName;
 
 import com.sforce.ws.ConnectionException;
@@ -679,6 +681,10 @@ public class BulkConnection {
 
     private InputStream doHttpGet(URL url) throws IOException, AsyncApiException {
         HttpURLConnection connection = config.createConnection(url, null);
+        SSLContext sslContext = config.getSslContext();
+        if (sslContext != null && connection instanceof HttpsURLConnection) {
+            ((HttpsURLConnection)connection).setSSLSocketFactory(sslContext.getSocketFactory());
+        }
         connection.setRequestProperty(SESSION_ID, config.getSessionId());
 
         boolean success = true;
