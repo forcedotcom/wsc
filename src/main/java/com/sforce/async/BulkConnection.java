@@ -46,6 +46,11 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.xml.namespace.QName;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 import com.sforce.ws.MessageHandler;
@@ -57,11 +62,6 @@ import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 
 
 /**
@@ -186,7 +186,7 @@ public class BulkConnection {
 
                 exception.load(xin, typeMapper);
             } else if (type == ContentType.JSON || type == ContentType.ZIP_JSON) {
-                JsonParser parser = factory.createJsonParser(in);
+                JsonParser parser = factory.createParser(in);
                 exception = parser.readValueAs(AsyncApiException.class);
             } else {
                 throw new AsyncApiException("Server error returned in unknown format", AsyncExceptionCode.ClientInputError);
@@ -793,7 +793,7 @@ public class BulkConnection {
      * @throws IOException
      */
     static void serializeToJson(OutputStream out, Object value) throws IOException{
-        JsonGenerator generator = factory.createJsonGenerator(out);
+        JsonGenerator generator = factory.createGenerator(out);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat(CalendarCodec.getDateFormat());
         mapper.writeValue(generator, value);
@@ -810,7 +810,7 @@ public class BulkConnection {
      */
     static <T> T deserializeJsonToObject (InputStream in, Class<T> tmpClass) throws IOException, ConnectionException {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         return mapper.readValue(in, tmpClass);
     }
 
