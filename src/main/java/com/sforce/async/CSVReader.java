@@ -47,7 +47,7 @@ public class CSVReader {
     private StreamTokenizer parser;
     private char[] separators;
     private boolean ignoreBlankRecords = true;
-    private int maxSizeOfIndividualCell = 131072;
+    private int maxSizeOfIndividualCell = 2097152;
     private int maxColumnsPerRow = 5000;
     private int maxRowSizeInCharacters = 400000; //400K of characters in a row..
 
