@@ -28,6 +28,7 @@ import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.wsdl.Constants;
+import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
 
 /**
  * This class wraps an XMLizable and presents it as an XmlObject so that we
@@ -41,6 +42,10 @@ public class XmlObjectWrapper extends XmlObject {
     private QName xmlType;
 
     private XMLizable xmlizable;
+	
+	static {
+		PropertyUtils.addBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
+	}
 
     public XmlObjectWrapper(XMLizable xmlizable) {
         this.xmlizable = xmlizable;
