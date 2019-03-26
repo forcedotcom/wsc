@@ -641,6 +641,11 @@ public enum StatusCode {
    * Enumeration  : NUM_HISTORY_FIELDS_BY_SOBJECT_EXCEEDED
    */
    NUM_HISTORY_FIELDS_BY_SOBJECT_EXCEEDED,
+   
+   /**
+    * Enumeration  : OPERATION_ENQUEUED
+    */
+   OPERATION_ENQUEUED,
 
   /**
    * Enumeration  : OPTED_OUT_OF_MASS_MAIL
