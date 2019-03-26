@@ -641,6 +641,11 @@ public enum StatusCode {
    * Enumeration  : NUM_HISTORY_FIELDS_BY_SOBJECT_EXCEEDED
    */
    NUM_HISTORY_FIELDS_BY_SOBJECT_EXCEEDED,
+   
+   /**
+    * Enumeration  : OPERATION_ENQUEUED
+    */
+   OPERATION_ENQUEUED,
 
   /**
    * Enumeration  : OPTED_OUT_OF_MASS_MAIL
@@ -651,6 +656,11 @@ public enum StatusCode {
    * Enumeration  : PACKAGE_LICENSE_REQUIRED
    */
    PACKAGE_LICENSE_REQUIRED,
+   
+   /**
+    * Enumeration  : PLATFORM_EVENT_PUBLISHING_UNAVAILABLE
+    */
+   PLATFORM_EVENT_PUBLISHING_UNAVAILABLE,
 
   /**
    * Enumeration  : PORTAL_USER_ALREADY_EXISTS_FOR_CONTACT
