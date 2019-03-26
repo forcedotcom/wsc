@@ -656,6 +656,11 @@ public enum StatusCode {
    * Enumeration  : PACKAGE_LICENSE_REQUIRED
    */
    PACKAGE_LICENSE_REQUIRED,
+   
+   /**
+    * Enumeration  : PLATFORM_EVENT_PUBLISHING_UNAVAILABLE
+    */
+   PLATFORM_EVENT_PUBLISHING_UNAVAILABLE,
 
   /**
    * Enumeration  : PORTAL_USER_ALREADY_EXISTS_FOR_CONTACT
