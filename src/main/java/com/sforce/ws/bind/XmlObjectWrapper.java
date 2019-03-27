@@ -43,9 +43,9 @@ public class XmlObjectWrapper extends XmlObject {
 
     private XMLizable xmlizable;
 	
-	static {
-		PropertyUtils.addBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
-	}
+    static {
+        PropertyUtils.addBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
+    }
 
     public XmlObjectWrapper(XMLizable xmlizable) {
         this.xmlizable = xmlizable;
