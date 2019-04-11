@@ -255,7 +255,7 @@ public class BulkConnection {
             throws AsyncApiException {
         final List<File> files = FileUtil.listFilesRecursive(attachmentDir, false);
         final Map<String, File> fileMap = new HashMap<String, File>(files.size());
-        final String rootPath = attachmentDir.getAbsolutePath() + "/";
+        final String rootPath = attachmentDir.getAbsolutePath() + File.separator;
         for (File f : files) {
             String name = f.getAbsolutePath().replace(rootPath, "");
             fileMap.put(name, f);
