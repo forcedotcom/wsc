@@ -27,6 +27,7 @@
 package com.sforce.ws.bind;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -348,15 +349,15 @@ public class XmlObject implements XMLizable {
             else {
                 XMLizable xmlizable;
                 try {
-                    xmlizable = (XMLizable)childClass.newInstance();
+                    xmlizable = (XMLizable)childClass.getConstructor().newInstance();
                     if (xmlizable instanceof XmlObject) {
                         child = (XmlObject) xmlizable;
                     } else {
                         child = new XmlObjectWrapper(xmlizable);
                     }
-                } catch (InstantiationException e) {
+                } catch (InstantiationException | NoSuchMethodException e) {
                     throw new ConnectionException("Failed to create object", e);
-                } catch (IllegalAccessException e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new ConnectionException("Failed to create object", e);
                 }
             }

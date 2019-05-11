@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="appengine-api-1.0-sdk-1.9.74">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/appengine-api-1.0-sdk-1.9.74.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.junit-4.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-beanutils-1.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-core-asl-1.9.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-mapper-asl-1.9.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ST-4.0.8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

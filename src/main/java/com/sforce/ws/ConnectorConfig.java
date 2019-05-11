@@ -27,6 +27,7 @@
 package com.sforce.ws;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.util.*;
 import java.util.Map.Entry;
@@ -461,14 +462,15 @@ public class ConnectorConfig {
     	if(transportFactory != null) {
     		return transportFactory.createTransport();
     	}
-    	
+
         try {
-            Transport t = (Transport)getTransport().newInstance();
+            Class<?> transClass = getTransport();
+            Transport t = (Transport) transClass.getDeclaredConstructor().newInstance();
             t.setConfig(this);
             return t;
-        } catch (InstantiationException e) {
+        } catch (InstantiationException | NoSuchMethodException e) {
             throw new ConnectionException("Failed to create new Transport " + getTransport());
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ConnectionException("Failed to create new Transport " + getTransport());
         }
     }

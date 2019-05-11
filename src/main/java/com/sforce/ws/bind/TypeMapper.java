@@ -44,6 +44,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -670,12 +671,12 @@ public class TypeMapper {
         }
 
         try {
-            XMLizable result = (XMLizable) type.newInstance();
+            XMLizable result = (XMLizable) type.getDeclaredConstructor().newInstance();
             result.load(in, this);
             return result;
-        } catch (InstantiationException e) {
+        } catch (InstantiationException | InvocationTargetException e) {
             throw new ConnectionException("Failed to create object", e);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException| NoSuchMethodException e) {
             throw new ConnectionException("Failed to create object", e);
         }
     }
