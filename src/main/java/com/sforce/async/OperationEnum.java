@@ -33,6 +33,7 @@ public enum OperationEnum {
     delete,
     hardDelete,
     query,
-    queryAll
+    queryAll,
+    composite
 }
 
