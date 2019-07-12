@@ -28,6 +28,8 @@ package com.sforce.ws.transport;
 
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
+import com.sforce.ws.MessageHandler;
+import com.sforce.ws.bind.HTMLResponseException;
 import com.sforce.ws.bind.TypeMapper;
 import com.sforce.ws.bind.XMLizable;
 import com.sforce.ws.parser.PullParserException;
@@ -36,14 +38,15 @@ import com.sforce.ws.parser.XmlOutputStream;
 import org.junit.Test;
 
 import javax.xml.namespace.QName;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * This class validates parts of the Soap Connection.
@@ -139,6 +142,119 @@ public class SoapConnectionTest {
             return in.getEventType() == XmlInputStream.END_TAG &&
                     name.getNamespaceURI().equals(in.getNamespace()) &&
                     name.getLocalPart().equals(in.getName());
+        }
+    }
+
+    @Test
+    public void testCaptureHtmlResponseWhenSet() throws ConnectionException, IOException {
+        testCaptureReponse(true);
+    }
+
+    @Test
+    public void testDontCaptureHtmlResponseWhenNotSet() throws ConnectionException, IOException {
+        testCaptureReponse(false);
+    }
+
+    private void testCaptureReponse(boolean captureResponse) throws ConnectionException {
+        ConnectorConfig config = new ConnectorConfig();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream("<html><head>Test</head><body>Simple Body</body></html>".getBytes());
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        config.setCaptureHtmlExceptionResponse(captureResponse);
+        config.setTransportFactory(new MockTransportFactory(stream, inputStream, true, config));
+        SoapConnection connection = new SoapConnection("http://www.salesforce.com", "sobject", new TypeMapper(), config);
+        QName name = new QName("urn:enterprise.soap.sforce.com", "SessionHeader"); // //SessionHeader
+
+        XMLizable xmlStream = new XMLizable() {
+            @Override
+            public void write(QName element, XmlOutputStream out, TypeMapper typeMapper) throws IOException {
+                out.writeStartTag("h", "Hello");
+                out.writeText("Hello");
+                out.writeEndTag("h", "Hello");
+            }
+
+            @Override
+            public void load(XmlInputStream in, TypeMapper typeMapper) throws IOException, ConnectionException {
+                // We don't expect any sort of loading to occur.
+            }
+        };
+        try {
+            connection.send("Create", name, xmlStream, name, SoapConnectionTest.class);
+            fail("Expected HTMLResponseException");
+        } catch (HTMLResponseException e) {
+            assertTrue(e.getMessage().contains("REQUEST: No Content RESPONSE: <html><head>Test</head><body>Simple Body</body></html>") == captureResponse);
+        }
+    }
+
+
+    public static class MockTransportFactory implements TransportFactory {
+
+        private final ByteArrayOutputStream outputStream;
+        private final ByteArrayInputStream responseStream;
+        private final boolean isSuccess;
+        private final ConnectorConfig config;
+
+        public MockTransportFactory(ByteArrayOutputStream outputStream, ByteArrayInputStream responseStream, boolean isSuccess, ConnectorConfig config){
+            this.outputStream = outputStream;
+            this.responseStream = responseStream;
+            this.isSuccess = isSuccess;
+            this.config = config;
+        }
+
+        @Override
+        public Transport createTransport() {
+            return new MockTransport(outputStream, responseStream, isSuccess, config);
+        }
+    }
+
+    public static class MockTransport implements Transport {
+
+        private final ByteArrayInputStream responseStream;
+        private final ByteArrayOutputStream outputStream;
+        private final boolean isSuccess;
+        private final ConnectorConfig config;
+
+        public MockTransport(ByteArrayOutputStream outputStream, ByteArrayInputStream responseStream,boolean isSuccess, ConnectorConfig config) {
+            this.outputStream = outputStream;
+            this.responseStream = responseStream;
+            this.isSuccess = isSuccess;
+            this.config = config;
+        }
+
+        @Override
+        public void setConfig(ConnectorConfig config) {
+        }
+
+        @Override
+        public OutputStream connect(String url, String soapAction) throws IOException {
+            return outputStream;
+        }
+
+        @Override
+        public InputStream getContent() throws IOException {
+            byte[] bytes = new byte[1024];
+            responseStream.read(bytes);
+            Iterator<MessageHandler> messagerHandlers = config.getMessagerHandlers();
+            while(messagerHandlers.hasNext()) {
+                MessageHandler next = messagerHandlers.next();
+                next.handleResponse(new URL("http://www.salesforce.com"), bytes);
+            }
+            responseStream.reset();
+            return responseStream;
+        }
+
+        @Override
+        public boolean isSuccessful() {
+            return isSuccess;
+        }
+
+        @Override
+        public OutputStream connect(String endpoint, HashMap<String, String> headers) throws IOException {
+            return outputStream;
+        }
+
+        @Override
+        public OutputStream connect(String endpoint, HashMap<String, String> httpHeaders, boolean b) throws IOException {
+            return outputStream;
         }
     }
 }

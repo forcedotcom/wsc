@@ -26,20 +26,29 @@
 
 package com.sforce.ws.transport;
 
-import java.io.*;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
+import com.sforce.ws.SessionRenewer;
+import com.sforce.ws.SoapFaultException;
+import com.sforce.ws.bind.HTMLResponseException;
+import com.sforce.ws.bind.TypeInfo;
+import com.sforce.ws.bind.TypeMapper;
+import com.sforce.ws.bind.XMLizable;
+import com.sforce.ws.parser.PullParserException;
+import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.util.Verbose;
+import com.sforce.ws.wsdl.Constants;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
-
-import com.sforce.ws.*;
-import com.sforce.ws.bind.*;
-import com.sforce.ws.parser.*;
-import com.sforce.ws.util.Verbose;
-import com.sforce.ws.wsdl.Constants;
 
 /**
  * SoapConnection can be used to send and receive SOAP messages over the
@@ -113,10 +122,8 @@ public class SoapConnection {
         } catch (SocketTimeoutException e) {
             long timeTaken = System.currentTimeMillis() - startTime;
             throw new ConnectionException("Request to " + url + " timed out. TimeTaken=" + timeTaken +
-                    " ConnectionTimeout=" + config.getConnectionTimeout() + " ReadTimeout=" + 
+                    " ConnectionTimeout=" + config.getConnectionTimeout() + " ReadTimeout=" +
                     config.getReadTimeout(), e);
-
-
         } catch (IOException e) {
             throw new ConnectionException("Failed to send request to " + url, e);
         }
@@ -146,7 +153,7 @@ public class SoapConnection {
         XMLizable result;
 
         try {
-           
+
             XmlInputStream xin = new XmlInputStream();
             xin.setInput(in, "UTF-8");
 
@@ -157,6 +164,13 @@ public class SoapConnection {
             }
         } catch (PullParserException e) {
             throw new ConnectionException("Failed to create/parse xml input stream ", e);
+        } catch (HTMLResponseException e) {
+            MessageCaptureHandler messageCaptureHandler = config.getCaptureHtmlHandler();
+            if (messageCaptureHandler != null) {
+                throw new HTMLResponseException(e.getMessage() + " REQUEST: " + messageCaptureHandler.getRequestString() + " RESPONSE: " + messageCaptureHandler.getResponseString(), e);
+            } else {
+                throw e;
+            }
         } finally {
             in.close();
         }
