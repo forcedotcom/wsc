@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import com.sforce.ws.tools.VersionInfo;
 import com.sforce.ws.transport.JdkHttpTransport;
+import com.sforce.ws.transport.MessageCaptureHandler;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.transport.TransportFactory;
 import com.sforce.ws.util.Base64;
@@ -47,6 +48,9 @@ import javax.net.ssl.SSLContext;
  * @since 1.0 Dec 19, 2005
  */
 public class ConnectorConfig {
+
+    private MessageCaptureHandler captureHtmlHandler;
+
     public class TeeInputStream {
         private int level = 0;
 
@@ -533,5 +537,16 @@ public class ConnectorConfig {
         }
 
         return connection;
+    }
+
+    public void setCaptureHtmlExceptionResponse(boolean captureHtmlResponse) {
+        if (captureHtmlResponse) {
+            this.captureHtmlHandler = new MessageCaptureHandler();
+            this.addMessageHandler(captureHtmlHandler);
+        }
+    }
+
+    public MessageCaptureHandler getCaptureHtmlHandler() {
+        return this.captureHtmlHandler;
     }
 }
