@@ -422,7 +422,7 @@ public class TypeMapper {
 
     public void verifyTag(String namespace1, String name1, String namespace2, String name2) throws ConnectionException {
         if (!sameTag(namespace1, name1, namespace2, name2)) {
-            if (namespace2.isEmpty() && name2.equalsIgnoreCase(HTML)) {
+            if (namespace2 != null && namespace2.isEmpty() && HTML.equalsIgnoreCase(name2)) {
                 throw new HTMLResponseException(String.format("Encountered HTML Content when looking for %s:%s", namespace1, name1));
             }
             throw new ConnectionException("Unexpected element. Parser was expecting element '" + namespace1 +
