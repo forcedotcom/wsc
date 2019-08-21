@@ -44,6 +44,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 
 import com.sforce.ws.ConnectionException;
@@ -66,7 +67,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * BulkConnection
- * 
+ *
  * @author mcheenath
  * @since 160
  */
@@ -341,9 +342,9 @@ public class BulkConnection {
     }
 
     /*
-     * Creates a compliant Async Api batch from a stream containing an arbitrary CSV source (eg. Outlook contacts). 
+     * Creates a compliant Async Api batch from a stream containing an arbitrary CSV source (eg. Outlook contacts).
      * The stream does not have to be UTF-8, and it's contents are transformed into a compliant
-     * batch using the previously created transformation specification (a mapping of columns to fields). 
+     * batch using the previously created transformation specification (a mapping of columns to fields).
      * The stream is still limited according to the same limit rules as apply to normal batches.
      */
     public BatchInfo createBatchFromForeignCsvStream(JobInfo jobInfo, InputStream input, String charSet) throws AsyncApiException {
@@ -379,7 +380,7 @@ public class BulkConnection {
      * Salesforce Field,Csv Header,Value,Hint
      * LastName,Surname,#N/A,
      * Birthdate,Birthday,,MM-dd-YYYY
-     * </code> 
+     * </code>
      */
     public void createTransformationSpecFromStream(JobInfo jobInfo, InputStream input) throws AsyncApiException {
         try {
@@ -622,7 +623,7 @@ public class BulkConnection {
                     AsyncExceptionCode.ClientInputError, e);
         }
     }
-    
+
     public InputStream getBatchRequestInputStream(String jobId, String batchId) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint() + "job/" + jobId + "/batch/" + batchId + "/request";
@@ -669,7 +670,7 @@ public class BulkConnection {
             throw new AsyncApiException("Failed to get result ", AsyncExceptionCode.ClientInputError, e);
         }
     }
-    
+
     public URL buildQueryResultURL(String jobId, String batchId, String resultId) throws AsyncApiException {
         try {
             return new URL(getRestEndpoint() + "job/" + jobId + "/batch/" + batchId + "/result" + "/" + resultId);
@@ -684,6 +685,10 @@ public class BulkConnection {
         SSLContext sslContext = config.getSslContext();
         if (sslContext != null && connection instanceof HttpsURLConnection) {
             ((HttpsURLConnection)connection).setSSLSocketFactory(sslContext.getSocketFactory());
+        }
+        SSLSocketFactory sslSocketFactory = config.getSslSocketFactory();
+        if (sslSocketFactory != null && connection instanceof HttpsURLConnection) {
+            ((HttpsURLConnection)connection).setSSLSocketFactory(sslSocketFactory);
         }
         connection.setRequestProperty(SESSION_ID, config.getSessionId());
 

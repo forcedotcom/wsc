@@ -41,6 +41,8 @@ import com.sforce.ws.util.FileUtil;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+
 
 /**
  * This class is an implementation of Transport using the build in
@@ -58,7 +60,7 @@ public class JdkHttpTransport implements Transport {
 
     public JdkHttpTransport() {
     }
-        
+
     public JdkHttpTransport(ConnectorConfig config) {
         setConfig(config);
     }
@@ -133,6 +135,10 @@ public class JdkHttpTransport implements Transport {
         if (sslContext != null && connection instanceof HttpsURLConnection) {
             ((HttpsURLConnection)connection).setSSLSocketFactory(sslContext.getSocketFactory());
         }
+        SSLSocketFactory sslSocketFactory = config.getSslSocketFactory();
+        if (sslSocketFactory != null && connection instanceof HttpsURLConnection) {
+            ((HttpsURLConnection)connection).setSSLSocketFactory(sslSocketFactory);
+        }
         connection.setRequestMethod("POST");
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -195,7 +201,7 @@ public class JdkHttpTransport implements Transport {
         if (config.getConnectionTimeout() != 0) {
             connection.setConnectTimeout(config.getConnectionTimeout());
         }
-        
+
         if (config.isTraceMessage()) {
             config.getTraceStream().println("WSC: Connection configured to have request properties " + connection.getRequestProperties());
         }
@@ -251,7 +257,7 @@ public class JdkHttpTransport implements Transport {
                     config.getTraceStream().print("=");
                     config.getTraceStream().println(header.getValue());
                 }
-                
+
                 config.teeInputStream(bytes);
             }
         }
