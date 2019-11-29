@@ -63,7 +63,7 @@ public class VoidReturnTest {
         File wsdl = CodeGeneratorTestUtil.getFileFromResource("VoidReturnTest.wsdl");
         File connection = CodeGeneratorTestUtil.getFileFromResource("codegeneration/VoidReturnConnection.txt");
 
-        wsdlc.run(wsdl.getAbsolutePath(), tempPath.resolve("test.jar").toAbsolutePath().toString(), null, false,
+        wsdlc.run(wsdl.getAbsolutePath(), tempPath.resolve("test.jar").toAbsolutePath().toString(), null, false, false,
                   new STGroupDir(TEMPLATE_DIR, '$', '$'), tempPath.toAbsolutePath().toString(), true);
 
         final AtomicReference<File> generatedConnection = new AtomicReference<>();

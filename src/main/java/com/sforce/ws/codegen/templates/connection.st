@@ -16,7 +16,7 @@ import javax.xml.namespace.QName;
  */
 public class $gen.className$ {
 
-  private TypeMapper __typeMapper = new TypeMapper();
+  private TypeMapper __typeMapper = new TypeMapper($gen.packagePrefix$, null, false);
   private ConnectorConfig __config;
   private HashMap<QName, XMLizable> __extraHeaders = new HashMap<QName, XMLizable>();
 
@@ -49,7 +49,6 @@ $header.elements: { ael |
 
   public $gen.className$(ConnectorConfig config) throws ConnectionException {
     this.__config = config;
-    this.__typeMapper.setPackagePrefix($gen.packagePrefix$);
     this.__typeMapper.setConfig(config);
 
     $ if (gen.hasLoginCall)$

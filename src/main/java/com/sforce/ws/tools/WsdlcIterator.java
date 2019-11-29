@@ -59,6 +59,7 @@ public class WsdlcIterator {
 
         String packagePrefix = System.getProperty(wsdlc.PACKAGE_PREFIX);
         boolean standAlone = Boolean.parseBoolean(System.getProperty(wsdlc.STANDALONE_JAR, "false"));
+        boolean javaTime = Boolean.parseBoolean(System.getProperty(wsdlc.JAVA_TIME, "false"));
         consoleMessage("Beginning run of multiple calls to wsdlc");
 
         // Parse input parameters
@@ -133,7 +134,7 @@ public class WsdlcIterator {
             // Run wsdlc on each wsdl in the wsdl directory:
             for (int ix = 0; ix < wsdlFiles.length; ix++) {
                 consoleMessage("Running wsdlc on " + wsdlPaths[ix] + "\n       to create " + jarFiles[ix]);
-                wsdlc.run(wsdlPaths[ix], jarFiles[ix], packagePrefix, standAlone, templates, null, true);
+                wsdlc.run(wsdlPaths[ix], jarFiles[ix], packagePrefix, javaTime, standAlone, templates, null, true);
             }
 
         } catch (Throwable th) {

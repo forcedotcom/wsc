@@ -89,7 +89,7 @@ public class BulkConnection {
 
     private ConnectorConfig config;
     private HashMap<String, String> headers = new HashMap<String, String>();
-    public static final TypeMapper typeMapper = new TypeMapper();
+    public static final TypeMapper typeMapper = new TypeMapper(null, null, false);
     private static final JsonFactory factory = new JsonFactory(new ObjectMapper());
 
 

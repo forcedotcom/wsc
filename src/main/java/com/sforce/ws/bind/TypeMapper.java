@@ -32,6 +32,7 @@ import com.sforce.ws.codegen.Generator;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.types.Time;
+import com.sforce.ws.types.OffsetDate;
 import com.sforce.ws.util.Base64;
 import com.sforce.ws.wsdl.Constants;
 import com.sforce.ws.wsdl.Restriction;
@@ -45,6 +46,10 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalQueries;
 import java.util.*;
 
 /**
@@ -58,8 +63,8 @@ import java.util.*;
 public class TypeMapper {
     public static final String HTML = "html";
     private static HashMap<QName, String> nillableJavaMapping = getNillableXmlJavaMapping();
-    private static HashMap<QName, String> xmlJavaMapping = getXmlJavaMapping();
-    private static HashMap<String, QName> javaXmlMapping = getJavaXmlMapping();
+    private final HashMap<QName, String> xmlJavaMapping = getXmlJavaMapping();
+    private final HashMap<String, QName> javaXmlMapping = getJavaXmlMapping();
     private static final HashSet<String> keywords = getKeyWords();
     private static HashMap<String, Class<?>> primitiveClassCache = getPrimitiveClassCache();
 
@@ -67,7 +72,7 @@ public class TypeMapper {
     private boolean generateInterfaces;
     private boolean generateExtendedErrorCodes;
 
-    private static HashMap<String, QName> getJavaXmlMapping() {
+    private HashMap<String, QName> getJavaXmlMapping() {
         HashMap<String, QName> map = new HashMap<String, QName>();
         map.put(String.class.getName(), new QName(Constants.SCHEMA_NS, "string"));
         map.put(int.class.getName(), new QName(Constants.SCHEMA_NS, "int"));
@@ -78,10 +83,16 @@ public class TypeMapper {
         map.put(Long.class.getName(), new QName(Constants.SCHEMA_NS, "long"));
         map.put(float.class.getName(), new QName(Constants.SCHEMA_NS, "float"));
         map.put(Float.class.getName(), new QName(Constants.SCHEMA_NS, "float"));
-        map.put(Date.class.getName(), new QName(Constants.SCHEMA_NS, "date"));
-        map.put(Calendar.class.getName(), new QName(Constants.SCHEMA_NS, "dateTime"));
-        map.put(GregorianCalendar.class.getName(), new QName(Constants.SCHEMA_NS, "dateTime"));
-        map.put(Time.class.getName(), new QName(Constants.SCHEMA_NS, "time"));
+        if (javaTime) {
+            map.put(OffsetDate.class.getName(), new QName(Constants.SCHEMA_NS, "date"));
+            map.put(OffsetDateTime.class.getName(), new QName(Constants.SCHEMA_NS, "dateTime"));
+            map.put(OffsetTime.class.getName(), new QName(Constants.SCHEMA_NS, "time"));
+        } else {
+            map.put(Date.class.getName(), new QName(Constants.SCHEMA_NS, "date"));
+            map.put(Calendar.class.getName(), new QName(Constants.SCHEMA_NS, "dateTime"));
+            map.put(GregorianCalendar.class.getName(), new QName(Constants.SCHEMA_NS, "dateTime"));
+            map.put(Time.class.getName(), new QName(Constants.SCHEMA_NS, "time"));
+        }
         map.put("[B", new QName(Constants.SCHEMA_NS, "base64Binary")); //byte[]
         map.put(double.class.getName(), new QName(Constants.SCHEMA_NS, "double"));
         map.put(Double.class.getName(), new QName(Constants.SCHEMA_NS, "double"));
@@ -90,16 +101,22 @@ public class TypeMapper {
         return map;
     }
 
-    private static HashMap<QName, String> getXmlJavaMapping() {
+    private HashMap<QName, String> getXmlJavaMapping() {
         HashMap<QName, String> map = new HashMap<QName, String>();
         map.put(new QName(Constants.SCHEMA_NS, "string"), String.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "int"), int.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "long"), long.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "float"), float.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "boolean"), boolean.class.getName());
-        map.put(new QName(Constants.SCHEMA_NS, "date"), Calendar.class.getName());
-        map.put(new QName(Constants.SCHEMA_NS, "dateTime"), Calendar.class.getName());
-        map.put(new QName(Constants.SCHEMA_NS, "time"), Time.class.getName());
+        if (javaTime) {
+            map.put(new QName(Constants.SCHEMA_NS, "date"), OffsetDate.class.getName());
+            map.put(new QName(Constants.SCHEMA_NS, "dateTime"), OffsetDateTime.class.getName());
+            map.put(new QName(Constants.SCHEMA_NS, "time"), OffsetTime.class.getName());
+        } else {
+            map.put(new QName(Constants.SCHEMA_NS, "date"), Calendar.class.getName());
+            map.put(new QName(Constants.SCHEMA_NS, "dateTime"), Calendar.class.getName());
+            map.put(new QName(Constants.SCHEMA_NS, "time"), Time.class.getName());
+        }
         map.put(new QName(Constants.SCHEMA_NS, "base64Binary"), "byte[]");
         map.put(new QName(Constants.SCHEMA_NS, "double"), double.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "decimal"), BigDecimal.class.getName());
@@ -134,16 +151,26 @@ public class TypeMapper {
         return map;
     }
 
+    private final boolean javaTime;
     private String packagePrefix;
-    private String interfacePackagePrefix = null;
+    private String interfacePackagePrefix;
+
+    public TypeMapper() {
+        this.javaTime = false;
+    }
+
+    public TypeMapper(String packagePrefix, String interfacePackagePrefix, boolean javaTime) {
+        this.packagePrefix = packagePrefix;
+        this.interfacePackagePrefix = interfacePackagePrefix;
+        this.javaTime = javaTime;
+    }
+
     private CalendarCodec calendarCodec = new CalendarCodec();
     private DateCodec dateCodec = new DateCodec();
     private HashMap<QName, Class<?>> typeCache = new HashMap<QName, Class<?>>();
     private ConnectorConfig config;
 
-
     public boolean writeFieldXsiType = false;
-
 
     public void writeFieldXsiType(boolean flag) {
         writeFieldXsiType = flag;
@@ -393,6 +420,12 @@ public class TypeMapper {
         } else if (value instanceof Calendar || value instanceof Date) {
             String s = calendarCodec.getValueAsString(value);
             writeSimpleType(out, info, s, true, Calendar.class.getName());
+        } else if (value instanceof OffsetDateTime) {
+            writeSimpleType(out, info, value.toString(), true, OffsetDateTime.class.getName());
+        } else if (value instanceof OffsetDate) {
+            writeSimpleType(out, info, value.toString(), true, OffsetDate.class.getName());
+        } else if (value instanceof OffsetTime) {
+            writeSimpleType(out, info, value.toString(), true, OffsetTime.class.getName());
         } else if (value instanceof byte[]) {
             String s = new String(Base64.encode((byte[]) value));
             writeSimpleType(out, info, s, true, "[B");
@@ -644,6 +677,17 @@ public class TypeMapper {
             return dateCodec.deserialize(readString(in, typeInfo, type));
         } else if (type == Time.class) {
             return new Time(readString(in, typeInfo, type));
+        } else if (type == OffsetDateTime.class) {
+            TemporalAccessor temporal = DateTimeFormatter.ISO_DATE_TIME.parseBest(readString(in, typeInfo, type), OffsetDateTime::from, LocalDateTime::from);
+            return temporal instanceof OffsetDateTime ? temporal : ((LocalDateTime) temporal).atOffset(ZoneOffset.UTC);
+        } else if (type == OffsetDate.class) {
+            TemporalAccessor temporal = DateTimeFormatter.ISO_DATE.parse(readString(in, typeInfo, type));
+            ZoneOffset offset = temporal.query(TemporalQueries.offset());
+            if (offset == null) offset = ZoneOffset.UTC;
+            return new OffsetDate(LocalDate.from(temporal), offset);
+        } else if (type == OffsetTime.class) {
+            TemporalAccessor temporal = DateTimeFormatter.ISO_TIME.parseBest(readString(in, typeInfo, type), OffsetTime::from, LocalTime::from);
+            return temporal instanceof OffsetTime ? temporal : ((LocalTime) temporal).atOffset(ZoneOffset.UTC);
         } else if (type == String.class) {
             return readString(in, typeInfo, type);
         } else if (type == int.class || type == Integer.class) {
