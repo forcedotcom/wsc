@@ -137,12 +137,13 @@ public class SoapConnection {
     	}
     	
         try {
-            Transport t = (Transport) config.getTransport().newInstance();
+            Class<?> transClass = config.getTransport();
+            Transport t = (Transport) transClass.getDeclaredConstructor().newInstance();
             t.setConfig(config);
             return t;
-        } catch (InstantiationException e) {
+        } catch (InstantiationException | NoSuchMethodException e) {
             throw new ConnectionException("Failed to create new Transport " + config.getTransport());
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ConnectionException("Failed to create new Transport " + config.getTransport());
         }
     }

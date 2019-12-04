@@ -56,7 +56,7 @@ class Compiler {
             findCompiler(loader);
         } catch (ClassNotFoundException e) {
             findCompilerInToolsJar(loader);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throwToolsexception(e);
         }
     }
@@ -65,18 +65,18 @@ class Compiler {
         try {
             ClassLoader tloader = new URLClassLoader(new URL[]{toolsJar()}, loader);
             findCompiler(tloader);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException | IOException | InvocationTargetException e) {
             throwToolsexception(e);
         }
     }
 
     @SuppressWarnings("unchecked")
     private void findCompiler(ClassLoader loader)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+            throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
 
         Class c = loader.loadClass("com.sun.tools.javac.Main");
         Class arg = (new String[0]).getClass();
-        main = c.newInstance();
+        main = c.getDeclaredConstructor().newInstance();
         method = c.getMethod("compile", arg);
     }
 
