@@ -88,7 +88,7 @@ class Compiler {
     public void compile(String[] files, File dir) throws ToolsException {
         String target = System.getProperty("compileTarget");
         if (target == null) {
-            target = "1.6";
+            target = "1.8";
         }
 
         Verbose.log("Compiling to target " + target + "... ");
