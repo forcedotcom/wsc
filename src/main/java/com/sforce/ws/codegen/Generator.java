@@ -29,7 +29,6 @@ package com.sforce.ws.codegen;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.jar.*;
 
@@ -70,27 +69,28 @@ abstract public class Generator {
     public final static String TYPE = "type";
     public final static String TYPE_INTERFACE = "typeinterface";
 
-    protected final TypeMapper typeMapper = new TypeMapper();
+    protected final TypeMapper typeMapper;
     protected final ArrayList<File> javaFiles = new ArrayList<File>();
     protected final String packagePrefix;
-    protected final String interfacePackagePrefix;
 
     protected final STGroupDir templates;
     protected boolean generateInterfaces;
 
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix) throws Exception {
-        this(packagePrefix, templates, interfacePackagePrefix, '$', '$');
+    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, char startDelim, char endDelim) {
+        this(packagePrefix, templates, interfacePackagePrefix);
     }
 
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, char startDelim, char endDelim) throws Exception {
+    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix) {
+        this(packagePrefix, templates, interfacePackagePrefix, false);
+    }
+
+    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, boolean javaTime) {
         this.templates = templates;
         this.packagePrefix = packagePrefix;
-        this.interfacePackagePrefix = interfacePackagePrefix;
-        typeMapper.setPackagePrefix(packagePrefix);
-        typeMapper.setInterfacePackagePrefix(interfacePackagePrefix);
+        typeMapper = new TypeMapper(packagePrefix, interfacePackagePrefix, javaTime);
     }
 
-    public void generate(URL wsdl, File dest) throws WsdlParseException, ToolsException, IOException {
+    public void generate(URL wsdl, File dest) throws WsdlParseException, IOException {
         Definitions definitions = WsdlFactory.create(wsdl);
         SfdcApiType sfdcApiType = definitions.getApiType();
         generateInterfaces = sfdcApiType == SfdcApiType.Partner;

@@ -85,7 +85,7 @@ public class SoapConnectionTest {
     // If we cannot identify a header throw an exception.
     @Test(expected = ConnectionException.class)
     public void validateParsingUnrecognizedHeader() throws PullParserException, IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ConnectionException {
-        SoapConnection connection = new SoapConnection("http://www.salesforce.com", "sobject", new TypeMapper(), ConnectorConfig.DEFAULT);
+        SoapConnection connection = new SoapConnection("http://www.salesforce.com", "sobject", new TypeMapper(null, null, false), ConnectorConfig.DEFAULT);
         Map<QName, Class> knownHeaders = new HashMap<>();
         connection.setKnownHeaders(knownHeaders);
         ByteArrayInputStream stream = new ByteArrayInputStream(INPUT_STRING.getBytes());
@@ -110,7 +110,7 @@ public class SoapConnectionTest {
     // If we have a correct header mapping we should be able to read with out problems.
     @Test
     public void validateParsingValidHeader() throws PullParserException, IOException, ConnectionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        SoapConnection connection = new SoapConnection("http://www.salesforce.com", "sobject", new TypeMapper(), ConnectorConfig.DEFAULT);
+        SoapConnection connection = new SoapConnection("http://www.salesforce.com", "sobject", new TypeMapper(null, null, false), ConnectorConfig.DEFAULT);
         Map<QName, Class> knownHeaders = new HashMap<>();
         QName name = new QName("urn:enterprise.soap.sforce.com", "SessionHeader"); // //SessionHeader
         knownHeaders.put(name, TestClass.class); // //
@@ -161,7 +161,7 @@ public class SoapConnectionTest {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         config.setCaptureHtmlExceptionResponse(captureResponse);
         config.setTransportFactory(new MockTransportFactory(stream, inputStream, true, config));
-        SoapConnection connection = new SoapConnection("http://www.salesforce.com", "sobject", new TypeMapper(), config);
+        SoapConnection connection = new SoapConnection("http://www.salesforce.com", "sobject", new TypeMapper(null, null, false), config);
         QName name = new QName("urn:enterprise.soap.sforce.com", "SessionHeader"); // //SessionHeader
 
         XMLizable xmlStream = new XMLizable() {

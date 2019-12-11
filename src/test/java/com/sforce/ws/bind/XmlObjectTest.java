@@ -56,7 +56,7 @@ public class XmlObjectTest extends TestCase {
     public void testSubclassWrite() throws IOException {
         QName qname = new QName("type", "urn:sobject.partner.soap.sforce.com");
         XmlOutputStream xout = new XmlOutputStream(System.out, true);
-        TypeMapper typeMapper = new TypeMapper();
+        TypeMapper typeMapper = new TypeMapper(null, null, false);
 
         // First try with Date type
         XmlObject obj = new XmlObject(qname);
@@ -87,7 +87,7 @@ public class XmlObjectTest extends TestCase {
     public void testStringArray() throws Exception {
     	String ns = "urn:sobject.partner.soap.sforce.com";
     	QName qname = new QName( ns, "anArray" );
-    	TypeMapper typeMapper = new TypeMapper();
+    	TypeMapper typeMapper = new TypeMapper(null, null, false);
 
     	String[] ab = new String[] { "a","b"  };
 		XmlObject obj = new XmlObject( qname );

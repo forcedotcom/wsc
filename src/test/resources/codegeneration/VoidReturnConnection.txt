@@ -15,7 +15,7 @@ import javax.xml.namespace.QName;
  */
 public class SoapConnection {
 
-  private TypeMapper __typeMapper = new TypeMapper();
+  private TypeMapper __typeMapper = new TypeMapper(null, null, false);
   private ConnectorConfig __config;
   private HashMap<QName, XMLizable> __extraHeaders = new HashMap<QName, XMLizable>();
 
@@ -26,7 +26,6 @@ public class SoapConnection {
 
   public SoapConnection(ConnectorConfig config) throws ConnectionException {
     this.__config = config;
-    this.__typeMapper.setPackagePrefix(null);
     this.__typeMapper.setConfig(config);
 
   }

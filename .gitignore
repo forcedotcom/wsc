@@ -2,5 +2,6 @@
 /.project
 /target
 /.classpath
-
+.idea
+*.iml
 *.java~

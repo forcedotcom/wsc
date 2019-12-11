@@ -15,7 +15,7 @@ import javax.xml.namespace.QName;
  */
 public class PartnerConnection {
 
-  private TypeMapper __typeMapper = new TypeMapper();
+  private TypeMapper __typeMapper = new TypeMapper("wsc130", null, false);
   private ConnectorConfig __config;
   private HashMap<QName, XMLizable> __extraHeaders = new HashMap<QName, XMLizable>();
 
@@ -241,7 +241,6 @@ public class PartnerConnection {
 
   public PartnerConnection(ConnectorConfig config) throws ConnectionException {
     this.__config = config;
-    this.__typeMapper.setPackagePrefix("wsc130");
     this.__typeMapper.setConfig(config);
 
     config.verifyPartnerEndpoint();

@@ -56,8 +56,9 @@ public class wsdlc extends Generator {
     public static final String TEMPLATE_DIR = String.format("%s/templates", Generator.class.getPackage().getName()
             .replace('.', '/'));
 
-    public static final String STANDALONE_JAR = "standalone-jar";
-    public static final String PACKAGE_PREFIX = "package-prefix";
+    static final String STANDALONE_JAR = "standalone-jar";
+    static final String PACKAGE_PREFIX = "package-prefix";
+    static final String JAVA_TIME = "java-time";
 
     public final static String CONNECTION = "connection";
     public final static String CONNECTOR = "connector";
@@ -75,23 +76,34 @@ public class wsdlc extends Generator {
         }
     }
 
-    public static void run(String wsdlUrl, String destJarFilename, String packagePrefix, boolean standAlone,
-                           STGroupDir templates, String destDir, boolean compile) throws Exception, ToolsException,
-            MalformedURLException, WsdlParseException, IOException {
-        wsdlc wsc = new wsdlc(packagePrefix, templates);
+    public static void run(
+            String wsdlUrl,
+            String destJarFilename,
+            String packagePrefix,
+            boolean javaTime,
+            boolean standAlone,
+            STGroupDir templates,
+            String destDir,
+            boolean compile
+    ) throws ToolsException, WsdlParseException, IOException {
+
+        wsdlc wsc = new wsdlc(packagePrefix, templates, javaTime);
         File destJar = new File(destJarFilename);
         if (destJar.exists()) {
-            if (!destJar.delete()) { throw new ToolsException(String.format(
-                    "Output Jar file exists and cannot be deleted: %s", destJar.getAbsolutePath())); }
+            if (!destJar.delete()) {
+                throw new ToolsException(String.format(
+                        "Output Jar file exists and cannot be deleted: %s", destJar.getAbsolutePath()));
+            }
         }
 
-        
-        if (destJar.getParentFile()!= null && !destJar.getParentFile().exists()) {
-            if (!destJar.getParentFile().mkdirs() && !destJar.getParentFile().exists()) { 
+
+        if (destJar.getParentFile() != null && !destJar.getParentFile().exists()) {
+            if (!destJar.getParentFile().mkdirs() && !destJar.getParentFile().exists()) {
                 // only throw exception if mkdirs returns false and directory does not exist to 
                 // prevent build failures when multiple instances of wsdlc are invoked in parallel
                 throw new ToolsException(String.format(
-                        "Cannot create jar file directory: %s", destJar.getParentFile().getAbsolutePath())); }
+                        "Cannot create jar file directory: %s", destJar.getParentFile().getAbsolutePath()));
+            }
         }
         URL wsdl;
         try {
@@ -146,13 +158,13 @@ public class wsdlc extends Generator {
         }
         String packagePrefix = System.getProperty(PACKAGE_PREFIX);
         boolean standAlone = Boolean.parseBoolean(System.getProperty(STANDALONE_JAR, "false"));
-        run(wsdlUrl, destJarFilename, packagePrefix, standAlone, new STGroupDir(TEMPLATE_DIR, '$', '$'), destDir,
-                compile);
+        boolean javaTime = Boolean.parseBoolean(System.getProperty(wsdlc.JAVA_TIME, "false"));
+        STGroupDir stGroupDir = new STGroupDir(TEMPLATE_DIR, '$', '$');
+        run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, stGroupDir, destDir, compile);
     }
 
-    public wsdlc(String packagePrefix, STGroupDir templates) throws Exception {
-        super(packagePrefix, templates, packagePrefix);
-
+    public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime) {
+        super(packagePrefix, templates, packagePrefix, javaTime);
     }
 
     private void generateConnectionClasses(Definitions definitions, File dir) throws IOException {

@@ -56,7 +56,7 @@ public class ToStringTest {
         File wsdl = CodeGeneratorTestUtil.getFileFromResource("ToStringTest.wsdl");
 
         tempPath = Files.createTempDirectory("ToStringTest");
-        wsdlc.run(wsdl.getAbsolutePath(), tempPath.resolve("test.jar").toString(), null, false,
+        wsdlc.run(wsdl.getAbsolutePath(), tempPath.resolve("test.jar").toString(), null, false, false,
                   new STGroupDir(TEMPLATE_DIR, '$', '$'), tempPath.toAbsolutePath().toString(), true);
         classLoader = new URLClassLoader(new URL[]{tempPath.toUri().toURL()}, ToStringTest.class.getClassLoader());
     }
