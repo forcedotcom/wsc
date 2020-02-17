@@ -238,6 +238,11 @@ public enum StatusCode {
    DUPLICATE_VALUE,
 
   /**
+   * Enumeration  : DUPLICATES_DETECTED
+   */
+   DUPLICATES_DETECTED,
+   
+  /**
    * Enumeration  : EMAIL_NOT_PROCESSED_DUE_TO_PRIOR_ERROR
    */
    EMAIL_NOT_PROCESSED_DUE_TO_PRIOR_ERROR,
