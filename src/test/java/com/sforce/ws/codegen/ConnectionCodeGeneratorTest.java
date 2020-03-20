@@ -159,6 +159,8 @@ public class ConnectionCodeGeneratorTest extends TestCase {
         ST template = templates.getInstanceOf(wsdlc.CONNECTION);
         assertNotNull(template);
         template.add("gen", connectionClassMetadata);
-        assertEquals(expectedSource, template.render());
+        String rendered = template.render();
+        rendered = rendered.replace("\r\n", "\n");
+        assertEquals(expectedSource, rendered);
     }
 }

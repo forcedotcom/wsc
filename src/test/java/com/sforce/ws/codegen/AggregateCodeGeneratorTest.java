@@ -42,7 +42,9 @@ public class AggregateCodeGeneratorTest extends TestCase {
         ST template = templates.getInstanceOf(Generator.AGGREGATE_RESULT);
         assertNotNull(template);
         template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null));
-        assertEquals(expectedSource, template.render());
+        String rendered = template.render();
+        rendered = rendered.replace("\r\n", "\n");
+        assertEquals(expectedSource, rendered);
     }
     
     public void testGenerateExtendedSource() throws Exception {
@@ -51,7 +53,9 @@ public class AggregateCodeGeneratorTest extends TestCase {
         ST template = templates.getInstanceOf(Generator.EXTENDED_ERROR_DETAILS);
         assertNotNull(template);
         template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null));
-        assertEquals(expectedSource, template.render());
+        String rendered = template.render();
+        rendered = rendered.replace("\r\n", "\n");
+        assertEquals(expectedSource, rendered);
     }
     
 }
