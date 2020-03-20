@@ -137,8 +137,8 @@
 	            </relocation>
                 <!-- jackson is also in core, prevent namespace collission -->
                 <relocation>
-                  <pattern>org.codehaus.jackson</pattern>
-                  <shadedPattern>com.sforce.ws.shade.org.codehaus.jackson</shadedPattern>
+                  <pattern>com.fasterxml.jackson</pattern>
+                  <shadedPattern>com.sforce.ws.shade.com.fasterxml.jackson</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>org.apache.commons</pattern>
