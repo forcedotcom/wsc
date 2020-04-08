@@ -52,5 +52,8 @@ public enum AsyncExceptionCode {
     InvalidVersion,
     HttpsRequired,
     UnsupportedContentType,
-    InvalidEntity
+    InvalidEntity,
+    TransactionSecurityBlock,
+    TransactionSecurityInternalError,
+    TransactionSecurityDeveloperError
 }
