@@ -167,6 +167,10 @@ public class wsdlc extends Generator {
         super(packagePrefix, templates, packagePrefix, javaTime);
     }
 
+    public wsdlc(String packagePrefix, STGroupDir templates) {
+        super(packagePrefix, templates, packagePrefix, false);
+    }
+
     private void generateConnectionClasses(Definitions definitions, File dir) throws IOException {
         ConnectionClassMetadata gen = new ConnectionMetadataConstructor(definitions, typeMapper, packagePrefix)
                 .getConnectionClassMetadata();
