@@ -126,7 +126,7 @@ public class wsdlc extends Generator {
         try {
             wsc.generate(wsdl, destDirectory);
             if (compile) {
-                wsc.compileTypes(destDirectory);
+                wsc.compileTypes();
                 wsc.generateJarFile(destJar, standAlone, destDirectory);
             }
         } finally {

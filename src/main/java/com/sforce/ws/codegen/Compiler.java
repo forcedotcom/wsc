@@ -27,104 +27,56 @@
 package com.sforce.ws.codegen;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import com.sforce.ws.tools.ToolsException;
 import com.sforce.ws.util.Verbose;
+import javax.tools.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author hhildebrand
  * @since 184
  */
 class Compiler {
-    private Object main;
-    private Method method;
+    JavaCompiler compiler;
+    DiagnosticCollector< JavaFileObject > ds;
+    StandardJavaFileManager mgr;
 
-    public Compiler() throws ToolsException {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    public Compiler() {
+        compiler = ToolProvider.getSystemJavaCompiler();
+        ds = new DiagnosticCollector<>();
+        mgr = compiler.getStandardFileManager( ds, null, null );
 
-        if (loader == null) {
-            loader = getClass().getClassLoader();
-        }
-
-        try {
-            findCompiler(loader);
-        } catch (ClassNotFoundException e) {
-            findCompilerInToolsJar(loader);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
-            throwToolsexception(e);
-        }
     }
 
-    private void findCompilerInToolsJar(ClassLoader loader) throws ToolsException {
-        try {
-            ClassLoader tloader = new URLClassLoader(new URL[]{toolsJar()}, loader);
-            findCompiler(tloader);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
-            throwToolsexception(e);
+    public void compile(String[] files) throws ToolsException {
+        List<File> generatedFiles = new ArrayList<>();
+        for (int itr = 0; itr< files.length ; itr++){
+            generatedFiles.add(new File(files[itr]));
         }
-    }
+        Iterable<? extends JavaFileObject> sourceFiles =
+                mgr.getJavaFileObjectsFromFiles( generatedFiles );
+        JavaCompiler.CompilationTask task =
+                compiler.getTask( null, mgr, ds, null,
+                        null, sourceFiles );
+        task.call();
 
-    @SuppressWarnings("unchecked")
-    private void findCompiler(ClassLoader loader)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-
-        Class c = loader.loadClass("com.sun.tools.javac.Main");
-        Class arg = (new String[0]).getClass();
-        main = c.newInstance();
-        method = c.getMethod("compile", arg);
-    }
-
-    private void throwToolsexception(Exception e) throws ToolsException {
-        e.printStackTrace();
-        throw new ToolsException("Unable to find compiler. Make sure that tools.jar is in your classpath: " + e);
-    }
-
-    public void compile(String[] files, File dir) throws ToolsException {
-        String target = System.getProperty("compileTarget");
-        if (target == null) {
-            target = "1.8";
-        }
-
-        Verbose.log("Compiling to target " + target + "... ");
-
-        String[] args =
-                {"-g", "-d", dir.getAbsolutePath(), "-sourcepath", dir.getAbsolutePath(), "-target", target, "-source",
-                 target};
-
-        String[] call = new String[args.length + files.length];
-
-        System.arraycopy(args, 0, call, 0, args.length);
-        System.arraycopy(files, 0, call, args.length, files.length);
-
-
-        try {
-            Integer result = (Integer) method.invoke(main, new Object[]{call});
-            if (result != 0) {
-                throw new ToolsException("Failed to compile");
+        int diagnosticWithError = 0;
+        for( Diagnostic < ? extends JavaFileObject >
+                d: ds.getDiagnostics() ) {
+            if(d.getKind() == Diagnostic.Kind.ERROR){
+                System.out.format("Error at Line: %d, %s in %s \n",
+                        d.getLineNumber(), d.getMessage( null ),
+                        d.getSource().getName());
+                diagnosticWithError++;
+            } else {
+                System.out.println(d);
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ToolsException("Failed to compile: " + e);
         }
 
+        if(diagnosticWithError > 0){
+            throw new ToolsException("Failed to compile");
+        }
         Verbose.log("Compiled " + files.length + " java files.");
-    }
-
-    private static URL toolsJar() throws MalformedURLException {
-        String javaHome = System.getProperty("java.home");
-        if (javaHome.endsWith("jre")) {
-            javaHome = javaHome.substring(0, javaHome.length() - 3);
-        }
-        if (!javaHome.endsWith("/")) {
-            javaHome = javaHome + "/";
-        }
-        String tj = javaHome + "lib/tools.jar";
-        File tjf = new File(tj);
-        return tjf.toURI().toURL();
     }
 }
