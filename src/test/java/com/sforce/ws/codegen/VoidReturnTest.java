@@ -80,8 +80,9 @@ public class VoidReturnTest {
         });
 
         Assert.assertNotNull(generatedConnection.get());
-        Assert.assertEquals(CodeGeneratorTestUtil.getSourceAsStr(connection),
-                            CodeGeneratorTestUtil.getSourceAsStr(generatedConnection.get()));
+        String conSourceAsStr = CodeGeneratorTestUtil.getSourceAsStr(connection).replace("\r\n", "\n");
+        String generatedSrcAsStr = CodeGeneratorTestUtil.getSourceAsStr(generatedConnection.get()).replace("\r\n", "\n");
+        Assert.assertEquals(conSourceAsStr, generatedSrcAsStr);
     }
 
 }

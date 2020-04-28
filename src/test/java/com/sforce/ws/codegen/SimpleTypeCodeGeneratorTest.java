@@ -53,6 +53,8 @@ public class SimpleTypeCodeGeneratorTest extends TestCase {
         ST template = templates.getInstanceOf(Generator.SIMPLE_TYPE);
         assertNotNull(template);
         template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "EmailSyncMatchPreference", enumEntries));
-        assertEquals(expectedSource, template.render());
+        String rendered = template.render();
+        rendered = rendered.replace("\r\n", "\n");
+        assertEquals(expectedSource, rendered);
     }
 }

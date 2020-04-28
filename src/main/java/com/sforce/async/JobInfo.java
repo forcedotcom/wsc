@@ -26,7 +26,7 @@
 
 package com.sforce.async;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Async Api JobInfo

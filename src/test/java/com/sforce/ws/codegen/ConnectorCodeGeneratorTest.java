@@ -46,6 +46,8 @@ public class ConnectorCodeGeneratorTest extends TestCase {
         ST template = templates.getInstanceOf(wsdlc.CONNECTOR);
         assertNotNull(template);
         template.add("gen", new ConnectorMetadata(packageName, className, endpoint));
-        assertEquals(expectedSource, template.render());
+        String rendered = template.render();
+        rendered = rendered.replace("\r\n", "\n");
+        assertEquals(expectedSource, rendered);
     }
 }

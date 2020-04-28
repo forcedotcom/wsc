@@ -40,22 +40,14 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import com.sforce.ws.util.FileUtil;
 import junit.framework.Assert;
 
 public class CodeGeneratorTestUtil {
     private static final String NL = System.getProperty("line.separator");
     
     public static String getSourceAsStr(final File src) throws IOException {
-        FileInputStream stream = new FileInputStream(src);
-        try {
-          FileChannel fc = stream.getChannel();
-          MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-          /* Instead of using default, pass in a decoder. */
-          return Charset.defaultCharset().decode(bb).toString();
-        }
-        finally {
-          stream.close();
-        }
+        return FileUtil.toString(src);
     }
 
     public static File getFileFromResource(final String resource) throws URISyntaxException {

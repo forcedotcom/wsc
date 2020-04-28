@@ -43,6 +43,8 @@ public class SObjectCodeGeneratorTest extends TestCase {
         ST template = templates.getInstanceOf(Generator.SOBJECT);
         assertNotNull(template);
         template.add("gen", new ClassMetadata("com.sforce.soap.partner.sobject", null));
-        assertEquals(expectedSource, template.render());
+        String rendered = template.render();
+        rendered = rendered.replace("\r\n", "\n");
+        assertEquals(expectedSource, rendered);
     }
 }
