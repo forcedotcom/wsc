@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -801,16 +802,13 @@ public class BulkConnection {
 
     /**
      * Deserialize JSON input
-     * @param in
-     * @param tmpClass
-     * @param <T>
-     * @return
-     * @throws IOException
-     * @throws ConnectionException
      */
-    static <T> T deserializeJsonToObject (InputStream in, Class<T> tmpClass) throws IOException, ConnectionException {
+    static <T> T deserializeJsonToObject (InputStream in, Class<T> tmpClass) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        // By default, ObjectMapper generates Calendar instances with UTC TimeZone.
+        // Here, override that to "GMT" to better match the behavior of the WSC XML parser.
+        mapper.setTimeZone(TimeZone.getTimeZone("GMT"));
         return mapper.readValue(in, tmpClass);
     }
 
