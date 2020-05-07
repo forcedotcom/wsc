@@ -27,10 +27,13 @@
 package com.sforce.async;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.TimeZone;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 
 /**
  * This is the beginning of a unit test class for {@link BulkConnection}.
@@ -38,6 +41,8 @@ import org.junit.Test;
  * @author btajuddin-sfdc
  */
 public class BulkConnectionTest {
+
+    private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 
     @Test
     public void testParseAndThrowXml() {
@@ -130,5 +135,95 @@ public class BulkConnectionTest {
         } catch (AsyncApiException aae) {
             Assert.assertEquals(AsyncExceptionCode.ClientInputError, aae.getExceptionCode());
         }
+    }
+
+    @Test
+    public void testJobSerializeToJson() throws Exception {
+        JobInfo jobInfo = new JobInfo(new JobInfo.Builder()
+                .operation(OperationEnum.query)
+                .object("Account")
+                .contentType(ContentType.JSON)
+                .fastPathEnabled(false)
+        );
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BulkConnection.serializeToJson(outputStream, jobInfo);
+
+        String output = outputStream.toString();
+        String[] expectedPairs = {
+                "\"object\":\"Account\"",
+                "\"operation\":\"query\"",
+                "\"contentType\":\"JSON\"",
+                "\"fastPathEnabled\":false",
+        };
+        for (String pair : expectedPairs) {
+            Assert.assertTrue("should contain " + pair, output.contains(pair));
+        }
+    }
+
+    @Test
+    public void testJobDeserializeJsonToObject() throws Exception {
+        InputStream inputStream = new ByteArrayInputStream(("{" +
+                "\"object\":\"Account\"," +
+                "\"operation\":\"query\"," +
+                "\"state\":\"Open\"," +
+                "\"id\":\"750xx000000006xAAA\"," +
+                "\"createdDate\":\"2020-04-24T04:24:04.000+0000\"," +
+                "\"assignmentRuleId\":null," +
+                "\"fastPathEnabled\":false," +
+                "\"totalProcessingTime\":0," +
+                "\"foo\":0" +
+                "}").getBytes());
+
+        JobInfo jobInfo = BulkConnection.deserializeJsonToObject(inputStream, JobInfo.class);
+
+        Assert.assertEquals("Account", jobInfo.getObject());
+        Assert.assertEquals(OperationEnum.query, jobInfo.getOperation());
+        Assert.assertEquals(JobStateEnum.Open, jobInfo.getState());
+        Assert.assertEquals("750xx000000006xAAA", jobInfo.getId());
+        Assert.assertEquals(1587702244000L, jobInfo.getCreatedDate().getTimeInMillis());
+        Assert.assertEquals(GMT, jobInfo.getCreatedDate().getTimeZone());
+        Assert.assertNull(jobInfo.getAssignmentRuleId());
+        Assert.assertFalse(jobInfo.getFastPathEnabled());
+        Assert.assertEquals(0, jobInfo.getTotalProcessingTime());
+    }
+
+    @Test
+    public void testBatchDeserializeJsonToObject() throws Exception {
+        InputStream inputStream = new ByteArrayInputStream(("{" +
+                "\"id\":\"751xx000000007vAAA\"," +
+                "\"jobId\":\"750xx000000006xAAA\"," +
+                "\"createdDate\":\"2020-04-24T04:24:04.000+0000\"," +
+                "\"state\":\"Completed\"," +
+                "\"stateMessage\":null," +
+                "\"totalProcessingTime\":0" +
+                "}").getBytes());
+
+        BatchInfo batchInfo = BulkConnection.deserializeJsonToObject(inputStream, BatchInfo.class);
+
+        Assert.assertEquals("751xx000000007vAAA", batchInfo.getId());
+        Assert.assertEquals("750xx000000006xAAA", batchInfo.getJobId());
+        Assert.assertEquals(1587702244000L, batchInfo.getCreatedDate().getTimeInMillis());
+        Assert.assertEquals(GMT, batchInfo.getCreatedDate().getTimeZone());
+        Assert.assertEquals(BatchStateEnum.Completed, batchInfo.getState());
+        Assert.assertNull(batchInfo.getStateMessage());
+        Assert.assertEquals(0, batchInfo.getTotalProcessingTime());
+    }
+
+    @Test
+    public void testErrorDeserializeJsonToObject() throws Exception {
+        InputStream inputStream = new ByteArrayInputStream(("{" +
+                "\"statusCode\":\"INVALID_CROSS_REFERENCE_TYPE_FOR_FIELD\"," +
+                "\"message\":\"Field must be picklist\"," +
+                "\"fields\":[\"Priority\"]," +
+                "\"foo\":[\"abc\"]" +
+                "}").getBytes());
+
+        Error err = BulkConnection.deserializeJsonToObject(inputStream, Error.class);
+
+        Assert.assertEquals(StatusCode.INVALID_CROSS_REFERENCE_TYPE_FOR_FIELD, err.getStatusCode());
+        Assert.assertEquals("Field must be picklist", err.getMessage());
+        Assert.assertEquals(1, err.getFields().length);
+        Assert.assertEquals("Priority", err.getFields()[0]);
     }
 }
