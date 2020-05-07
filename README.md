@@ -28,7 +28,7 @@ The following sample illustrates creating a connection and creating a new Accoun
     import com.sforce.soap.partner.sobject.*;
     import com.sforce.ws.*;
 
-    public static void main(String args) {
+    public static void main(String[] args) {
         ConnectorConfig config = new ConnectorConfig();
         config.setUsername("username");
         config.setPassword("password");
