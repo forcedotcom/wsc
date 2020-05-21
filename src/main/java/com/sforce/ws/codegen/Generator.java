@@ -132,13 +132,13 @@ abstract public class Generator {
         }
     }
 
-    protected void compileTypes(File dir) throws ToolsException {
+    protected void compileTypes() throws ToolsException {
         Compiler compiler = new Compiler();
         List<String> fileNames = new ArrayList<String>();
         for (File f : javaFiles) {
             fileNames.add(f.getPath());
         }
-        compiler.compile(fileNames.toArray(new String[fileNames.size()]), dir);
+        compiler.compile(fileNames.toArray(new String[fileNames.size()]));
     }
 
     protected void generate(Definitions definitions, SfdcApiType sfdcApiType, Types types, File dir) throws IOException {
