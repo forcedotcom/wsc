@@ -155,9 +155,7 @@ public class TypeMapper {
     private final Map<String, QName> javaXmlMapping;
 
     public TypeMapper() {
-        boolean javaTime = false;
-        this.xmlJavaMapping = getXmlJavaMapping(javaTime);
-        this.javaXmlMapping = getJavaXmlMapping(javaTime);
+	this(null, null, false);
     }
 
     public TypeMapper(String packagePrefix, String interfacePackagePrefix, boolean javaTime) {
