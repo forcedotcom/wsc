@@ -33,6 +33,7 @@ import com.sforce.ws.types.OffsetDate;
 import com.sforce.ws.wsdl.Constants;
 import org.junit.Test;
 
+import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.*;
@@ -99,6 +100,9 @@ public class TypeMapperTests {
         TypeInfo info = new TypeInfo("", "a", Constants.SCHEMA_NS, "date", 0, 1, true);
         TypeMapper mapper = new TypeMapper(null, null, true);
 
+        String javaClassName = mapper.getJavaClassName(new QName(Constants.SCHEMA_NS, "date"), null, false);
+        assertEquals(OffsetDate.class.getName(), javaClassName);
+
         OffsetDate result1 = (OffsetDate) mapper.readObject(xmlWithoutTimeZone, info, OffsetDate.class);
         assertEquals(ZoneOffset.UTC, result1.getOffset());
         assertEquals(LocalDate.of(2019, 12, 2), result1.getDate());
@@ -121,8 +125,11 @@ public class TypeMapperTests {
         xmlWithTimeZone.setInput(new ByteArrayInputStream(withTimeZone.getBytes()), "UTF-8");
         xmlWithTimeZone.nextTag();
 
-        TypeInfo info = new TypeInfo("", "a", Constants.SCHEMA_NS, "datetime", 0, 1, true);
+        TypeInfo info = new TypeInfo("", "a", Constants.SCHEMA_NS, "dateTime", 0, 1, true);
         TypeMapper mapper = new TypeMapper(null, null, true);
+
+        String javaClassName = mapper.getJavaClassName(new QName(Constants.SCHEMA_NS, "dateTime"), null, false);
+        assertEquals(OffsetDateTime.class.getName(), javaClassName);
 
         OffsetDateTime result1 = (OffsetDateTime) mapper.readObject(xmlWithoutTimeZone, info, OffsetDateTime.class);
         assertEquals(ZoneOffset.UTC, result1.getOffset());
@@ -148,6 +155,9 @@ public class TypeMapperTests {
 
         TypeInfo info = new TypeInfo("", "a", Constants.SCHEMA_NS, "time", 0, 1, true);
         TypeMapper mapper = new TypeMapper(null, null, true);
+
+        String javaClassName = mapper.getJavaClassName(new QName(Constants.SCHEMA_NS, "time"), null, false);
+        assertEquals(OffsetTime.class.getName(), javaClassName);
 
         OffsetTime result1 = (OffsetTime) mapper.readObject(xmlWithoutTimeZone, info, OffsetTime.class);
         assertEquals(ZoneOffset.UTC, result1.getOffset());

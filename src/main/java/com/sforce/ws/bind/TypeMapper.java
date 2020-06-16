@@ -63,8 +63,6 @@ import java.util.*;
 public class TypeMapper {
     public static final String HTML = "html";
     private static HashMap<QName, String> nillableJavaMapping = getNillableXmlJavaMapping();
-    private final HashMap<QName, String> xmlJavaMapping = getXmlJavaMapping();
-    private final HashMap<String, QName> javaXmlMapping = getJavaXmlMapping();
     private static final HashSet<String> keywords = getKeyWords();
     private static HashMap<String, Class<?>> primitiveClassCache = getPrimitiveClassCache();
 
@@ -72,7 +70,7 @@ public class TypeMapper {
     private boolean generateInterfaces;
     private boolean generateExtendedErrorCodes;
 
-    private HashMap<String, QName> getJavaXmlMapping() {
+    private Map<String, QName> getJavaXmlMapping(boolean javaTime) {
         HashMap<String, QName> map = new HashMap<String, QName>();
         map.put(String.class.getName(), new QName(Constants.SCHEMA_NS, "string"));
         map.put(int.class.getName(), new QName(Constants.SCHEMA_NS, "int"));
@@ -101,7 +99,7 @@ public class TypeMapper {
         return map;
     }
 
-    private HashMap<QName, String> getXmlJavaMapping() {
+    private Map<QName, String> getXmlJavaMapping(boolean javaTime) {
         HashMap<QName, String> map = new HashMap<QName, String>();
         map.put(new QName(Constants.SCHEMA_NS, "string"), String.class.getName());
         map.put(new QName(Constants.SCHEMA_NS, "int"), int.class.getName());
@@ -151,18 +149,20 @@ public class TypeMapper {
         return map;
     }
 
-    private final boolean javaTime;
     private String packagePrefix;
     private String interfacePackagePrefix;
+    private final Map<QName, String> xmlJavaMapping;
+    private final Map<String, QName> javaXmlMapping;
 
     public TypeMapper() {
-        this.javaTime = false;
+	this(null, null, false);
     }
 
     public TypeMapper(String packagePrefix, String interfacePackagePrefix, boolean javaTime) {
         this.packagePrefix = packagePrefix;
         this.interfacePackagePrefix = interfacePackagePrefix;
-        this.javaTime = javaTime;
+        this.xmlJavaMapping = getXmlJavaMapping(javaTime);
+        this.javaXmlMapping = getJavaXmlMapping(javaTime);
     }
 
     private CalendarCodec calendarCodec = new CalendarCodec();
