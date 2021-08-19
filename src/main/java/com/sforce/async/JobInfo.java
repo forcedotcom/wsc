@@ -42,6 +42,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
     public JobInfo(Builder builder) {
         if (builder.object != null) setObject(builder.object);
+        if (builder.query != null) setQuery(builder.query);
         if (builder.operation != null) setOperation(builder.operation);
         if (builder.assignmentRuleId != null) setAssignmentRuleId(builder.assignmentRuleId);
         if (builder.concurrencyMode != null) setConcurrencyMode(builder.concurrencyMode);
@@ -654,7 +655,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         }
         __in.peekTag();
         if (__typeMapper.isElement(__in, query__typeInfo)) {
-            setObject(__typeMapper.readString(__in, query__typeInfo, String.class));
+            setQuery(__typeMapper.readString(__in, query__typeInfo, String.class));
         }
         __in.peekTag();
         if (__typeMapper.isElement(__in, createdById__typeInfo)) {
