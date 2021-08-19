@@ -42,6 +42,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
     public JobInfo(Builder builder) {
         if (builder.object != null) setObject(builder.object);
+        if (builder.query != null) setQuery(builder.query);
         if (builder.operation != null) setOperation(builder.operation);
         if (builder.assignmentRuleId != null) setAssignmentRuleId(builder.assignmentRuleId);
         if (builder.concurrencyMode != null) setConcurrencyMode(builder.concurrencyMode);
@@ -654,7 +655,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         }
         __in.peekTag();
         if (__typeMapper.isElement(__in, query__typeInfo)) {
-            setObject(__typeMapper.readString(__in, query__typeInfo, String.class));
+            setQuery(__typeMapper.readString(__in, query__typeInfo, String.class));
         }
         __in.peekTag();
         if (__typeMapper.isElement(__in, createdById__typeInfo)) {
@@ -773,6 +774,8 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(operation)).append("'\n");
         sb.append(" object=");
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(object)).append("'\n");
+        sb.append(" query=");
+        sb.append("'").append(com.sforce.ws.util.Verbose.toString(query)).append("'\n");
         sb.append(" createdById=");
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(createdById)).append("'\n");
         sb.append(" createdDate=");
@@ -823,6 +826,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         // optional fields
         private String object;
+        private String query;
         private OperationEnum operation;
         private String assignmentRuleId;
         private ConcurrencyMode concurrencyMode;
@@ -834,6 +838,11 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         public Builder object(String object) {
             this.object = object;
+            return this;
+        }
+
+        public Builder query(String query) {
+            this.query = query;
             return this;
         }
 
