@@ -773,6 +773,8 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(operation)).append("'\n");
         sb.append(" object=");
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(object)).append("'\n");
+        sb.append(" query=");
+        sb.append("'").append(com.sforce.ws.util.Verbose.toString(query)).append("'\n");
         sb.append(" createdById=");
         sb.append("'").append(com.sforce.ws.util.Verbose.toString(createdById)).append("'\n");
         sb.append(" createdDate=");
@@ -823,6 +825,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         // optional fields
         private String object;
+        private String query;
         private OperationEnum operation;
         private String assignmentRuleId;
         private ConcurrencyMode concurrencyMode;
@@ -834,6 +837,11 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         public Builder object(String object) {
             this.object = object;
+            return this;
+        }
+
+        public Builder query(String query) {
+            this.query = query;
             return this;
         }
 
