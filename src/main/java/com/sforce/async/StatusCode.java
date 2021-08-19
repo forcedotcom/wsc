@@ -193,6 +193,11 @@ public enum StatusCode {
    DEPENDENCY_EXISTS,
 
   /**
+   * Enumeration  : DUPLICATES_DETECTED
+   */
+   DUPLICATES_DETECTED,
+
+  /**
    * Enumeration  : DUPLICATE_CASE_SOLUTION
    */
    DUPLICATE_CASE_SOLUTION,
