@@ -119,6 +119,27 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
     }
 
     /**
+     * element  : query of type {http://www.w3.org/2001/XMLSchema}string
+     * java type: java.lang.String
+     */
+    private static final com.sforce.ws.bind.TypeInfo query__typeInfo =
+            new com.sforce.ws.bind.TypeInfo("http://www.force.com/2009/06/asyncapi/dataload", "object",
+                    "http://www.w3.org/2001/XMLSchema", "string", 0, 1, true);
+
+    private java.lang.String query;
+    private boolean query__is_set = false;
+
+
+    public java.lang.String getQuery() {
+        return query;
+    }
+
+
+    public void setQuery(java.lang.String queryStr) {
+        this.query = queryStr;
+        query__is_set = true;
+    }
+    /**
      * element  : createdById of type {http://www.w3.org/2001/XMLSchema}string
      * java type: java.lang.String
      */
@@ -577,6 +598,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         __typeMapper.writeString(__out, id__typeInfo, id, id__is_set);
         __typeMapper.writeObject(__out, operation__typeInfo, operation, operation__is_set);
         __typeMapper.writeString(__out, object__typeInfo, object, object__is_set);
+        __typeMapper.writeString(__out, query__typeInfo, query, query__is_set);
         __typeMapper.writeString(__out, createdById__typeInfo, createdById, createdById__is_set);
         __typeMapper.writeObject(__out, createdDate__typeInfo, createdDate, createdDate__is_set);
         __typeMapper.writeObject(__out, systemModstamp__typeInfo, systemModstamp, systemModstamp__is_set);
@@ -629,6 +651,10 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
         __in.peekTag();
         if (__typeMapper.isElement(__in, object__typeInfo)) {
             setObject(__typeMapper.readString(__in, object__typeInfo, String.class));
+        }
+        __in.peekTag();
+        if (__typeMapper.isElement(__in, query__typeInfo)) {
+            setObject(__typeMapper.readString(__in, query__typeInfo, String.class));
         }
         __in.peekTag();
         if (__typeMapper.isElement(__in, createdById__typeInfo)) {
