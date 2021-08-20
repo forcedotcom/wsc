@@ -249,6 +249,7 @@ public class JdkHttpStreamingTransport implements StreamingTransportInterface {
 	        for(int len; (len = this.contentInputStream.read(buffer)) > 0;) {
 	            bos.write(buffer, 0, len);
 	        }
+	        bos.flush();
         	bos.close();
     	}
     	
