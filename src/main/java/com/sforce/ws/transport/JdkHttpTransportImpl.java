@@ -50,17 +50,17 @@ import javax.net.ssl.SSLContext;
  * @version 1.0
  * @since 1.0  Nov 30, 2005
  */
-public class JdkHttpStreamingTransport implements StreamingTransportInterface {
+public class JdkHttpTransportImpl implements HttpTransportInterface {
     private HttpURLConnection connection;
     private boolean successful;
     private ConnectorConfig config;
     private URL url;
     private BufferedInputStream contentInputStream;
 
-    public JdkHttpStreamingTransport() {
+    public JdkHttpTransportImpl() {
     }
         
-    public JdkHttpStreamingTransport(ConnectorConfig config) {
+    public JdkHttpTransportImpl(ConnectorConfig config) {
         setConfig(config);
     }
 
@@ -73,13 +73,13 @@ public class JdkHttpStreamingTransport implements StreamingTransportInterface {
 
     @Override
     public OutputStream connect(String uri, HashMap<String, String> httpHeaders) throws IOException {
-        return connectLocal(uri, httpHeaders, true,  StreamingTransportInterface.SupportedHttpMethodType.POST, null, null);
+        return connectLocal(uri, httpHeaders, true,  HttpTransportInterface.SupportedHttpMethodType.POST, null, null);
     }
 
     @Override
     public OutputStream connect(String uri, HashMap<String, String> httpHeaders, boolean enableCompression)
             throws IOException {
-        return connectLocal(uri, httpHeaders, enableCompression,  StreamingTransportInterface.SupportedHttpMethodType.POST, null, null);
+        return connectLocal(uri, httpHeaders, enableCompression,  HttpTransportInterface.SupportedHttpMethodType.POST, null, null);
     }
 
     @Override
@@ -94,30 +94,30 @@ public class JdkHttpStreamingTransport implements StreamingTransportInterface {
         header.put("Content-Type", "text/xml; charset=UTF-8");
         header.put("Accept", "text/xml");
 
-        return connectLocal(uri, header, StreamingTransportInterface.SupportedHttpMethodType.POST, null, null);
+        return connectLocal(uri, header, HttpTransportInterface.SupportedHttpMethodType.POST, null, null);
     }
 
 	@Override
 	public OutputStream connect(String uri, HashMap<String, String> httpHeaders, boolean enableCompression,
-			SupportedHttpMethodType httpMethod) throws IOException {
+			HttpTransportInterface.SupportedHttpMethodType httpMethod) throws IOException {
         return connectLocal(uri, httpHeaders, enableCompression, httpMethod, null, null);
 	}
 
 	@Override
-	public void connectStream(String uri, HashMap<String, String> httpHeaders, boolean enableCompression,
-			SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding)
+	public void connect(String uri, HashMap<String, String> httpHeaders, boolean enableCompression,
+			HttpTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding)
 			throws IOException {
         connectLocal(uri, httpHeaders, enableCompression, httpMethod, contentInputStream, contentEncoding);		
 	}
 	
     private OutputStream connectLocal(String uri, HashMap<String, String> httpHeaders,
-    		StreamingTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding)
+    		HttpTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding)
             throws IOException {
         return connectLocal(uri, httpHeaders, true, httpMethod, contentInputStream, contentEncoding);
     }
 
     private OutputStream connectLocal(String uri, HashMap<String, String> httpHeaders, boolean enableCompression,
-    		StreamingTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding)
+    		HttpTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding)
             throws IOException {
     	OutputStream requestOutputStream = connectRaw(uri, httpHeaders, enableCompression, httpMethod, contentInputStream, contentEncoding);
     	if (contentInputStream != null) {
@@ -149,12 +149,12 @@ public class JdkHttpStreamingTransport implements StreamingTransportInterface {
     }
 
     private OutputStream connectRaw(String uri, HashMap<String, String> httpHeaders, boolean enableCompression,
-    		StreamingTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentStreamContentEncoding)
+    		HttpTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentStreamContentEncoding)
             throws IOException {
         url = new URL(uri);
 
         if (httpMethod == null) {
-        	httpMethod = StreamingTransportInterface.SupportedHttpMethodType.POST;
+        	httpMethod = HttpTransportInterface.SupportedHttpMethodType.POST;
         }
         
         if (contentInputStream != null) {

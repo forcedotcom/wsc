@@ -38,16 +38,16 @@ import java.util.HashMap;
  * @version 1.0
  * @since 1.0  Nov 30, 2005
  */
-public interface StreamingTransportInterface extends Transport {
+public interface HttpTransportInterface extends Transport {
 	enum SupportedHttpMethodType {
 		PUT,
 		POST,
 		PATCH
 	}
     OutputStream connect(String endpoint, HashMap<String, String> httpHeaders, boolean enableCompression,
-    		StreamingTransportInterface.SupportedHttpMethodType httpMethod) throws IOException;
+    		HttpTransportInterface.SupportedHttpMethodType httpMethod) throws IOException;
 
-    void connectStream(String endpoint, HashMap<String, String> httpHeaders, boolean enableCompression,
-    		StreamingTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding) throws IOException;
+    void connect(String endpoint, HashMap<String, String> httpHeaders, boolean enableCompression,
+    		HttpTransportInterface.SupportedHttpMethodType httpMethod, InputStream contentInputStream, String contentEncoding) throws IOException;
 
 }
