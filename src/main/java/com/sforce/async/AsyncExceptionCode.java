@@ -55,5 +55,6 @@ public enum AsyncExceptionCode {
     InvalidEntity,
     TransactionSecurityBlock,
     TransactionSecurityInternalError,
-    TransactionSecurityDeveloperError
+    TransactionSecurityDeveloperError,
+    Gone
 }
