@@ -167,4 +167,9 @@ public class TypeMapperTests {
         assertEquals(ZoneOffset.of("+05:00"), result2.getOffset());
         assertEquals(LocalTime.of(11, 22, 33, 444000000), result2.toLocalTime());
     }
+
+    @Test
+    public void writingOffsetDateTimeDoesntDropExtraZeros() {
+
+    }
 }
