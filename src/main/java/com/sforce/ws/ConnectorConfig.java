@@ -39,10 +39,12 @@ import com.sforce.ws.util.Base64;
 import com.sforce.ws.util.Verbose;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+
 
 /**
  * This class contains a set of configuration properties
- * 
+ *
  * @author http://cheenath.com
  * @version 1.0
  * @since 1.0 Dec 19, 2005
@@ -132,7 +134,7 @@ public class ConnectorConfig {
             getTraceStream().println("------------ Request end   ----------");
         }
     }
-    
+
     private int readTimeout;
     private int connectionTimeout;
     private boolean traceMessage;
@@ -159,8 +161,11 @@ public class ConnectorConfig {
     private Class transport = JdkHttpTransport.class;
     private SessionRenewer sessionRenewer;
     private String ntlmDomain;
-	private TransportFactory transportFactory;
+	  private TransportFactory transportFactory;
 	  private SSLContext sslContext;
+    private SSLSocketFactory sslSocketFactory;
+
+
 
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
 
@@ -172,6 +177,10 @@ public class ConnectorConfig {
         return sslContext;
     }
 
+    public SSLSocketFactory getSslSocketFactory() { return sslSocketFactory; }
+
+    public void setSslSocketFactory(SSLSocketFactory sslSocketFactory) { this.sslSocketFactory = sslSocketFactory; }
+
     public Class getTransport() {
         return transport;
     }
@@ -179,11 +188,11 @@ public class ConnectorConfig {
     public TransportFactory getTransportFactory() {
     	return transportFactory;
     }
-    
+
     public void setTransportFactory(TransportFactory transportFactory) {
     	this.transportFactory = transportFactory;
     }
-    
+
     public void setTransport(Class transport) {
         this.transport = transport;
     }
@@ -196,7 +205,7 @@ public class ConnectorConfig {
             Verbose.log("http.auth.ntlm.domain already set");
         }
     }
-    
+
     public String getNtlmDomain() {
     	return ntlmDomain;
     }
@@ -385,11 +394,11 @@ public class ConnectorConfig {
 	public void setUseChunkedPost(boolean chunk) {
 		this.useChunkedPost = chunk;
 	}
-	
+
 	public boolean useChunkedPost() {
 		return this.useChunkedPost;
 	}
-	
+
     public void verifyPartnerEndpoint() throws ConnectionException {
         verifyEndpoint("/services/Soap/u/");
     }
@@ -452,11 +461,11 @@ public class ConnectorConfig {
     public void setRestEndpoint(String restEndpoint) {
         this.restEndpoint = restEndpoint;
     }
-    
+
     public SessionRenewer getSessionRenewer() {
         return sessionRenewer;
     }
-    
+
     public void setSessionRenewer(SessionRenewer sessionRenewer) {
         this.sessionRenewer = sessionRenewer;
     }
@@ -465,7 +474,7 @@ public class ConnectorConfig {
     	if(transportFactory != null) {
     		return transportFactory.createTransport();
     	}
-    	
+
         try {
             Transport t = (Transport)getTransport().newInstance();
             t.setConfig(this);
@@ -481,11 +490,11 @@ public class ConnectorConfig {
             HashMap<String, String> httpHeaders) throws IOException {
         return createConnection(url, httpHeaders, true);
     }
-    
+
     public void teeInputStream(byte[] bytes) {
         new TeeInputStream(bytes);
     }
-    
+
     public OutputStream teeOutputStream(OutputStream os) {
         return new TeeOutputStream(os);
     }
