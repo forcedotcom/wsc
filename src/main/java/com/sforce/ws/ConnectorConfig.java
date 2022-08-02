@@ -172,8 +172,6 @@ public class ConnectorConfig {
             Version.Builder.newBuilder().setFeature(14).build();
     private final static Version VERSION_13_0_2 =
             Version.Builder.newBuilder().setFeature(13).setInterim(0).setUpdate(2).build();
-    private final static Version VERSION_12_0_0 =
-            Version.Builder.newBuilder().setFeature(12).setInterim(0).setUpdate(0).setPatch(0).setBuild(0).build();
     private final static Version VERSION_11_0_6 =
             Version.Builder.newBuilder().setFeature(11).setInterim(0).setUpdate(6).build();
     private final static Version VERSION_1_8_0_0_321 =
