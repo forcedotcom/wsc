@@ -172,10 +172,12 @@ public class ConnectorConfig {
             Version.Builder.newBuilder().setFeature(14).build();
     private final static Version VERSION_13_0_2 =
             Version.Builder.newBuilder().setFeature(13).setInterim(0).setUpdate(2).build();
+    private final static Version VERSION_12_0_0 =
+            Version.Builder.newBuilder().setFeature(12).setInterim(0).setUpdate(0).setPatch(0).setBuild(0).build();
     private final static Version VERSION_11_0_6 =
             Version.Builder.newBuilder().setFeature(11).setInterim(0).setUpdate(6).build();
     private final static Version VERSION_1_8_0_0_321 =
-            Version.Builder.newBuilder().setFeature(1).setInterim(0).setUpdate(8).setPatch(0).setBuild(321).build();
+            Version.Builder.newBuilder().setFeature(1).setInterim(8).setUpdate(0).setPatch(0).setBuild(321).build();
     private static boolean javaVersionHasBug = doesVersionHasABug(System.getProperty(JAVA_VERSION_PROPERTY));
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
 
@@ -586,9 +588,10 @@ public class ConnectorConfig {
         try {
             Version version = Version.parse(runtimeVersion);
             if (version.compareTo(VERSION_14_0_0_0) >= 0) return false;
-            else if (version.compareTo(VERSION_13_0_2) >= 0) return false;
-            else if (version.compareTo(VERSION_11_0_6) >= 0) return false;
-            else return version.compareTo(VERSION_1_8_0_0_321) < 0;
+            else if (version.getFeature() == 13 && version.compareTo(VERSION_13_0_2) >= 0) return false;
+            else if (version.getFeature() == 11 && version.compareTo(VERSION_11_0_6) >= 0) return false;
+            else if (version.getFeature() == 1 && version.getInterim() == 8 && version.compareTo(VERSION_1_8_0_0_321) >= 0) return false;
+            else return true;
         } catch (Exception e) {
             // We were not able to determine the java version therefore, we default are assumption tha the current java
             // version is free from bug JDK-8209178

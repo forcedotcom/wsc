@@ -37,19 +37,25 @@ public class ConnectorConfigTest {
 
     @Test
     public void testDoesVersionHasABugWithBugFixedVersionShouldReturnFalse() {
-        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("1.8.0_331"));
-        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("11.0.7"));
-        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("13.1"));
-        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("14.0.1"));
         Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("15"));
+        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("14.0.0"));
+        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("13.0.2"));
+        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("13.0.3"));
+        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("11.0.6"));
+        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("11.1.2"));
+        Assert.assertFalse("method should return false for a java version that has been fixed for bug", ConnectorConfig.doesVersionHasABug("1.8.0_331"));
     }
 
     @Test
     public void testDoesVersionHasABugWithBugVersionShouldReturnTrue() {
-        Assert.assertFalse("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("1.8.0_172"));
-        Assert.assertFalse("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("10.0.2"));
-        Assert.assertFalse("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("11.0.5"));
-        Assert.assertFalse("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("13.0.1"));
-        Assert.assertFalse("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("9.0.1"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("13.0.1"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("12.0.9"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("12.0.0"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("11.0.5"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("11.0.2"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("10.0.2"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("9"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("8"));
+        Assert.assertTrue("method should return true for a java version that has not been fixed for the bug", ConnectorConfig.doesVersionHasABug("1.8.0_172"));
     }
 }
