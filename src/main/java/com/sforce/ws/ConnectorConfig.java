@@ -26,10 +26,6 @@
 
 package com.sforce.ws;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.Map.Entry;
 import com.sforce.ws.tools.VersionInfo;
 import com.sforce.ws.transport.JdkHttpTransport;
 import com.sforce.ws.transport.MessageCaptureHandler;
@@ -39,6 +35,13 @@ import com.sforce.ws.util.Base64;
 import com.sforce.ws.util.Verbose;
 
 import javax.net.ssl.SSLContext;
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class contains a set of configuration properties
@@ -161,8 +164,13 @@ public class ConnectorConfig {
     private String ntlmDomain;
 	private TransportFactory transportFactory;
 	  private SSLContext sslContext;
-
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
+
+    static {
+        if (javaVersionHasABug()) {
+            Verbose.log(JavaVersion.JDK_UPDATE_MESSAGE);
+        }
+    }
 
     public void setSslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
@@ -357,6 +365,9 @@ public class ConnectorConfig {
         }
 
         traceStream = new PrintStream(new FileOutputStream(file, true), true);
+        if (javaVersionHasABug()) {
+            traceStream.println(JavaVersion.JDK_UPDATE_MESSAGE);
+        }
     }
 
     public PrintStream getTraceStream() {
@@ -548,5 +559,9 @@ public class ConnectorConfig {
 
     public MessageCaptureHandler getCaptureHtmlHandler() {
         return this.captureHtmlHandler;
+    }
+
+    private static boolean javaVersionHasABug() {
+        return JavaVersion.javaVersionHasABug(System.getProperty(JavaVersion.JAVA_VERSION_PROPERTY));
     }
 }
