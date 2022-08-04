@@ -23,27 +23,43 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.sforce.ws.types;
+package com.sforce.ws;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Version implements Comparable<Version> {
+/**
+ * This class represents a semantic java version that can parse a string into different semantic version components
+ * (feature, interim, patch, update and build) and can compare two versions based on these components.
+ *
+ * @author arjun.mehrotra
+ */
+public class JavaVersion implements Comparable<JavaVersion> {
 
     //For java 8 and earlier versions the version format string follows pattern major.minor.patch_build https://www.oracle.com/java/technologies/javase/versioning-naming.html
     //For java 9 and later versions the version format string follows pattern feature.interim.update.patch https://openjdk.org/jeps/223
     private static final String JAVA_VERSION_REGEX = "^(?<FEATURE>[1-9][0-9]*)(?:\\.(?<INTERIM>[0-9]*))?(?:\\.(?<UPDATE>\\d+))?(?:\\.(?<PATCH>[0-9]*))?(?:_(?<BUILD>[0-9]*))?(.*)";
     private static final Pattern JAVA_VERSION_PATTERN = Pattern.compile(JAVA_VERSION_REGEX);
-    public static final String VERSION_PARSE_ERROR = "Cannot parse provided version string";
-    public static final String INVALID_FEATURE_VALUE_ERROR = "Invalid feature value in the provided version string";
+    protected static final String VERSION_PARSE_ERROR = "Cannot parse provided version string";
+    protected static final String INVALID_FEATURE_VALUE_ERROR = "Invalid feature value in the provided version string";
+    public static final String JAVA_VERSION_PROPERTY = "java.version";
+    public static final String JDK_UPDATE_MESSAGE = "Please update the client to a JDK version that includes a fix for JDK-8209178. See https://trailblazer.salesforce.com/issues_view?id=a1p4V000002JfxSQAS for more details.";
+    private final static JavaVersion JAVA_VERSION_14_0_0_0 =
+            Builder.newBuilder().setFeature(14).build();
+    private final static JavaVersion JAVA_VERSION_13_0_2 =
+            Builder.newBuilder().setFeature(13).setInterim(0).setUpdate(2).build();
+    private final static JavaVersion JAVA_VERSION_11_0_6 =
+            Builder.newBuilder().setFeature(11).setInterim(0).setUpdate(6).build();
+    private final static JavaVersion JAVA_VERSION_1_8_0_0_321 =
+            Builder.newBuilder().setFeature(1).setInterim(8).setUpdate(0).setPatch(0).setBuild(321).build();
     private final int feature;
     private final int interim;
     private final int update;
     private final int patch;
     private final int build;
 
-    private Version(Integer feature, int interim, int update, int patch, int build) {
+    private JavaVersion(Integer feature, int interim, int update, int patch, int build) {
         if (feature == null || feature.equals(0))
             throw new IllegalArgumentException(INVALID_FEATURE_VALUE_ERROR);
         this.feature = feature;
@@ -53,7 +69,7 @@ public class Version implements Comparable<Version> {
         this.build = build;
     }
 
-    public static Version parse(String version) {
+    public static JavaVersion parse(String version) {
         if (version == null)
             throw new NullPointerException(VERSION_PARSE_ERROR);
         try {
@@ -67,14 +83,14 @@ public class Version implements Comparable<Version> {
         throw new IllegalArgumentException(VERSION_PARSE_ERROR);
     }
 
-    private static Version buildVersionFromNewPattern(Matcher matcher) {
+    private static JavaVersion buildVersionFromNewPattern(Matcher matcher) {
         Integer feature = getValue(matcher, "FEATURE", null);
         int interim = getValue(matcher, "INTERIM", 0);
         int update = getValue(matcher, "UPDATE", 0);
         int patch = getValue(matcher, "PATCH", 0);
         int build = getValue(matcher, "BUILD", 0);
 
-        return new Version.Builder()
+        return new JavaVersion.Builder()
                 .setFeature(feature)
                 .setInterim(interim)
                 .setUpdate(update)
@@ -92,8 +108,31 @@ public class Version implements Comparable<Version> {
         }
     }
 
+    /**
+     * Check if the provided java version has been patched for the bug JDK-8209178. Refer
+     * <a href="https://bugs.openjdk.org/browse/JDK-8209178">JDK-8209178</a> to get the list of java versions that have
+     * fixed the bug.
+     *
+     * @param runtimeVersion java version
+     * @return true, if the java version has been patched for the bug, false otherwise
+     */
+    public static boolean javaVersionHasABug(String runtimeVersion) {
+        try {
+            JavaVersion javaVersion = parse(runtimeVersion);
+            if (javaVersion.compareTo(JAVA_VERSION_14_0_0_0) >= 0) return false;
+            else if (javaVersion.getFeature() == 13 && javaVersion.compareTo(JAVA_VERSION_13_0_2) >= 0) return false;
+            else if (javaVersion.getFeature() == 11 && javaVersion.compareTo(JAVA_VERSION_11_0_6) >= 0) return false;
+            else if (javaVersion.getFeature() == 1 && javaVersion.getInterim() == 8 && javaVersion.compareTo(JAVA_VERSION_1_8_0_0_321) >= 0) return false;
+            else return true;
+        } catch (Exception e) {
+            // We were not able to determine the java version therefore, we default are assumption tha the current java
+            // version is free from bug JDK-8209178
+            return false;
+        }
+    }
+
     @Override
-    public int compareTo(Version that) {
+    public int compareTo(JavaVersion that) {
         if (that == null)
             throw new NullPointerException();
         if (!Objects.equals(getFeature(), that.getFeature()))
@@ -176,8 +215,8 @@ public class Version implements Comparable<Version> {
             return this;
         }
 
-        public Version build() {
-            return new Version(feature, interim, update, patch, build);
+        public JavaVersion build() {
+            return new JavaVersion(feature, interim, update, patch, build);
         }
     }
 }

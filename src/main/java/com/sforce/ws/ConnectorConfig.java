@@ -31,7 +31,6 @@ import com.sforce.ws.transport.JdkHttpTransport;
 import com.sforce.ws.transport.MessageCaptureHandler;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.transport.TransportFactory;
-import com.sforce.ws.types.Version;
 import com.sforce.ws.util.Base64;
 import com.sforce.ws.util.Verbose;
 
@@ -52,9 +51,6 @@ import java.util.Map.Entry;
  * @since 1.0 Dec 19, 2005
  */
 public class ConnectorConfig {
-
-    private final static String JAVA_VERSION_PROPERTY = "java.version";
-    private final static String JDK_UPDATE_MESSAGE = "Please update the client to a JDK version that includes a fix for JDK-8209178. See https://trailblazer.salesforce.com/issues_view?id=a1p4V000002JfxSQAS for more details.";
 
     private MessageCaptureHandler captureHtmlHandler;
 
@@ -168,20 +164,11 @@ public class ConnectorConfig {
     private String ntlmDomain;
 	private TransportFactory transportFactory;
 	  private SSLContext sslContext;
-    private final static Version VERSION_14_0_0_0 =
-            Version.Builder.newBuilder().setFeature(14).build();
-    private final static Version VERSION_13_0_2 =
-            Version.Builder.newBuilder().setFeature(13).setInterim(0).setUpdate(2).build();
-    private final static Version VERSION_11_0_6 =
-            Version.Builder.newBuilder().setFeature(11).setInterim(0).setUpdate(6).build();
-    private final static Version VERSION_1_8_0_0_321 =
-            Version.Builder.newBuilder().setFeature(1).setInterim(8).setUpdate(0).setPatch(0).setBuild(321).build();
-    private static boolean javaVersionHasBug = doesVersionHasABug(System.getProperty(JAVA_VERSION_PROPERTY));
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
 
     static {
-        if (javaVersionHasBug) {
-            Verbose.log(JDK_UPDATE_MESSAGE);
+        if (javaVersionHasABug()) {
+            Verbose.log(JavaVersion.JDK_UPDATE_MESSAGE);
         }
     }
 
@@ -378,8 +365,8 @@ public class ConnectorConfig {
         }
 
         traceStream = new PrintStream(new FileOutputStream(file, true), true);
-        if (javaVersionHasBug) {
-            traceStream.println(JDK_UPDATE_MESSAGE);
+        if (javaVersionHasABug()) {
+            traceStream.println(JavaVersion.JDK_UPDATE_MESSAGE);
         }
     }
 
@@ -574,26 +561,7 @@ public class ConnectorConfig {
         return this.captureHtmlHandler;
     }
 
-    /**
-     * Check if the provided java version has been patched for the bug JDK-8209178. Refer
-     * <a href="https://bugs.openjdk.org/browse/JDK-8209178">JDK-8209178</a> to get the list of java versions that have
-     * fixed the bug.
-     *
-     * @param runtimeVersion java version
-     * @return true, if the java version has been patched for the bug, false otherwise
-     */
-    public static boolean doesVersionHasABug(String runtimeVersion) {
-        try {
-            Version version = Version.parse(runtimeVersion);
-            if (version.compareTo(VERSION_14_0_0_0) >= 0) return false;
-            else if (version.getFeature() == 13 && version.compareTo(VERSION_13_0_2) >= 0) return false;
-            else if (version.getFeature() == 11 && version.compareTo(VERSION_11_0_6) >= 0) return false;
-            else if (version.getFeature() == 1 && version.getInterim() == 8 && version.compareTo(VERSION_1_8_0_0_321) >= 0) return false;
-            else return true;
-        } catch (Exception e) {
-            // We were not able to determine the java version therefore, we default are assumption tha the current java
-            // version is free from bug JDK-8209178
-            return false;
-        }
+    private static boolean javaVersionHasABug() {
+        return JavaVersion.javaVersionHasABug(System.getProperty(JavaVersion.JAVA_VERSION_PROPERTY));
     }
 }
