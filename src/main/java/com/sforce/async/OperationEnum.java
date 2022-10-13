@@ -34,6 +34,7 @@ public enum OperationEnum {
     hardDelete,
     query,
     queryAll,
-    composite
+    composite,
+    internal
 }
 
