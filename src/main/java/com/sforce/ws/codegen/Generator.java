@@ -228,14 +228,11 @@ abstract public class Generator {
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {
         SimpleClassMetadata gen = new SimpleClassMetadata(schema, simpleType, typeMapper);
         ST template;
-        System.out.println(gen.getClassName());
-        System.out.println("asdf");
         if (gen.getClassName().equals("OrganizationValue")) {
             template = templates.getInstanceOf(SIMPLE_TYPE_ORGANIZATION_VALUE);
         } else {
             template = templates.getInstanceOf(SIMPLE_TYPE);
         }
-        // ST template = templates.getInstanceOf(SIMPLE_TYPE);
 
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
     }
