@@ -61,6 +61,7 @@ abstract public class Generator {
      */
     public final static String AGGREGATE_RESULT = "aggregateResult";
     public final static String SIMPLE_TYPE = "simpleType";
+    public final static String SIMPLE_TYPE_ORGANIZATION_VALUE = "simpleTypeOrganizationValue";
     public final static String SOBJECT = "sobject";
     public final static String ISOBJECT = "isobject";
     public final static String EXTENDED_ERROR_DETAILS = "extendedErrorDetails";
@@ -226,7 +227,13 @@ abstract public class Generator {
 
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {
         SimpleClassMetadata gen = new SimpleClassMetadata(schema, simpleType, typeMapper);
-        ST template = templates.getInstanceOf(SIMPLE_TYPE);
+        ST template;
+        if (gen.getClassName().equals("OrganizationValue")) {
+            template = templates.getInstanceOf(SIMPLE_TYPE_ORGANIZATION_VALUE);
+        } else {
+            template = templates.getInstanceOf(SIMPLE_TYPE);
+        }
+
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
     }
 
