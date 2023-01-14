@@ -56,9 +56,15 @@ $header.elements: { ael |
     if (!config.isManualLogin()) {
       if (config.getSessionId()==null) {
         config.setServiceEndpoint(config.getAuthEndpoint());
-        $gen.loginResult$ result = login(config.getUsername(), config.getPassword());
-        config.setSessionId(result.getSessionId());
-        config.setServiceEndpoint(result.getServerUrl());
+        if(config.getJwtPrivateKey() != null) {
+            com.sforce.jwt.JwtResult jwtResult = new com.sforce.jwt.JwtLoginService(config).login();
+            config.setSessionId(jwtResult.getJwtResponse().getAccess_token());
+            config.setServiceEndpoint(jwtResult.getServerUrl());
+        } else {
+            $gen.loginResult$ result = login(config.getUsername(), config.getPassword());
+            config.setSessionId(result.getSessionId());
+            config.setServiceEndpoint(result.getServerUrl());
+        }
       } else {
         if (config.getServiceEndpoint() == null) {
           throw new com.sforce.ws.ConnectionException("Please set ServiceEndpoint");
