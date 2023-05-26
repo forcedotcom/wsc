@@ -9,10 +9,11 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>58.0.0</version>
+  <version>58.0.1-SNAPSHOT</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
+  
   <licenses>
     <license>
       <name>BSD License (FreeBSD)</name>
@@ -21,14 +22,17 @@
       <comments>A business-friendly OSS license</comments>
     </license>
   </licenses>
+
   <scm>
     <connection>scm:git:git://github.com/forcedotcom/wsc.git</connection>
     <developerConnection>scm:git:git://github.com/forcedotcom/wsc.git</developerConnection>
     <url>git@github.com/forcedotcom/wsc</url>
   </scm>
+
   <developers>
     <!-- see mailing list -->
   </developers>
+
   <mailingLists>
     <mailingList>
       <name>Database.com SDK for Java Issues</name>
@@ -38,6 +42,7 @@
       <post>https://github.com/forcedotcom/java-sdk/issues/new</post>
     </mailingList>
   </mailingLists>
+
   <dependencies>
     <dependency>
       <groupId>org.antlr</groupId>
@@ -77,6 +82,7 @@
       <version>1.9.4</version>
     </dependency>
   </dependencies>
+
   <build>
     <resources>
       <resource>

@@ -1,0 +1,9 @@
+load("@rules_java//java:defs.bzl", "java_import")
+
+package(default_visibility = ["//visibility:public"])
+
+java_import(
+    name = "com_force_api_force_wsc",
+    jars = glob(["target/force-wsc-*-SNAPSHOT.jar"]),
+    srcjar = glob([target/force-wsc-*-SNAPSHOT-sources.jar"])[0],
+)
