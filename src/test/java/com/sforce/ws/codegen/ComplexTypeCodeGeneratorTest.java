@@ -137,6 +137,7 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
         template.add("gen", classMetadata);
         String rendered = template.render();
         rendered = rendered.replace("\r\n", "\n");
+        expectedSource = expectedSource.replace("\r\n", "\n");
         assertEquals(expectedSource, rendered);
     }
 }
