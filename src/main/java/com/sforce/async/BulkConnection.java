@@ -82,6 +82,9 @@ public class BulkConnection {
     public static final String ZIP_XML_CONTENT_TYPE = "zip/xml";
     public static final String ZIP_CSV_CONTENT_TYPE = "zip/csv";
     public static final String ZIP_JSON_CONTENT_TYPE = "zip/json";
+    public static final String AVTO_BINARY_CONTENT_TYPE = "avro/binary";
+    public static final String OCTET_STREAM_CONTENT_TYPE = "application/octet-stream";
+    public static final String PARQUET_CONTENT_TYPE = "application/vnd.apache.parquet"
 
     public static final QName JOB_QNAME = new QName(NAMESPACE, "jobInfo");
     public static final QName BATCH_QNAME = new QName(NAMESPACE, "batchInfo");

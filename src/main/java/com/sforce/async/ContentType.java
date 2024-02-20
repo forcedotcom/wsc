@@ -38,5 +38,7 @@ public enum ContentType {
     JSON,
     ZIP_XML,
     ZIP_CSV,
-    ZIP_JSON
+    ZIP_JSON,
+    AVRO,
+    PARQUET
 }
