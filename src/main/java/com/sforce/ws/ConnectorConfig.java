@@ -37,6 +37,7 @@ import com.sforce.ws.util.Verbose;
 import javax.net.ssl.SSLContext;
 import java.io.*;
 import java.net.*;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,6 +53,10 @@ import java.util.Map.Entry;
  */
 public class ConnectorConfig {
 
+	public static final String ENTERPRISE_ENDPOINT_PATH = "/services/Soap/c/";
+	public static final String PARTNER_ENDPOINT_PATH = "/services/Soap/u/";
+    public static final String TOOLING_ENDPOINT_PATH = "/services/Soap/T/";
+	
     private MessageCaptureHandler captureHtmlHandler;
 
     public class TeeInputStream {
@@ -145,6 +150,10 @@ public class ConnectorConfig {
     private boolean useChunkedPost;
     private String username;
     private String password;
+    private String clientId;
+    private PrivateKey jwtPrivateKey;
+    private String jwtLoginUrl;
+    private String jwtEndPointUrl;
     private String sessionId;
     private String authEndpoint;
     private String serviceEndpoint;
@@ -402,15 +411,15 @@ public class ConnectorConfig {
 	}
 	
     public void verifyPartnerEndpoint() throws ConnectionException {
-        verifyEndpoint("/services/Soap/u/");
+        verifyEndpoint(PARTNER_ENDPOINT_PATH);
     }
 
     public void verifyEnterpriseEndpoint() throws ConnectionException {
-        verifyEndpoint("/services/Soap/c/");
+        verifyEndpoint(ENTERPRISE_ENDPOINT_PATH);
     }
 
     public void verifyToolingEndpoint() throws ConnectionException {
-        verifyEndpoint("/services/Soap/T/");
+        verifyEndpoint(TOOLING_ENDPOINT_PATH);
     }
 
     public Iterator<MessageHandler> getMessagerHandlers() {
@@ -564,4 +573,37 @@ public class ConnectorConfig {
     private static boolean javaVersionHasABug() {
         return JavaVersion.javaVersionHasABug(System.getProperty(JavaVersion.JAVA_VERSION_PROPERTY));
     }
+
+	public PrivateKey getJwtPrivateKey() {
+		return jwtPrivateKey;
+	}
+
+	public void setJwtPrivateKey(PrivateKey jwtPrivateKey) {
+		this.jwtPrivateKey = jwtPrivateKey;
+	}
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public String getJwtLoginUrl() {
+		return jwtLoginUrl;
+	}
+
+	public void setJwtLoginUrl(String jwtLoginUrl) {
+		this.jwtLoginUrl = jwtLoginUrl;
+	}
+
+	public String getJwtEndPointUrl() {
+		return jwtEndPointUrl;
+	}
+
+	public void setJwtEndPointUrl(String jwtEndPointUrl) {
+		this.jwtEndPointUrl = jwtEndPointUrl;
+	}
+
 }

@@ -44,6 +44,7 @@ public class AggregateCodeGeneratorTest extends TestCase {
         template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null));
         String rendered = template.render();
         rendered = rendered.replace("\r\n", "\n");
+        expectedSource = expectedSource.replace("\r\n", "\n");
         assertEquals(expectedSource, rendered);
     }
     
@@ -55,6 +56,7 @@ public class AggregateCodeGeneratorTest extends TestCase {
         template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null));
         String rendered = template.render();
         rendered = rendered.replace("\r\n", "\n");
+        expectedSource = expectedSource.replace("\r\n", "\n");
         assertEquals(expectedSource, rendered);
     }
     
