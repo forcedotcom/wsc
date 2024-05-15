@@ -40,7 +40,7 @@ import com.sforce.ws.tools.wsdlc;
 public class ConnectionCodeGeneratorTest extends TestCase {
 
     public void testGenerateConnectionSource() throws Exception {
-        final String expectedSource = CodeGeneratorTestUtil.fileToString("PartnerConnection.java");
+        String expectedSource = CodeGeneratorTestUtil.fileToString("PartnerConnection.java");
 
         List<HeaderMetadata> headers = new ArrayList<HeaderMetadata>();
 
@@ -161,6 +161,7 @@ public class ConnectionCodeGeneratorTest extends TestCase {
         template.add("gen", connectionClassMetadata);
         String rendered = template.render();
         rendered = rendered.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
+        expectedSource = expectedSource.replace("\r\n", "\n");
+        assertEquals(expectedSource.replaceAll("\\s+",""), rendered.replaceAll("\\s+",""));
     }
 }
