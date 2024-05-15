@@ -155,6 +155,7 @@ public class UpdateStream {
                 BatchInfo batch = bulkConnection.createBatchFromStream(job,
                         new ByteArrayInputStream(writer.getBuffer().toString().getBytes()));
 
+
                 handler.info("Batch created with ID: " + batch.getId());
                 writer = null;
                 csvWriter = null;
