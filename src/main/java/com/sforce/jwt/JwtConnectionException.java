@@ -24,38 +24,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.sforce.ws.codegen;
+package com.sforce.jwt;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sforce.ws.ConnectionException;
 
-import junit.framework.TestCase;
+public class JwtConnectionException extends ConnectionException {
 
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupDir;
+	private static final long serialVersionUID = -6980997197068666839L;
 
-import com.sforce.ws.codegen.metadata.SimpleClassMetadata;
-import com.sforce.ws.codegen.metadata.SimpleClassMetadata.EnumAndValue;
-import com.sforce.ws.tools.wsdlc;
+	public JwtConnectionException() {
+	}
 
-public class SimpleTypeCodeGeneratorTest extends TestCase {
+	public JwtConnectionException(String message) {
+		super(message);
+	}	
 
-    public void testGenerateSimpleTypeSource() throws Exception {
-        String expectedSource = CodeGeneratorTestUtil.fileToString("EmailSyncMatchPreference.java");
-
-        List<EnumAndValue> enumEntries = new ArrayList<EnumAndValue>();
-        enumEntries.add(new EnumAndValue("LastModified", "LastModified"));
-        enumEntries.add(new EnumAndValue("LastActivity", "LastActivity"));
-        enumEntries.add(new EnumAndValue("Oldest", "Oldest"));
-        enumEntries.add(new EnumAndValue("UTF_8", "UTF-8"));
-
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.SIMPLE_TYPE);
-        assertNotNull(template);
-        template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "EmailSyncMatchPreference", enumEntries));
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        expectedSource = expectedSource.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
-    }
+	public JwtConnectionException(String message, Throwable th) {
+		super(message, th);
+	}
 }
