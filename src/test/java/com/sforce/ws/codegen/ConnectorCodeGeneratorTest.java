@@ -48,6 +48,7 @@ public class ConnectorCodeGeneratorTest extends TestCase {
         template.add("gen", new ConnectorMetadata(packageName, className, endpoint));
         String rendered = template.render();
         rendered = rendered.replace("\r\n", "\n");
+        expectedSource = expectedSource.replace("\r\n", "\n");
         assertEquals(expectedSource, rendered);
     }
 }

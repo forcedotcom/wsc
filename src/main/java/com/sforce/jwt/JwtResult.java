@@ -24,38 +24,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.sforce.ws.codegen;
+package com.sforce.jwt;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import junit.framework.TestCase;
+@JsonIgnoreProperties
+public class JwtResult {
 
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroupDir;
+	private JwtResponse jwtResponse;
+	private String serverUrl;
 
-import com.sforce.ws.codegen.metadata.SimpleClassMetadata;
-import com.sforce.ws.codegen.metadata.SimpleClassMetadata.EnumAndValue;
-import com.sforce.ws.tools.wsdlc;
+	public JwtResponse getJwtResponse() {
+		return jwtResponse;
+	}
 
-public class SimpleTypeCodeGeneratorTest extends TestCase {
+	public void setJwtResponse(JwtResponse jwtResponse) {
+		this.jwtResponse = jwtResponse;
+	}
 
-    public void testGenerateSimpleTypeSource() throws Exception {
-        String expectedSource = CodeGeneratorTestUtil.fileToString("EmailSyncMatchPreference.java");
+	public String getServerUrl() {
+		return serverUrl;
+	}
 
-        List<EnumAndValue> enumEntries = new ArrayList<EnumAndValue>();
-        enumEntries.add(new EnumAndValue("LastModified", "LastModified"));
-        enumEntries.add(new EnumAndValue("LastActivity", "LastActivity"));
-        enumEntries.add(new EnumAndValue("Oldest", "Oldest"));
-        enumEntries.add(new EnumAndValue("UTF_8", "UTF-8"));
+	public void setServerUrl(String serverUrl) {
+		this.serverUrl = serverUrl;
+	}
 
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.SIMPLE_TYPE);
-        assertNotNull(template);
-        template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "EmailSyncMatchPreference", enumEntries));
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        expectedSource = expectedSource.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
-    }
 }
