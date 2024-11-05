@@ -61,6 +61,9 @@ public class SimpleClassMetadata extends ClassMetadata {
 
     public static String javaName(Enumeration enumeration, TypeMapper typeMapper) {
         String name = enumeration.getValue();
+        if (isNumeric(name)){
+            return "V"+name;
+        }
         int index = name.indexOf(":");
         String subname = index == -1 ? name : name.substring(index + 1);
         if (typeMapper.isKeyWord(subname)) {
@@ -70,6 +73,15 @@ public class SimpleClassMetadata extends ClassMetadata {
             subname = DASH_PATTERN.matcher(subname).replaceAll("_");
         }
         return subname;
+    }
+
+    private static boolean isNumeric(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private final Collection<EnumAndValue> enumsAndValues;
