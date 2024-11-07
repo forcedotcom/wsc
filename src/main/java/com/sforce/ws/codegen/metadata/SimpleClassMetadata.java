@@ -61,8 +61,8 @@ public class SimpleClassMetadata extends ClassMetadata {
 
     public static String javaName(Enumeration enumeration, TypeMapper typeMapper) {
         String name = enumeration.getValue();
-        if (isNumeric(name)){
-            return "V"+name;
+        if (isNumeric(name)) {
+            return "V" + name;
         }
         int index = name.indexOf(":");
         String subname = index == -1 ? name : name.substring(index + 1);
