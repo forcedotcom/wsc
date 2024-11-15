@@ -7,8 +7,20 @@ package $gen.packageName$;
  */
 public class $gen.className$ $gen.typeExtension$ $gen.interfaceExtension${
     private final java.util.HashMap lineNumbers = new java.util.HashMap();
+    public java.util.HashMap getLineNumbers() {
+        return lineNumbers;
+    }
     private int startLine;
+    public int getStartLine(){
+        return startLine;
+    }
     private int endLine;
+    public int getEndLine(){
+        return endLine;
+    }
+    private String subcomponentId;
+    public String getSubcomponentId(){ return subcomponentId; }
+    public void setSubcomponentId(String subcomponentId){ this.subcomponentId = subcomponentId; }
     /**
      * Constructor
      */
