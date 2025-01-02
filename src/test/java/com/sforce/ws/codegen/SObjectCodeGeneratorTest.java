@@ -45,6 +45,7 @@ public class SObjectCodeGeneratorTest extends TestCase {
         template.add("gen", new ClassMetadata("com.sforce.soap.partner.sobject", null));
         String rendered = template.render();
         rendered = rendered.replace("\r\n", "\n");
+        expectedSource = expectedSource.replace("\r\n", "\n");
         assertEquals(expectedSource, rendered);
     }
 }
