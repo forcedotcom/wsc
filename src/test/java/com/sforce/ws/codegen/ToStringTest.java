@@ -37,7 +37,7 @@ import java.nio.file.Path;
 
 import com.sforce.ws.bind.XMLizable;
 import com.sforce.ws.tools.wsdlc;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils2.PropertyUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
