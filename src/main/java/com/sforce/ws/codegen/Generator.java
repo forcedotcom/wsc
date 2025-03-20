@@ -233,8 +233,7 @@ abstract public class Generator {
     }
 
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {
-        SimpleClassMetadata gen = new SimpleClassMetadata(schema, simpleType, typeMapper);
-        //TODO: lzemskov - do we need to plumb it here as well
+        SimpleClassMetadata gen = new SimpleClassMetadata(schema, simpleType, typeMapper, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(SIMPLE_TYPE);
 
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
