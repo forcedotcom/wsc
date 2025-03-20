@@ -75,6 +75,7 @@ abstract public class Generator {
 
     protected final STGroupDir templates;
     protected boolean generateInterfaces;
+    protected boolean addDeprecatedAnnotation;
 
     public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, char startDelim, char endDelim) {
         this(packagePrefix, templates, interfacePackagePrefix);
@@ -85,8 +86,13 @@ abstract public class Generator {
     }
 
     public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, boolean javaTime) {
+        this(packagePrefix, templates, interfacePackagePrefix, javaTime, false);
+    }
+
+    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, boolean javaTime, boolean addDeprecatedAnnotation) {
         this.templates = templates;
         this.packagePrefix = packagePrefix;
+        this.addDeprecatedAnnotation = addDeprecatedAnnotation;
         typeMapper = new TypeMapper(packagePrefix, interfacePackagePrefix, javaTime);
     }
 
@@ -186,6 +192,7 @@ abstract public class Generator {
 
     protected void generateAggregateResultClasses(String packageName, File dir) throws IOException {
         ClassMetadata gen = new ClassMetadata(packageName, null);
+        //TODO: lzemskov - plumb the property here
         ST template = templates.getInstanceOf(AGGREGATE_RESULT);
         javaFiles.add(generate(packageName, AGGREGATE_RESULT_JAVA, gen, template, dir));
     }
@@ -194,7 +201,7 @@ abstract public class Generator {
     	String packageName = NameMapper.getPackageName(definitions.getApiType().getNamespace(), packagePrefix);
     	// Lot of nulls are fine here since this is used only in the .st file. 
     	ComplexClassMetadata gen = new ComplexClassMetadata(packageName, null, null, null, null, null, null, null, typeMapper.generateInterfaces(), null, null);
-    	
+    	//TODO: lzemskov - plumb the property here
         ST template = templates.getInstanceOf(EXTENDED_ERROR_DETAILS);
         javaFiles.add(generate(packageName, EXTENDED_ERROR_DETAILS_JAVA, gen, template, dir));
         if (generateInterfaces) {
@@ -205,8 +212,9 @@ abstract public class Generator {
     
     protected void generateClassFromComplexType(Types types, Schema schema, ComplexType complexType, File dir)
             throws IOException {
-        ComplexClassMetadata gen = newTypeMetadataConstructor(types, schema, complexType, dir)
+        ComplexClassMetadata gen = newTypeMetadataConstructor(types, schema, complexType, dir, addDeprecatedAnnotation)
                 .generateMetadata();
+        //TODO: lzemskov - do we need to plumb it here too?
         ST template = templates.getInstanceOf(TYPE);
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
         if (generateInterfaces) {
@@ -220,12 +228,13 @@ abstract public class Generator {
      * changing system properties.
      */
     protected TypeMetadataConstructor newTypeMetadataConstructor(Types types, Schema schema, ComplexType complexType,
-            File dir) {
+            File dir, boolean addDeprecatedToStubs) {
         return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper);
     }
 
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {
         SimpleClassMetadata gen = new SimpleClassMetadata(schema, simpleType, typeMapper);
+        //TODO: lzemskov - do we need to plumb it here as well
         ST template = templates.getInstanceOf(SIMPLE_TYPE);
 
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
@@ -280,6 +289,7 @@ abstract public class Generator {
 
     protected void generateSObjectClass(Definitions definitions, File dir) throws IOException {
         String packageName = getPackageName(definitions);
+        //TODO: lzemskov should ClassMetadata also contain our property?
         ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
         ST template = templates.getInstanceOf(SOBJECT);
         javaFiles.add(generate(packageName, SOBJECT_JAVA, gen, template, dir));
@@ -291,6 +301,7 @@ abstract public class Generator {
 
     protected void generateSObjectInterface(Definitions definitions, File dir) throws IOException {
         String packageName = getPackageName(definitions);
+        //TODO: klzemskov - should we populate this as well with our new property?
         ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
         ST template = templates.getInstanceOf(ISOBJECT);
         javaFiles.add(generate(packageName, ISOBJECT_JAVA, gen, template, dir));

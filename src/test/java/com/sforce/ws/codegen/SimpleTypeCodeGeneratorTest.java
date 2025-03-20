@@ -41,20 +41,42 @@ import com.sforce.ws.tools.wsdlc;
 public class SimpleTypeCodeGeneratorTest extends TestCase {
 
     public void testGenerateSimpleTypeSource() throws Exception {
-        String expectedSource = CodeGeneratorTestUtil.fileToString("EmailSyncMatchPreference.java");
+        String expectedSource = CodeGeneratorTestUtil.fileToString("SimpleTypeEmailSyncMatchPreference.java");
 
+        ST template = getTemplateDefinitions();
+        template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "SimpleTypeEmailSyncMatchPreference", getExpectedEnums()));
+
+        assertEquals(expectedSource, getRenderedStringWithReplacements(template));
+    }
+
+    public void testGenerateSimpleTypeWithDeprecatedAnnotation() throws Exception {
+        String expectedSource = CodeGeneratorTestUtil.fileToString("SimpleTypeEmailSyncMatchPreferenceDep.java");
+
+        ST template = getTemplateDefinitions();
+        template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "SimpleTypeEmailSyncMatchPreferenceDep", getExpectedEnums(), true));
+
+        assertEquals(expectedSource, getRenderedStringWithReplacements(template));
+    }
+
+    private ST getTemplateDefinitions() {
+        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
+        ST template = templates.getInstanceOf(Generator.SIMPLE_TYPE);
+        assertNotNull(template);
+        return template;
+    }
+
+    private List<EnumAndValue> getExpectedEnums() {
         List<EnumAndValue> enumEntries = new ArrayList<EnumAndValue>();
         enumEntries.add(new EnumAndValue("LastModified", "LastModified"));
         enumEntries.add(new EnumAndValue("LastActivity", "LastActivity"));
         enumEntries.add(new EnumAndValue("Oldest", "Oldest"));
         enumEntries.add(new EnumAndValue("UTF_8", "UTF-8"));
+        return enumEntries;
+    }
 
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.SIMPLE_TYPE);
-        assertNotNull(template);
-        template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "EmailSyncMatchPreference", enumEntries));
+    private String getRenderedStringWithReplacements(ST template){
         String rendered = template.render();
         rendered = rendered.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
+        return rendered;
     }
 }

@@ -86,8 +86,22 @@ public class wsdlc extends Generator {
             String destDir,
             boolean compile
     ) throws ToolsException, WsdlParseException, IOException {
+        run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, templates, destDir, compile, false);
+    }
 
-        wsdlc wsc = new wsdlc(packagePrefix, templates, javaTime);
+    public static void run(
+            String wsdlUrl,
+            String destJarFilename,
+            String packagePrefix,
+            boolean javaTime,
+            boolean standAlone,
+            STGroupDir templates,
+            String destDir,
+            boolean compile,
+            boolean addDeprecatedToStubs
+    ) throws ToolsException, WsdlParseException, IOException {
+
+        wsdlc wsc = new wsdlc(packagePrefix, templates, javaTime, addDeprecatedToStubs);
         File destJar = new File(destJarFilename);
         if (destJar.exists()) {
             if (!destJar.delete()) {
@@ -137,30 +151,38 @@ public class wsdlc extends Generator {
     }
 
     static void run(String[] args) throws Exception {
-        if (args.length < 2 || args.length > 4) { throw new ToolsException(
-                " usage: java com.sforce.ws.tools.wsdlc -nc <wsdl-file> <jar-file> <dest-dir>"); }
+        String usageErrorText =  " usage: java com.sforce.ws.tools.wsdlc -nc -dep <wsdl-file> <jar-file> <dest-dir>";
+        System.out.println("Here are the args: " + args.toString());
+        if (args.length < 2 || args.length > 5) { throw new ToolsException(usageErrorText); }
         boolean compile = true;
+        boolean addDeprecatedToStubs = false;
         String destJarFilename = null;
         String wsdlUrl = null;
         String destDir = null;
         for (String arg : args) {
             if (arg.equals("-nc")) {
                 compile = false;
-            } else if (wsdlUrl == null) {
+            } else if(arg.equals("-dep")) {
+                addDeprecatedToStubs = true;
+            }else if (wsdlUrl == null) {
                 wsdlUrl = arg;
             } else if (destJarFilename == null) {
                 destJarFilename = arg;
             } else if (destDir == null) {
                 destDir = arg;
             } else {
-                throw new ToolsException(" usage: java com.sforce.ws.tools.wsdlc -nc <wsdl-file> <jar-file> <dest-dir>");
+                throw new ToolsException(usageErrorText);
             }
         }
         String packagePrefix = System.getProperty(PACKAGE_PREFIX);
         boolean standAlone = Boolean.parseBoolean(System.getProperty(STANDALONE_JAR, "false"));
         boolean javaTime = Boolean.parseBoolean(System.getProperty(wsdlc.JAVA_TIME, "false"));
         STGroupDir stGroupDir = new STGroupDir(TEMPLATE_DIR, '$', '$');
-        run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, stGroupDir, destDir, compile);
+        run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, stGroupDir, destDir, compile, addDeprecatedToStubs);
+    }
+
+    public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime, boolean addDeprecatedToStubs) {
+        super(packagePrefix, templates, packagePrefix, javaTime, addDeprecatedToStubs);
     }
 
     public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime) {
