@@ -33,21 +33,31 @@ import com.sforce.ws.tools.wsdlc;
 
 import junit.framework.TestCase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ConnectorCodeGeneratorTest extends TestCase {
+    private Map<String, String> connectorInfo = new HashMap<String, String>(){{
+        put("className", "EnterpriseConnection");
+        put("packageName", "com.sforce.soap.enterprise");
+        put("endpoint", "https://login.salesforce.com/services/Soap/c/16.0");
+    }};
+
+    public void testGenerateConnectorSourceWithDeprecation() throws Exception {
+        String expectedSource = CodeGeneratorTestUtil.fileToString("ConnectorDep.java");
+
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(wsdlc.CONNECTOR);
+
+        template.add("gen", new ConnectorMetadata(connectorInfo.get("packageName"), connectorInfo.get("className"), connectorInfo.get("endpoint"), true));
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
+    }
 
     public void testGenerateConnectorSource() throws Exception {
         String expectedSource = CodeGeneratorTestUtil.fileToString("Connector.java");
 
-        String className = "EnterpriseConnection";
-        String packageName = "com.sforce.soap.enterprise";
-        String endpoint = "https://login.salesforce.com/services/Soap/c/16.0";
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(wsdlc.CONNECTOR);
 
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(wsdlc.CONNECTOR);
-        assertNotNull(template);
-        template.add("gen", new ConnectorMetadata(packageName, className, endpoint));
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
+        template.add("gen", new ConnectorMetadata(connectorInfo.get("packageName"), connectorInfo.get("className"), connectorInfo.get("endpoint")));
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
 }

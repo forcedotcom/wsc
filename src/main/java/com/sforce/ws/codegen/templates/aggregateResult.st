@@ -38,8 +38,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.IOException;
 
+$if(gen.addDeprecatedAnnotation)$
+import java.lang.Deprecated;
+$endif$
 /**
  */
+$if(gen.addDeprecatedAnnotation)$
+@Deprecated
+$endif$
 public class AggregateResult extends SObject {
 
     private XmlObject xmlObject = new XmlObject();

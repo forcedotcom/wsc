@@ -49,13 +49,13 @@ public class ConnectionClassMetadata extends ClassMetadata {
             final boolean hasSessionHeader, final String sobjectNamespace, final String qNames, final String knownHeaders, final List<HeaderMetadata> headersMetadata,
             final List<OperationMetadata> operations) {
         return new ConnectionClassMetadata(packagePrefix, packageName, className, hasLoginCall, verifyEndpoint,
-                loginResult, hasSessionHeader, sobjectNamespace, qNames, knownHeaders, headersMetadata, operations);
+                loginResult, hasSessionHeader, sobjectNamespace, qNames, knownHeaders, headersMetadata, operations, false);
     }
 
-    private ConnectionClassMetadata(final String packagePrefix, final String packageName, final String className,
+    public ConnectionClassMetadata(final String packagePrefix, final String packageName, final String className,
             final boolean hasLoginCall, final String verifyEndpoint, final String loginResult, final boolean hasSessionHeader,
-            final String sobjectNamespace, final String qNames, final String knownHeaders, final List<HeaderMetadata> headersMetadata, final List<OperationMetadata> operations) {
-        super(packageName, className);
+            final String sobjectNamespace, final String qNames, final String knownHeaders, final List<HeaderMetadata> headersMetadata, final List<OperationMetadata> operations, boolean addDeprecatedAnnotation) {
+        super(packageName, className, null, addDeprecatedAnnotation);
         this.packagePrefix = packagePrefix;
         this.hasLoginCall = hasLoginCall;
         this.verifyEndpoint = verifyEndpoint;

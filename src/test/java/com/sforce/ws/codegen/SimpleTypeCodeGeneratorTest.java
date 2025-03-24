@@ -43,26 +43,19 @@ public class SimpleTypeCodeGeneratorTest extends TestCase {
     public void testGenerateSimpleTypeSource() throws Exception {
         String expectedSource = CodeGeneratorTestUtil.fileToString("SimpleTypeEmailSyncMatchPreference.java");
 
-        ST template = getTemplateDefinitions();
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.SIMPLE_TYPE);
         template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "SimpleTypeEmailSyncMatchPreference", getExpectedEnums()));
 
-        assertEquals(expectedSource, getRenderedStringWithReplacements(template));
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
 
     public void testGenerateSimpleTypeWithDeprecatedAnnotation() throws Exception {
         String expectedSource = CodeGeneratorTestUtil.fileToString("SimpleTypeEmailSyncMatchPreferenceDep.java");
 
-        ST template = getTemplateDefinitions();
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.SIMPLE_TYPE);
         template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "SimpleTypeEmailSyncMatchPreferenceDep", getExpectedEnums(), true));
 
-        assertEquals(expectedSource, getRenderedStringWithReplacements(template));
-    }
-
-    private ST getTemplateDefinitions() {
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.SIMPLE_TYPE);
-        assertNotNull(template);
-        return template;
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
 
     private List<EnumAndValue> getExpectedEnums() {
@@ -72,11 +65,5 @@ public class SimpleTypeCodeGeneratorTest extends TestCase {
         enumEntries.add(new EnumAndValue("Oldest", "Oldest"));
         enumEntries.add(new EnumAndValue("UTF_8", "UTF-8"));
         return enumEntries;
-    }
-
-    private String getRenderedStringWithReplacements(ST template){
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        return rendered;
     }
 }

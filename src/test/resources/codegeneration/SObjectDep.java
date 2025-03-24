@@ -1,4 +1,3 @@
-sobject(gen) ::= <<
 /*
  * Copyright (c) 2005-2013, salesforce.com, inc.
  * All rights reserved.
@@ -24,7 +23,7 @@ sobject(gen) ::= <<
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package $gen.packageName$;
+package com.sforce.soap.partner.sobject;
 
 import com.sforce.ws.bind.XmlObject;
 import com.sforce.ws.bind.XmlObjectWrapper;
@@ -35,14 +34,10 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-$if(gen.addDeprecatedAnnotation)$
 import java.lang.Deprecated;
-$endif$
 /**
  */
-$if(gen.addDeprecatedAnnotation)$
 @Deprecated
-$endif$
 public class SObject extends XmlObject implements ISObject {
 
     /**
@@ -114,5 +109,3 @@ public class SObject extends XmlObject implements ISObject {
         setField(field, value);
     }
 }
-
->>

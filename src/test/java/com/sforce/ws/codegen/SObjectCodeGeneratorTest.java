@@ -36,15 +36,21 @@ import com.sforce.ws.tools.wsdlc;
 
 public class SObjectCodeGeneratorTest extends TestCase {
 
+    public void testGenerateSobjectSourceWithDeprecatedAnnotations() {
+        String expectedSource = CodeGeneratorTestUtil.fileToString("SObjectDep.java");
+
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.SOBJECT);
+        template.add("gen", new ClassMetadata("com.sforce.soap.partner.sobject", null, null, true));
+
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
+    }
+
     public void testGenerateSObjectSource() throws Exception {
         String expectedSource = CodeGeneratorTestUtil.fileToString("SObject.java");
 
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.SOBJECT);
-        assertNotNull(template);
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.SOBJECT);
         template.add("gen", new ClassMetadata("com.sforce.soap.partner.sobject", null));
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
+
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
 }
