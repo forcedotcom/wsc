@@ -194,7 +194,7 @@ public class wsdlc extends Generator {
     }
 
     private void generateConnectionClasses(Definitions definitions, File dir) throws IOException {
-        ConnectionClassMetadata gen = new ConnectionMetadataConstructor(definitions, typeMapper, packagePrefix)
+        ConnectionClassMetadata gen = new ConnectionMetadataConstructor(definitions, typeMapper, packagePrefix, addDeprecatedAnnotation)
                 .getConnectionClassMetadata();
         ST template = templates.getInstanceOf(CONNECTION);
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
@@ -227,7 +227,7 @@ public class wsdlc extends Generator {
     }
 
     private void generateConnectorClasses(Definitions definitions, File dir) throws IOException {
-        ConnectorMetadata gen = new ConnectorMetadata(definitions, packagePrefix);
+        ConnectorMetadata gen = new ConnectorMetadata(definitions, packagePrefix, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(CONNECTOR);
         javaFiles.add(generate(gen.getPackageName(), CONNECTOR_JAVA, gen, template, dir));
     }

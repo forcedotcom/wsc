@@ -43,6 +43,12 @@ public class ConnectorMetadata extends ClassMetadata {
                 definitions.getService().getPort().getSoapAddress().getLocation());
     }
 
+    public ConnectorMetadata(Definitions definitions, String packagePrefix, boolean addDeprecatedAnnotation) {
+        this(NameMapper.getPackageName(definitions.getTargetNamespace(), packagePrefix),
+                (definitions.getApiType() != null ? definitions.getApiType().name() : "Soap") + "Connection",
+                definitions.getService().getPort().getSoapAddress().getLocation(), addDeprecatedAnnotation);
+    }
+
     public ConnectorMetadata(String packageName, String className, String endpoint) {
         super(packageName, className);
         this.endpoint = endpoint;

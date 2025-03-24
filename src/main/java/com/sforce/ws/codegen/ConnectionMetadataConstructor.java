@@ -48,12 +48,18 @@ public class ConnectionMetadataConstructor {
     private final String packageName;
     private final Definitions definitions;
     protected final TypeMapper typeMapper;
+    protected final boolean addDeprecatedAnnotation;
 
     public ConnectionMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix) {
+        this(definitions, typeMapper, packagePrefix, false);
+    }
+
+    public ConnectionMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix, boolean addDeprecatedAnnotation) {
         this.definitions = definitions;
         this.typeMapper = typeMapper;
         this.className = (definitions.getApiType() != null ? definitions.getApiType().name() : "Soap") + "Connection";
         this.packageName = NameMapper.getPackageName(definitions.getTargetNamespace(), packagePrefix);
+        this.addDeprecatedAnnotation = addDeprecatedAnnotation;
     }
 
     /**
@@ -107,10 +113,9 @@ public class ConnectionMetadataConstructor {
                         operationHeaders, isReturnTypeComplexType(operation), returnTypeInterface(operation)));
             }
 
-            ConnectionClassMetadata connectionClassMetadata = ConnectionClassMetadata.newInstance(getPackagePrefix(),
-                    packageName, className, hasLoginCall(), hasLoginCall() == true ? loginResult() : null,
-                    verifyEndpoint(), hasSessionHeader(), sobjectNamespace(), dumpQNames(), dumpKnownHeaders(),
-                    headers, operations);
+            ConnectionClassMetadata connectionClassMetadata = new ConnectionClassMetadata(getPackagePrefix(),
+                    packageName, className, hasLoginCall(), verifyEndpoint(), hasLoginCall() == true ? loginResult() : null, hasSessionHeader(), sobjectNamespace(), dumpQNames(), dumpKnownHeaders(),
+                    headers, operations, addDeprecatedAnnotation);
             return connectionClassMetadata;
         } catch (ConnectionException e) {
             throw new IllegalStateException(e);

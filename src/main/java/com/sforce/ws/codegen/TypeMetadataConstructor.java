@@ -102,14 +102,19 @@ public class TypeMetadataConstructor {
     }
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
-            TypeMapper typeMapper, boolean laxMinOccursMode, boolean addDeprecatedToStubs) {
+                                   TypeMapper typeMapper, boolean addDeprecatedAnnotation) {
+        this(types, schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null, addDeprecatedAnnotation);
+    }
+
+    public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
+            TypeMapper typeMapper, boolean laxMinOccursMode, boolean addDeprecatedAnnotation) {
         this.packageName = NameMapper.getPackageName(schema.getTargetNamespace(), typeMapper.getPackagePrefix());
         this.types = types;
         this.mapper = typeMapper;
         this.complexType = complexType;
         this.className = NameMapper.getClassName(complexType.getName());
         this.laxMinOccursMode = laxMinOccursMode;
-        this.addDeprecatedToStubs = addDeprecatedToStubs;
+        this.addDeprecatedToStubs = addDeprecatedAnnotation;
     }
 
     public String baseClass() {

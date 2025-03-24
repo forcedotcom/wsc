@@ -191,8 +191,7 @@ abstract public class Generator {
     }
 
     protected void generateAggregateResultClasses(String packageName, File dir) throws IOException {
-        ClassMetadata gen = new ClassMetadata(packageName, null);
-        //TODO: lzemskov - plumb the property here
+        ClassMetadata gen = new ClassMetadata(packageName, null, null, true);
         ST template = templates.getInstanceOf(AGGREGATE_RESULT);
         javaFiles.add(generate(packageName, AGGREGATE_RESULT_JAVA, gen, template, dir));
     }
@@ -200,8 +199,7 @@ abstract public class Generator {
     protected void generateExtendedErrorDetailsClasses(Definitions definitions, File dir) throws IOException {
     	String packageName = NameMapper.getPackageName(definitions.getApiType().getNamespace(), packagePrefix);
     	// Lot of nulls are fine here since this is used only in the .st file. 
-    	ComplexClassMetadata gen = new ComplexClassMetadata(packageName, null, null, null, null, null, null, null, typeMapper.generateInterfaces(), null, null);
-    	//TODO: lzemskov - plumb the property here
+    	ComplexClassMetadata gen = new ComplexClassMetadata(packageName, null, null, null, null, null, null, null, typeMapper.generateInterfaces(), null, null, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(EXTENDED_ERROR_DETAILS);
         javaFiles.add(generate(packageName, EXTENDED_ERROR_DETAILS_JAVA, gen, template, dir));
         if (generateInterfaces) {
@@ -212,9 +210,8 @@ abstract public class Generator {
     
     protected void generateClassFromComplexType(Types types, Schema schema, ComplexType complexType, File dir)
             throws IOException {
-        ComplexClassMetadata gen = newTypeMetadataConstructor(types, schema, complexType, dir, addDeprecatedAnnotation)
+        ComplexClassMetadata gen = newTypeMetadataConstructor(types, schema, complexType, dir)
                 .generateMetadata();
-        //TODO: lzemskov - do we need to plumb it here too?
         ST template = templates.getInstanceOf(TYPE);
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
         if (generateInterfaces) {
@@ -228,8 +225,8 @@ abstract public class Generator {
      * changing system properties.
      */
     protected TypeMetadataConstructor newTypeMetadataConstructor(Types types, Schema schema, ComplexType complexType,
-            File dir, boolean addDeprecatedToStubs) {
-        return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper);
+            File dir) {
+        return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper, addDeprecatedAnnotation);
     }
 
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {
@@ -288,8 +285,7 @@ abstract public class Generator {
 
     protected void generateSObjectClass(Definitions definitions, File dir) throws IOException {
         String packageName = getPackageName(definitions);
-        //TODO: lzemskov should ClassMetadata also contain our property?
-        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
+        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName), addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(SOBJECT);
         javaFiles.add(generate(packageName, SOBJECT_JAVA, gen, template, dir));
     }
@@ -300,8 +296,7 @@ abstract public class Generator {
 
     protected void generateSObjectInterface(Definitions definitions, File dir) throws IOException {
         String packageName = getPackageName(definitions);
-        //TODO: klzemskov - should we populate this as well with our new property?
-        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
+        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName), addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(ISOBJECT);
         javaFiles.add(generate(packageName, ISOBJECT_JAVA, gen, template, dir));
     }
