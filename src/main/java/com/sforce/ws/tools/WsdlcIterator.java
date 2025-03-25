@@ -63,7 +63,7 @@ public class WsdlcIterator {
         consoleMessage("Beginning run of multiple calls to wsdlc");
 
         // Parse input parameters
-        if (args.length > 5) {
+        if (args.length != 5 && args.length != 4) {
             showMainUsage();
             System.exit(2);
         }
