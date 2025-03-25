@@ -50,10 +50,6 @@ public class FactoryMetadataConstructor {
     private final String packagePrefix;
     private final boolean addDeprecatedAnnotation;
 
-    public FactoryMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix) {
-        this(definitions, typeMapper, packagePrefix, false);
-    }
-
     public FactoryMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix, boolean addDeprecatedAnnotation) {
         this.definitions = definitions;
         this.typeMapper = typeMapper;

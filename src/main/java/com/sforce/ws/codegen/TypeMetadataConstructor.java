@@ -97,11 +97,6 @@ public class TypeMetadataConstructor {
     protected final boolean addDeprecatedAnnotation;
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
-            TypeMapper typeMapper) {
-    	this(types, schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null, false);
-    }
-
-    public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
                                    TypeMapper typeMapper, boolean addDeprecatedAnnotation) {
         this(types, schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null, addDeprecatedAnnotation);
     }

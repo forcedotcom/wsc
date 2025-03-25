@@ -44,7 +44,7 @@ public class SimpleTypeCodeGeneratorTest extends TestCase {
         String expectedSource = CodeGeneratorTestUtil.fileToString("SimpleTypeEmailSyncMatchPreference.java");
 
         ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.SIMPLE_TYPE);
-        template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "SimpleTypeEmailSyncMatchPreference", getExpectedEnums()));
+        template.add("gen", new SimpleClassMetadata("com.sforce.soap.partner", "SimpleTypeEmailSyncMatchPreference", getExpectedEnums(), false));
 
         assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }

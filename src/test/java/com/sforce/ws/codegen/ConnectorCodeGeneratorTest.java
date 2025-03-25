@@ -57,7 +57,7 @@ public class ConnectorCodeGeneratorTest extends TestCase {
 
         ST template = CodeGeneratorTestUtil.getTemplateDefinitions(wsdlc.CONNECTOR);
 
-        template.add("gen", new ConnectorMetadata(connectorInfo.get("packageName"), connectorInfo.get("className"), connectorInfo.get("endpoint")));
+        template.add("gen", new ConnectorMetadata(connectorInfo.get("packageName"), connectorInfo.get("className"), connectorInfo.get("endpoint"), false));
         assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
 }

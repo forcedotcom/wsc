@@ -84,19 +84,6 @@ public class wsdlc extends Generator {
             boolean standAlone,
             STGroupDir templates,
             String destDir,
-            boolean compile
-    ) throws ToolsException, WsdlParseException, IOException {
-        run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, templates, destDir, compile, false);
-    }
-
-    public static void run(
-            String wsdlUrl,
-            String destJarFilename,
-            String packagePrefix,
-            boolean javaTime,
-            boolean standAlone,
-            STGroupDir templates,
-            String destDir,
             boolean compile,
             boolean addDeprecatedAnnotation
     ) throws ToolsException, WsdlParseException, IOException {
@@ -184,14 +171,6 @@ public class wsdlc extends Generator {
         super(packagePrefix, templates, packagePrefix, javaTime, addDeprecatedAnnotation);
     }
 
-    public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime) {
-        super(packagePrefix, templates, packagePrefix, javaTime);
-    }
-
-    public wsdlc(String packagePrefix, STGroupDir templates) {
-        super(packagePrefix, templates, packagePrefix, false);
-    }
-
     private void generateConnectionClasses(Definitions definitions, File dir) throws IOException {
         ConnectionClassMetadata gen = new ConnectionMetadataConstructor(definitions, typeMapper, packagePrefix, addDeprecatedAnnotation)
                 .getConnectionClassMetadata();
@@ -202,7 +181,7 @@ public class wsdlc extends Generator {
     private void generateConnectionWrapperClasses(Definitions definitions, File dir)
             throws IOException {
         ConnectionClassMetadata connectionMetadata = new ConnectionMetadataConstructor(
-                definitions, typeMapper, packagePrefix)
+                definitions, typeMapper, packagePrefix, addDeprecatedAnnotation)
                 .getConnectionClassMetadata();
         ConnectionWrapperClassMetadata gen = new ConnectionWrapperClassMetadata(connectionMetadata.getPackageName(), connectionMetadata.getClassName() + "Wrapper", null, connectionMetadata, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(CONNECTION_WRAPPER);

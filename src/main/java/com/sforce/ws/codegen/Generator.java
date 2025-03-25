@@ -77,18 +77,6 @@ abstract public class Generator {
     protected boolean generateInterfaces;
     protected boolean addDeprecatedAnnotation;
 
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, char startDelim, char endDelim) {
-        this(packagePrefix, templates, interfacePackagePrefix);
-    }
-
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix) {
-        this(packagePrefix, templates, interfacePackagePrefix, false);
-    }
-
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, boolean javaTime) {
-        this(packagePrefix, templates, interfacePackagePrefix, javaTime, false);
-    }
-
     public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, boolean javaTime, boolean addDeprecatedAnnotation) {
         this.templates = templates;
         this.packagePrefix = packagePrefix;

@@ -198,10 +198,10 @@ public class ConnectionCodeGeneratorTest extends TestCase {
         ConnectionMetadataInfo connectionMetadataInfo = new ConnectionMetadataInfo().getExpectedConnectionMetadataInfo();
         ST template = CodeGeneratorTestUtil.getTemplateDefinitions(wsdlc.CONNECTION);
 
-        final ConnectionClassMetadata connectionClassMetadata = ConnectionClassMetadata.newInstance("\"wsc130\"",
+        final ConnectionClassMetadata connectionClassMetadata = new ConnectionClassMetadata("\"wsc130\"",
                 "com.sforce.soap.partner.wsc130", "PartnerConnection", true,
-                "com.sforce.soap.partner.wsc130.LoginResult", "verifyPartnerEndpoint", true,
-                "\"urn:sobject.partner.soap.sforce.com\"", connectionMetadataInfo.getQNames(), connectionMetadataInfo.getKnownHeaders(), connectionMetadataInfo.getHeaders(), connectionMetadataInfo.getOperations());
+                "verifyPartnerEndpoint","com.sforce.soap.partner.wsc130.LoginResult",true,
+                "\"urn:sobject.partner.soap.sforce.com\"", connectionMetadataInfo.getQNames(), connectionMetadataInfo.getKnownHeaders(), connectionMetadataInfo.getHeaders(), connectionMetadataInfo.getOperations(), false);
 
         template.add("gen", connectionClassMetadata);
         assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));

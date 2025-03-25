@@ -36,18 +36,6 @@ public class ClassMetadata {
     protected final String interfacePackageName;
     protected final boolean addDeprecatedAnnotation;
 
-    public static ClassMetadata newInstance(String packageName, String className) {
-        return new ClassMetadata(packageName, className);
-    }
-
-    public ClassMetadata(String packageName, String className) {
-        this(packageName, className, null);
-    }
-
-    public ClassMetadata(String packageName, String className, String interfacePackageName) {
-        this(packageName, className, interfacePackageName, false);
-    }
-
     public ClassMetadata(String packageName, String className, String interfacePackageName, boolean addDeprecatedAnnotation) {
         this.packageName = packageName;
         this.className = className;

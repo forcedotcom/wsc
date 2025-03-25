@@ -40,7 +40,7 @@ public class AggregateCodeGeneratorTest extends TestCase {
         String expectedSource = CodeGeneratorTestUtil.fileToString("AggregateResult.java");
 
         ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.AGGREGATE_RESULT);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null));
+        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null, null, false));
 
         assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
@@ -58,7 +58,7 @@ public class AggregateCodeGeneratorTest extends TestCase {
         String expectedSource = CodeGeneratorTestUtil.fileToString("ExtendedErrorDetails.java");
 
         ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.EXTENDED_ERROR_DETAILS);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null));
+        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null, null, false));
 
         assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }

@@ -49,7 +49,7 @@ public class SObjectCodeGeneratorTest extends TestCase {
         String expectedSource = CodeGeneratorTestUtil.fileToString("SObject.java");
 
         ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.SOBJECT);
-        template.add("gen", new ClassMetadata("com.sforce.soap.partner.sobject", null));
+        template.add("gen", new ClassMetadata("com.sforce.soap.partner.sobject", null, null, false));
 
         assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }

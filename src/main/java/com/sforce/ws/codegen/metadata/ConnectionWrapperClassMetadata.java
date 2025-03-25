@@ -36,10 +36,6 @@ public class ConnectionWrapperClassMetadata extends ClassMetadata {
 
     protected final ConnectionClassMetadata connectionMetadata;
 
-    public ConnectionWrapperClassMetadata(String packageName, String className,  String interfacePackageName, ConnectionClassMetadata connectionMetadata) {
-        this(packageName, className, interfacePackageName, connectionMetadata, false);
-    }
-
     public ConnectionWrapperClassMetadata(String packageName, String className,  String interfacePackageName, ConnectionClassMetadata connectionMetadata, boolean addDeprecatedAnnotation) {
         super(packageName, className, interfacePackageName, addDeprecatedAnnotation);
         this.connectionMetadata = connectionMetadata;
