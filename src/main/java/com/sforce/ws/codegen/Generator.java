@@ -191,7 +191,7 @@ abstract public class Generator {
     }
 
     protected void generateAggregateResultClasses(String packageName, File dir) throws IOException {
-        ClassMetadata gen = new ClassMetadata(packageName, null, null, true);
+        ClassMetadata gen = new ClassMetadata(packageName, null, null, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(AGGREGATE_RESULT);
         javaFiles.add(generate(packageName, AGGREGATE_RESULT_JAVA, gen, template, dir));
     }

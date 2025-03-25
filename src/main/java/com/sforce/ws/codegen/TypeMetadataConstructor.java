@@ -94,7 +94,7 @@ public class TypeMetadataConstructor {
 
     protected final String packageName;
 
-    protected final boolean addDeprecatedToStubs;
+    protected final boolean addDeprecatedAnnotation;
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
             TypeMapper typeMapper) {
@@ -114,7 +114,7 @@ public class TypeMetadataConstructor {
         this.complexType = complexType;
         this.className = NameMapper.getClassName(complexType.getName());
         this.laxMinOccursMode = laxMinOccursMode;
-        this.addDeprecatedToStubs = addDeprecatedAnnotation;
+        this.addDeprecatedAnnotation = addDeprecatedAnnotation;
     }
 
     public String baseClass() {
@@ -159,7 +159,7 @@ public class TypeMetadataConstructor {
 
         return new ComplexClassMetadata(packageName, className, baseClass(), xsiType(), superWrite(), superLoad(),
                 superToString(), memberMetadataList, mapper.generateInterfaces(), packageName,
-                complexType.getBase() == null ? null : localJavaType(complexType.getBase(), 1, false), addDeprecatedToStubs);
+                complexType.getBase() == null ? null : localJavaType(complexType.getBase(), 1, false), addDeprecatedAnnotation);
     }
 
 	public Iterator<Element> getElements() {
