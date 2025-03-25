@@ -44,6 +44,12 @@ public class FactoryClassMetadata extends ClassMetadata {
         this.sObjectClass = sObjectClass;
     }
 
+    public FactoryClassMetadata(String packageName, String className, List<ClassMetadata> types, ClassMetadata sObjectClass, String interfacePackageName, boolean addDeprecatedAnnotation) {
+        super(packageName, className, interfacePackageName, addDeprecatedAnnotation);
+        this.types = types;
+        this.sObjectClass = sObjectClass;
+    }
+
     public List<ClassMetadata> getTypes() {
         return types;
     }

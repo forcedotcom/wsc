@@ -48,12 +48,18 @@ public class FactoryMetadataConstructor {
     protected final String packageName;
     private final Definitions definitions;
     private final String packagePrefix;
+    private final boolean addDeprecatedAnnotation;
 
     public FactoryMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix) {
+        this(definitions, typeMapper, packagePrefix, false);
+    }
+
+    public FactoryMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix, boolean addDeprecatedAnnotation) {
         this.definitions = definitions;
         this.typeMapper = typeMapper;
         this.packagePrefix = packagePrefix;
         this.packageName = NameMapper.getPackageName(definitions.getTargetNamespace(), packagePrefix);
+        this.addDeprecatedAnnotation = addDeprecatedAnnotation;
     }
 
     public FactoryClassMetadata getFactoryClassMetadata() {
@@ -65,7 +71,7 @@ public class FactoryMetadataConstructor {
         for (Schema schema : types.getSchemas()) {
             String schemaPackageName = NameMapper.getPackageName(schema.getTargetNamespace(), packagePrefix);
             for (ComplexType ct : schema.getComplexTypes()) {
-                ClassMetadata cm = new ClassMetadata(schemaPackageName, NameMapper.getClassName(ct.getName()), getInterfacePackageName(schemaPackageName));
+                ClassMetadata cm = new ClassMetadata(schemaPackageName, NameMapper.getClassName(ct.getName()), getInterfacePackageName(schemaPackageName), addDeprecatedAnnotation);
                 if (typeMapper.isSObject(ct.getSchema().getTargetNamespace(), ct.getName())) {
                     assert sObjectClass == null;
                     sObjectClass = cm;
@@ -77,7 +83,7 @@ public class FactoryMetadataConstructor {
         }
 
         String className = (definitions.getApiType() != null ? definitions.getApiType().name() : "Soap") + "ConnectionFactory";
-        return new FactoryClassMetadata(packageName, className, classes, sObjectClass, getInterfacePackageName());
+        return new FactoryClassMetadata(packageName, className, classes, sObjectClass, getInterfacePackageName(), addDeprecatedAnnotation);
     }
 
     protected String getInterfacePackageName(String packageName) {

@@ -56,20 +56,23 @@ public class WsdlcIterator {
     // other methods of this class.
 
     public static void main(String[] args) {
-
         String packagePrefix = System.getProperty(wsdlc.PACKAGE_PREFIX);
         boolean standAlone = Boolean.parseBoolean(System.getProperty(wsdlc.STANDALONE_JAR, "false"));
         boolean javaTime = Boolean.parseBoolean(System.getProperty(wsdlc.JAVA_TIME, "false"));
+        boolean addDeprecatedAnnotation = false;
         consoleMessage("Beginning run of multiple calls to wsdlc");
 
         // Parse input parameters
-        if (args.length != 4) {
+        if (args.length > 5) {
             showMainUsage();
             System.exit(2);
         }
         if (!"wsdldir".equalsIgnoreCase(args[0]) || !"jardir".equalsIgnoreCase(args[2])) {
             showMainUsage();
             System.exit(2);
+        }
+        if ("-dep".equalsIgnoreCase(args[4])) {
+            addDeprecatedAnnotation = true;
         }
         String wsdlDir = args[1];
         String jarDir = args[3];
@@ -134,7 +137,7 @@ public class WsdlcIterator {
             // Run wsdlc on each wsdl in the wsdl directory:
             for (int ix = 0; ix < wsdlFiles.length; ix++) {
                 consoleMessage("Running wsdlc on " + wsdlPaths[ix] + "\n       to create " + jarFiles[ix]);
-                wsdlc.run(wsdlPaths[ix], jarFiles[ix], packagePrefix, javaTime, standAlone, templates, null, true);
+                wsdlc.run(wsdlPaths[ix], jarFiles[ix], packagePrefix, javaTime, standAlone, templates, null, true, addDeprecatedAnnotation);
             }
 
         } catch (Throwable th) {
@@ -148,10 +151,11 @@ public class WsdlcIterator {
     }
 
     private static void showMainUsage() {
-        System.out.println("Usage:  WsdlcIterator wsdldir <dir> jardir <dir>");
+        System.out.println("Usage:  WsdlcIterator wsdldir <dir> jardir <dir> -dep");
         System.out
                 .println("        wsdldir = The directory into which ApexWebServiceTestExposer (or other source) has placed all the wsdl files it creates. This tool will pass all wsdl files therein to com.sforce.ws.tools.wsdlc,");
         System.out.println("        jardir  = The directory to which the resulting jars will be written.");
+        System.out.println("        -dep = Pass this if you want generated stubs to be marked with @Deprecated annotations.");
     }
 
 }

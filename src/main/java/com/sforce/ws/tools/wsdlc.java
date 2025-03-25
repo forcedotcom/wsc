@@ -98,10 +98,10 @@ public class wsdlc extends Generator {
             STGroupDir templates,
             String destDir,
             boolean compile,
-            boolean addDeprecatedToStubs
+            boolean addDeprecatedAnnotation
     ) throws ToolsException, WsdlParseException, IOException {
 
-        wsdlc wsc = new wsdlc(packagePrefix, templates, javaTime, addDeprecatedToStubs);
+        wsdlc wsc = new wsdlc(packagePrefix, templates, javaTime, addDeprecatedAnnotation);
         File destJar = new File(destJarFilename);
         if (destJar.exists()) {
             if (!destJar.delete()) {
@@ -152,10 +152,9 @@ public class wsdlc extends Generator {
 
     static void run(String[] args) throws Exception {
         String usageErrorText =  " usage: java com.sforce.ws.tools.wsdlc -nc -dep <wsdl-file> <jar-file> <dest-dir>";
-        System.out.println("Here are the args: " + args.toString());
         if (args.length < 2 || args.length > 5) { throw new ToolsException(usageErrorText); }
         boolean compile = true;
-        boolean addDeprecatedToStubs = false;
+        boolean addDeprecatedAnnotation = false;
         String destJarFilename = null;
         String wsdlUrl = null;
         String destDir = null;
@@ -163,7 +162,7 @@ public class wsdlc extends Generator {
             if (arg.equals("-nc")) {
                 compile = false;
             } else if(arg.equals("-dep")) {
-                addDeprecatedToStubs = true;
+                addDeprecatedAnnotation = true;
             }else if (wsdlUrl == null) {
                 wsdlUrl = arg;
             } else if (destJarFilename == null) {
@@ -178,11 +177,11 @@ public class wsdlc extends Generator {
         boolean standAlone = Boolean.parseBoolean(System.getProperty(STANDALONE_JAR, "false"));
         boolean javaTime = Boolean.parseBoolean(System.getProperty(wsdlc.JAVA_TIME, "false"));
         STGroupDir stGroupDir = new STGroupDir(TEMPLATE_DIR, '$', '$');
-        run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, stGroupDir, destDir, compile, addDeprecatedToStubs);
+        run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, stGroupDir, destDir, compile, addDeprecatedAnnotation);
     }
 
-    public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime, boolean addDeprecatedToStubs) {
-        super(packagePrefix, templates, packagePrefix, javaTime, addDeprecatedToStubs);
+    public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime, boolean addDeprecatedAnnotation) {
+        super(packagePrefix, templates, packagePrefix, javaTime, addDeprecatedAnnotation);
     }
 
     public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime) {
@@ -205,7 +204,7 @@ public class wsdlc extends Generator {
         ConnectionClassMetadata connectionMetadata = new ConnectionMetadataConstructor(
                 definitions, typeMapper, packagePrefix)
                 .getConnectionClassMetadata();
-        ConnectionWrapperClassMetadata gen = new ConnectionWrapperClassMetadata(connectionMetadata.getPackageName(), connectionMetadata.getClassName() + "Wrapper", null, connectionMetadata);
+        ConnectionWrapperClassMetadata gen = new ConnectionWrapperClassMetadata(connectionMetadata.getPackageName(), connectionMetadata.getClassName() + "Wrapper", null, connectionMetadata, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(CONNECTION_WRAPPER);
         File wrapperFile = generate(gen.getPackageName(), gen.getClassName()
                 + ".java", gen, template, dir);
@@ -217,7 +216,7 @@ public class wsdlc extends Generator {
     }
 
     private void generateFactoryClasses(Definitions definitions, File dir) throws IOException {
-        FactoryClassMetadata gen = new FactoryMetadataConstructor(definitions, typeMapper, packagePrefix)
+        FactoryClassMetadata gen = new FactoryMetadataConstructor(definitions, typeMapper, packagePrefix, addDeprecatedAnnotation)
                 .getFactoryClassMetadata();
         ST template = templates.getInstanceOf(FACTORY);
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
