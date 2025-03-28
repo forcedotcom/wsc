@@ -40,8 +40,13 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import com.sforce.ws.tools.wsdlc;
 import com.sforce.ws.util.FileUtil;
 import junit.framework.Assert;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroupDir;
+
+import static junit.framework.TestCase.assertNotNull;
 
 public class CodeGeneratorTestUtil {
     private static final String NL = System.getProperty("line.separator");
@@ -93,5 +98,18 @@ public class CodeGeneratorTestUtil {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    public static String getRenderedStringWithReplacements(ST template){
+        String rendered = template.render();
+        rendered = rendered.replace("\r\n", "\n");
+        return rendered;
+    }
+
+    public static ST getTemplateDefinitions(String generatorName) {
+        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
+        ST template = templates.getInstanceOf(generatorName);
+        assertNotNull(template);
+        return template;
     }
 }

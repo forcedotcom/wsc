@@ -75,18 +75,12 @@ abstract public class Generator {
 
     protected final STGroupDir templates;
     protected boolean generateInterfaces;
+    protected boolean addDeprecatedAnnotation;
 
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, char startDelim, char endDelim) {
-        this(packagePrefix, templates, interfacePackagePrefix);
-    }
-
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix) {
-        this(packagePrefix, templates, interfacePackagePrefix, false);
-    }
-
-    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, boolean javaTime) {
+    public Generator(String packagePrefix, STGroupDir templates, String interfacePackagePrefix, boolean javaTime, boolean addDeprecatedAnnotation) {
         this.templates = templates;
         this.packagePrefix = packagePrefix;
+        this.addDeprecatedAnnotation = addDeprecatedAnnotation;
         typeMapper = new TypeMapper(packagePrefix, interfacePackagePrefix, javaTime);
     }
 
@@ -185,7 +179,7 @@ abstract public class Generator {
     }
 
     protected void generateAggregateResultClasses(String packageName, File dir) throws IOException {
-        ClassMetadata gen = new ClassMetadata(packageName, null);
+        ClassMetadata gen = new ClassMetadata(packageName, null, null, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(AGGREGATE_RESULT);
         javaFiles.add(generate(packageName, AGGREGATE_RESULT_JAVA, gen, template, dir));
     }
@@ -193,8 +187,7 @@ abstract public class Generator {
     protected void generateExtendedErrorDetailsClasses(Definitions definitions, File dir) throws IOException {
     	String packageName = NameMapper.getPackageName(definitions.getApiType().getNamespace(), packagePrefix);
     	// Lot of nulls are fine here since this is used only in the .st file. 
-    	ComplexClassMetadata gen = new ComplexClassMetadata(packageName, null, null, null, null, null, null, null, typeMapper.generateInterfaces(), null, null);
-    	
+    	ComplexClassMetadata gen = new ComplexClassMetadata(packageName, null, null, null, null, null, null, null, typeMapper.generateInterfaces(), null, null, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(EXTENDED_ERROR_DETAILS);
         javaFiles.add(generate(packageName, EXTENDED_ERROR_DETAILS_JAVA, gen, template, dir));
         if (generateInterfaces) {
@@ -221,11 +214,11 @@ abstract public class Generator {
      */
     protected TypeMetadataConstructor newTypeMetadataConstructor(Types types, Schema schema, ComplexType complexType,
             File dir) {
-        return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper);
+        return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper, addDeprecatedAnnotation);
     }
 
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {
-        SimpleClassMetadata gen = new SimpleClassMetadata(schema, simpleType, typeMapper);
+        SimpleClassMetadata gen = new SimpleClassMetadata(schema, simpleType, typeMapper, addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(SIMPLE_TYPE);
 
         javaFiles.add(generate(gen.getPackageName(), gen.getClassName() + ".java", gen, template, dir));
@@ -280,7 +273,7 @@ abstract public class Generator {
 
     protected void generateSObjectClass(Definitions definitions, File dir) throws IOException {
         String packageName = getPackageName(definitions);
-        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
+        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName), addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(SOBJECT);
         javaFiles.add(generate(packageName, SOBJECT_JAVA, gen, template, dir));
     }
@@ -291,7 +284,7 @@ abstract public class Generator {
 
     protected void generateSObjectInterface(Definitions definitions, File dir) throws IOException {
         String packageName = getPackageName(definitions);
-        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName));
+        ClassMetadata gen = new ClassMetadata(packageName, null, getInterfacePackageName(packageName), addDeprecatedAnnotation);
         ST template = templates.getInstanceOf(ISOBJECT);
         javaFiles.add(generate(packageName, ISOBJECT_JAVA, gen, template, dir));
     }

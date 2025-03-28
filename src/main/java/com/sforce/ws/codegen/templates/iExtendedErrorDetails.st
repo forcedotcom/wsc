@@ -29,9 +29,15 @@ package $gen.packageName$;
 import com.sforce.ws.bind.XmlObject;
 import $gen.packageName$.ExtendedErrorCode;
 
+$if(gen.addDeprecatedAnnotation)$
+import java.lang.Deprecated;
+$endif$
 /**
  * ExtendedErrorDetails is loosely typed. You can use {@link #getField(String)} to get the information 
  */
+$if(gen.addDeprecatedAnnotation)$
+@Deprecated
+$endif$
 public interface IExtendedErrorDetails {
 
 	/**

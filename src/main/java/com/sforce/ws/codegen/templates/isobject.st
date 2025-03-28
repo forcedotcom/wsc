@@ -26,6 +26,11 @@ isobject(gen) ::= <<
  */
 package $gen.packageName$;
 
+$if(gen.addDeprecatedAnnotation)$
+import java.lang.Deprecated;
+
+@Deprecated
+$endif$
 public interface ISObject {
 
     public String getType();
