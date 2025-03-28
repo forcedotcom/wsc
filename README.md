@@ -15,6 +15,8 @@ To skip the gpg signing, run the following command
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.
+* `-dep` if you want to have @Deprecated annotations added to all generated stubs.
+* `-nc` if you don't want to compile the stubs.
 
 ## Write Application Code
 The following sample illustrates creating a connection and creating a new Account SObject.  Login is automatically handled by the Connector.
