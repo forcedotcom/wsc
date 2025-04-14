@@ -332,7 +332,7 @@ public class CSVReader {
         final int recordNumber;
 
         CSVParseException(String message, int lineno) {
-            super(message);
+            super(message + String.format(" - Line number %d ", lineno));
             recordNumber = lineno;
         }
 
