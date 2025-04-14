@@ -22,13 +22,13 @@ import java.util.*;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils2.PropertyUtils;
 
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.wsdl.Constants;
-import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
+import org.apache.commons.beanutils2.SuppressPropertiesBeanIntrospector;
 
 /**
  * This class wraps an XMLizable and presents it as an XmlObject so that we
