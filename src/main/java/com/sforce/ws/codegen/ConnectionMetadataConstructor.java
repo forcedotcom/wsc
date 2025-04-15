@@ -50,6 +50,10 @@ public class ConnectionMetadataConstructor {
     protected final TypeMapper typeMapper;
     protected final boolean addDeprecatedAnnotation;
 
+    public ConnectionMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix) {
+        this(definitions, typeMapper, packagePrefix, false);
+    }
+
     public ConnectionMetadataConstructor(Definitions definitions, TypeMapper typeMapper, String packagePrefix, boolean addDeprecatedAnnotation) {
         this.definitions = definitions;
         this.typeMapper = typeMapper;
