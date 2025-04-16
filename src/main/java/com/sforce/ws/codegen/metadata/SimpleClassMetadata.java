@@ -84,6 +84,11 @@ public class SimpleClassMetadata extends ClassMetadata {
                 .getClassName(simpleType.getName()), getEnumsAndValues(simpleType, typeMapper), addDeprecatedAnnotation);
     }
 
+    public SimpleClassMetadata(String packageName, String className, Collection<EnumAndValue> enumsAndValues) {
+        super(packageName, className, null, false);
+        this.enumsAndValues = enumsAndValues;
+    }
+
     public SimpleClassMetadata(String packageName, String className, Collection<EnumAndValue> enumsAndValues, boolean addDeprecatedAnnotation) {
         super(packageName, className, null, addDeprecatedAnnotation);
         this.enumsAndValues = enumsAndValues;

@@ -167,6 +167,10 @@ public class wsdlc extends Generator {
         run(wsdlUrl, destJarFilename, packagePrefix, javaTime, standAlone, stGroupDir, destDir, compile, addDeprecatedAnnotation);
     }
 
+    public wsdlc(String packagePrefix, STGroupDir templates) {
+        super(packagePrefix, templates, packagePrefix, false, false);
+    }
+
     public wsdlc(String packagePrefix, STGroupDir templates, boolean javaTime, boolean addDeprecatedAnnotation) {
         super(packagePrefix, templates, packagePrefix, javaTime, addDeprecatedAnnotation);
     }
