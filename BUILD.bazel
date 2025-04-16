@@ -1,0 +1,23 @@
+load("@rules_java//java:defs.bzl", "java_import")
+
+package(default_visibility = ["//visibility:public"])
+
+java_import(
+    name = "com_force_api_force_wsc",
+    jars = glob(
+        ["target/force-wsc-64.0.0-SNAPSHOT.jar"],
+        allow_empty = False,
+    ),
+    srcjar = glob(
+        ["target/force-wsc-64.0.0-SNAPSHOT-sources.jar"],
+        allow_empty = False,
+    )[0],
+)
+
+java_import(
+    name = "com_force_api_force_wsc_uber",
+    jars = glob(
+        ["target/force-wsc-64.0.0-SNAPSHOT-uber.jar"],
+        allow_empty = False,
+    ),
+)
