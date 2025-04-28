@@ -1,0 +1,13 @@
+name: 'create release branch'
+on: 
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  call-template:
+    uses: prodly/github-action-templates/.github/workflows/release-branch.yml@main
+    secrets:
+      AWS_DEV_REGION: ${{ secrets.AWS_DEV_REGION }}
+      NON_PROD_AWS_ROLE: ${{ secrets.AWS_OIDC_ROLE }}
+      OIDC_USER: ${{ github.event.repository.name }}

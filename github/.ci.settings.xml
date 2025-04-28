@@ -1,0 +1,34 @@
+<settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <activeProfiles>
+        <activeProfile>prodly-prodly-default-artifactory</activeProfile>
+    </activeProfiles>
+
+    <profiles>
+        <profile>
+            <id>prodly-prodly-default-artifactory</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>prodly-prodly-default-artifactory</id>
+                    <url>
+                        https://prodly-548915384428.d.codeartifact.us-east-2.amazonaws.com/maven/prodly-default-artifactory/
+                    </url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <servers>
+        <server>
+            <id>prodly-prodly-default-artifactory</id>
+            <username>aws</username>
+            <password>${env.CODEARTIFACT_AUTH_TOKEN}</password>
+        </server>
+    </servers>
+</settings>

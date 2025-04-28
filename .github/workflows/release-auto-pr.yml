@@ -1,0 +1,9 @@
+name: 'create release PR'
+on: 
+  push:
+    branches:
+      - release*
+
+jobs:
+  call-template:
+    uses: prodly/github-action-templates/.github/workflows/release-auto-pr.yml@main

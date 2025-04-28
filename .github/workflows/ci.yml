@@ -1,0 +1,33 @@
+name: Service CI
+
+on:
+  push: 
+  workflow_dispatch:
+    inputs:
+      only_manifest_distribution:
+        description: 'Skip build and only distribute manifest to argo'
+        type: boolean
+        required: false
+        default: "false"
+
+
+jobs:
+  call-template:
+    uses: prodly/github-action-templates/.github/workflows/service-ci.yml@main
+    secrets:
+      AWS_DEV_ACCOUNT_ID: ${{ secrets.AWS_DEV_ACCOUNT_ID }}
+      AWS_DEV_REGION: ${{ secrets.AWS_DEV_REGION }}
+      AWS_DEV_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
+      AWS_DEV_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEV_SECRET_ACCESS_KEY }}
+      CI_SSH_CHECKOUT_KEY: ${{ secrets.CI_SSH_CHECKOUT_KEY }}
+      ARGOCD_SSH_DEPLOY_KEY: ${{ secrets.ARGOCD_SSH_DEPLOY_KEY }}
+      ARGOCD_SSH_DEPLOY_USER: ${{ secrets.ARGOCD_SSH_DEPLOY_USER }}
+      IT_SALESFORCE_URL: ${{ secrets.IT_SALESFORCE_URL }}
+      IT_SALESFORCE_SFDX_AUTH_URL: ${{ secrets.IT_SALESFORCE_SFDX_AUTH_URL }}
+    with:
+      java_version: 17
+      update_dev_condition: ${{ !contains(github.repository, '/prodly-microservice-templ') && ( startsWith(github.ref, 'refs/heads/main') ) }}
+      update_qa_condition: ${{ !contains(github.repository, '/prodly-microservice-templ') && ( startsWith(github.ref, 'refs/heads/main') ) }}
+      update_prod_condition: ${{ !contains(github.repository, '/prodly-microservice-templ') && startsWith(github.ref, 'refs/tags/v') }}
+      only_manifest_distribution: ${{ github.event.inputs.only_manifest_distribution == 'true' }}
+      split_service: true
