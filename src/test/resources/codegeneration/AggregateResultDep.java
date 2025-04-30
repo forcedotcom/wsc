@@ -1,6 +1,5 @@
-sobject(gen) ::= <<
 /*
- * Copyright (c) 2005-2013, salesforce.com, inc.
+ * Copyright (c) 2005-2013 salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -24,95 +23,55 @@ sobject(gen) ::= <<
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package $gen.packageName$;
+package com.sforce.soap.enterprise.sobject;
 
 import com.sforce.ws.bind.XmlObject;
-import com.sforce.ws.bind.XmlObjectWrapper;
+import com.sforce.ws.bind.TypeMapper;
 import com.sforce.ws.wsdl.Constants;
 import com.sforce.ws.parser.XmlInputStream;
+import com.sforce.ws.parser.XmlOutputStream;
+import com.sforce.ws.ConnectionException;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.io.IOException;
 
-$if(gen.addDeprecatedAnnotation)$
 import java.lang.Deprecated;
-$endif$
 /**
  */
-$if(gen.addDeprecatedAnnotation)$
 @Deprecated
-$endif$
-public class SObject extends XmlObject implements ISObject {
+public class AggregateResult extends SObject {
+
+    private XmlObject xmlObject = new XmlObject();
 
     /**
      * Constructor
      */
-    public SObject() {
+    public AggregateResult() {
     }
 
-    public SObject(String type) {
-        this();
-        setType(type);
-    }
-
-    @Override
-    public String getType() {
-        return (String)getField("type");
-    }
-
-    @Override
-    public void setType(String type) {
-        setField("type", type);
-    }
-
-    @Override
-    public String[] getFieldsToNull() {
-        Iterator<XmlObject> it = getChildren("fieldsToNull");
-        ArrayList<String> result = new ArrayList<String>();
-        while(it.hasNext()) {
-          result.add((String)it.next().getValue());
-        }
-        return (String[]) result.toArray(new String[0]);
-    }
-
-    @Override
-    public void setFieldsToNull(String[] fieldsToNull) {
-        for (int i=0; i<fieldsToNull.length; i++) {
-          addField("fieldsToNull", fieldsToNull[i]);
-        }
+    public Object getField(String name) {
+        return xmlObject.getField(name);
     }
 
     @Override
     public String getId() {
-        return (String)getField("Id");
+        return (String)xmlObject.getField("Id");
     }
 
     @Override
-    public void setId(String Id) {
-        setField("Id", Id);
+    public void setId(String id) {
+        xmlObject.setField("Id", id);
     }
 
     @Override
-    public Object getSObjectField(String name) {
-        Object o = super.getField(name);
-        if (!(o instanceof XmlObject)) {
-            return o;
-        } else if (o instanceof XmlObjectWrapper) {
-            return ((XmlObjectWrapper)o).asTyped();
-        } else if (!(o instanceof SObject)) {
-            SObject sObject = new SObject();
-            sObject.cloneFrom((XmlObject)o);
-            return sObject;
-        } else {
-            return o;
-        }
+    public void write(QName element, XmlOutputStream out, TypeMapper typeMapper) throws IOException {
+        xmlObject.write(element, out, typeMapper);
     }
 
     @Override
-    public void setSObjectField(String field, Object value) {
-        setField(field, value);
+    public void load(XmlInputStream in, TypeMapper typeMapper) throws IOException, ConnectionException {
+        xmlObject.load(in, typeMapper);
     }
 }
-
->>

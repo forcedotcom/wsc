@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, salesforce.com, inc.
+ * Copyright (c) 2005-2016 salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -23,31 +23,32 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+package com.sforce.soap.enterprise;
 
-package com.sforce.ws.codegen.metadata;
+import com.sforce.ws.bind.XmlObject;
+import com.sforce.soap.enterprise.ExtendedErrorCode;
 
-import com.sforce.ws.bind.NameMapper;
-import com.sforce.ws.wsdl.Definitions;
-
+import java.lang.Deprecated;
 /**
- * @author hhildebrand
- * @since 184
+ * ExtendedErrorDetails is loosely typed. You can use {@link #getField(String)} to get the information 
  */
-public class ConnectorMetadata extends ClassMetadata {
-    private final String endpoint;
+@Deprecated
+public class ExtendedErrorDetails extends XmlObject {
 
-    public ConnectorMetadata(Definitions definitions, String packagePrefix, boolean addDeprecatedAnnotation) {
-        this(NameMapper.getPackageName(definitions.getTargetNamespace(), packagePrefix),
-                (definitions.getApiType() != null ? definitions.getApiType().name() : "Soap") + "Connection",
-                definitions.getService().getPort().getSoapAddress().getLocation(), addDeprecatedAnnotation);
+	/**
+	 * @return the details associated with the field. You can find the fields to expect for 
+	 * the given {@link #getExtendedErrorCode()} in the wsdl, or online documentation. 
+	 */
+	@Override
+    public Object getField(String name) {
+        return super.getField(name);
     }
 
-    public ConnectorMetadata(String packageName, String className, String endpoint, boolean addDeprecatedAnnotation) {
-        super(packageName, className, null, addDeprecatedAnnotation);
-        this.endpoint = endpoint;
-    }
-
-    public String getEndpoint() {
-        return this.endpoint;
+    public ExtendedErrorCode getExtendedErrorCode() {
+    	String extendedErrorCode = (String)getField("extendedErrorCode");
+    	if (extendedErrorCode != null) {
+    		return ExtendedErrorCode.valueOf(extendedErrorCode);
+    	}
+        return null;
     }
 }

@@ -40,6 +40,21 @@ import com.sforce.ws.tools.wsdlc;
 
 public class ComplexTypeCodeGeneratorTest extends TestCase {
 
+    public void testGenerateComplexTypeWithDeprecation() {
+        final String packageName = "com.sforce.soap.partner.wsc";
+        final String className = "EmailSyncEntityDep";
+        final String typeExtension = "implements com.sforce.ws.bind.XMLizable";
+        final String xsiType = "";
+        final String superWrite = "";
+        final String superLoad = "";
+        final String superToString = "";
+
+        List<MemberMetadata> memberMetadataList = getExpectedLitsOfMemberMetadata();
+        generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, false, "EmailSyncEntityDep.java", true);
+        generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, true, "EmailSyncEntityInterfaceDep.java", true);
+
+    }
+
     public void testGenerateComplexTypeSource() throws Exception {
         final String packageName = "com.sforce.soap.partner.wsc";
         final String className = "EmailSyncEntity";
@@ -49,6 +64,12 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
         final String superLoad = "";
         final String superToString = "";
 
+        List<MemberMetadata> memberMetadataList = getExpectedLitsOfMemberMetadata();
+        generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, false, "EmailSyncEntity.java", false);
+        generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, true, "EmailSyncEntityInterface.java", false);
+    }
+
+    private List<MemberMetadata> getExpectedLitsOfMemberMetadata() {
         List<MemberMetadata> memberMetadataList = new ArrayList<MemberMetadata>();
 
         memberMetadataList
@@ -120,23 +141,17 @@ public class ComplexTypeCodeGeneratorTest extends TestCase {
                                 "\"urn:partner.soap.sforce.com\",\"syncFollowed\",\"http://www.w3.org/2001/XMLSchema\",\"boolean\",1,1,true",
                                 "", "getSyncFollowed", "boolean", "isSyncFollowed", "setSyncFollowed", "writeBoolean",
                                 "verifyElement", "readBoolean", true, "boolean", false, "writeFieldSyncFollowed"));
-
-        generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, false, "EmailSyncEntity.java");
-        generateMetadataAndVerify(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, true, "EmailSyncEntityInterface.java");
+        return memberMetadataList;
     }
 
-    public void generateMetadataAndVerify(String packageName, String className, String typeExtension, String xsiType, String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList, boolean generateInterfaces, String expectedSourceFileName) {
+    public void generateMetadataAndVerify(String packageName, String className, String typeExtension, String xsiType, String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList, boolean generateInterfaces, String expectedSourceFileName, boolean shouldHaveDeprecatedAnnotations) {
         String expectedSource = CodeGeneratorTestUtil.fileToString(expectedSourceFileName);
 
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.TYPE);
         final ComplexClassMetadata classMetadata = new ComplexClassMetadata(packageName, className, typeExtension,
-                xsiType, superWrite, superLoad, superToString, memberMetadataList, generateInterfaces, packageName, "EmailSyncEntityBase");
-
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.TYPE);
-        assertNotNull(template);
+                xsiType, superWrite, superLoad, superToString, memberMetadataList, generateInterfaces, packageName, "EmailSyncEntityBase", shouldHaveDeprecatedAnnotations);
         template.add("gen", classMetadata);
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
+
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
 }

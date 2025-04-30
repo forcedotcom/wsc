@@ -76,14 +76,24 @@ public class SimpleClassMetadata extends ClassMetadata {
 
     public SimpleClassMetadata(Schema schema, SimpleType simpleType, TypeMapper typeMapper) {
         this(NameMapper.getPackageName(schema.getTargetNamespace(), typeMapper.getPackagePrefix()), NameMapper
-                .getClassName(simpleType.getName()), getEnumsAndValues(simpleType, typeMapper));
+                .getClassName(simpleType.getName()), getEnumsAndValues(simpleType, typeMapper), false);
+    }
+
+    public SimpleClassMetadata(Schema schema, SimpleType simpleType, TypeMapper typeMapper, boolean addDeprecatedAnnotation) {
+        this(NameMapper.getPackageName(schema.getTargetNamespace(), typeMapper.getPackagePrefix()), NameMapper
+                .getClassName(simpleType.getName()), getEnumsAndValues(simpleType, typeMapper), addDeprecatedAnnotation);
     }
 
     public SimpleClassMetadata(String packageName, String className, Collection<EnumAndValue> enumsAndValues) {
-        super(packageName, className);
+        super(packageName, className, null, false);
         this.enumsAndValues = enumsAndValues;
     }
-    
+
+    public SimpleClassMetadata(String packageName, String className, Collection<EnumAndValue> enumsAndValues, boolean addDeprecatedAnnotation) {
+        super(packageName, className, null, addDeprecatedAnnotation);
+        this.enumsAndValues = enumsAndValues;
+    }
+
     public Collection<EnumAndValue> getEnumsAndValues() {
     	return enumsAndValues;
     }

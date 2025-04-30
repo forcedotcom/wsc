@@ -38,24 +38,37 @@ public class AggregateCodeGeneratorTest extends TestCase {
 
     public void testGenerateSObjectSource() throws Exception {
         String expectedSource = CodeGeneratorTestUtil.fileToString("AggregateResult.java");
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.AGGREGATE_RESULT);
-        assertNotNull(template);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null));
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
+
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.AGGREGATE_RESULT);
+        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null, null, false));
+
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
+    }
+
+    public void testGenerateSObjectSourceWithDeprecations() throws Exception {
+        String expectedSource = CodeGeneratorTestUtil.fileToString("AggregateResultDep.java");
+
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.AGGREGATE_RESULT);
+        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise.sobject", null, null, true));
+
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
     
     public void testGenerateExtendedSource() throws Exception {
         String expectedSource = CodeGeneratorTestUtil.fileToString("ExtendedErrorDetails.java");
-        STGroupDir templates = new STGroupDir(wsdlc.TEMPLATE_DIR, '$', '$');
-        ST template = templates.getInstanceOf(Generator.EXTENDED_ERROR_DETAILS);
-        assertNotNull(template);
-        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null));
-        String rendered = template.render();
-        rendered = rendered.replace("\r\n", "\n");
-        assertEquals(expectedSource, rendered);
+
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.EXTENDED_ERROR_DETAILS);
+        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null, null, false));
+
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
     }
-    
+
+    public void testGenerateExtendedSourceWithDeprecations() throws Exception {
+        String expectedSource = CodeGeneratorTestUtil.fileToString("ExtendedErrorDetailsDep.java");
+
+        ST template = CodeGeneratorTestUtil.getTemplateDefinitions(Generator.EXTENDED_ERROR_DETAILS);
+        template.add("gen", new ClassMetadata("com.sforce.soap.enterprise", null, null, true));
+
+        assertEquals(expectedSource, CodeGeneratorTestUtil.getRenderedStringWithReplacements(template));
+    }
 }

@@ -94,19 +94,26 @@ public class TypeMetadataConstructor {
 
     protected final String packageName;
 
-    public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
-            TypeMapper typeMapper) {
-    	this(types, schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null);
+    protected final boolean addDeprecatedAnnotation;
+
+    public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir, TypeMapper typeMapper) {
+        this(types,schema, complexType, tempDir, typeMapper, false);
     }
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
-            TypeMapper typeMapper, boolean laxMinOccursMode) {
+                                   TypeMapper typeMapper, boolean addDeprecatedAnnotation) {
+        this(types, schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null, addDeprecatedAnnotation);
+    }
+
+    public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
+            TypeMapper typeMapper, boolean laxMinOccursMode, boolean addDeprecatedAnnotation) {
         this.packageName = NameMapper.getPackageName(schema.getTargetNamespace(), typeMapper.getPackagePrefix());
         this.types = types;
         this.mapper = typeMapper;
         this.complexType = complexType;
         this.className = NameMapper.getClassName(complexType.getName());
         this.laxMinOccursMode = laxMinOccursMode;
+        this.addDeprecatedAnnotation = addDeprecatedAnnotation;
     }
 
     public String baseClass() {
@@ -151,7 +158,7 @@ public class TypeMetadataConstructor {
 
         return new ComplexClassMetadata(packageName, className, baseClass(), xsiType(), superWrite(), superLoad(),
                 superToString(), memberMetadataList, mapper.generateInterfaces(), packageName,
-                complexType.getBase() == null ? null : localJavaType(complexType.getBase(), 1, false));
+                complexType.getBase() == null ? null : localJavaType(complexType.getBase(), 1, false), addDeprecatedAnnotation);
     }
 
 	public Iterator<Element> getElements() {

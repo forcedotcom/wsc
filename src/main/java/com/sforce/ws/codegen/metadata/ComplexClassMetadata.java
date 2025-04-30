@@ -36,7 +36,13 @@ public class ComplexClassMetadata extends ClassMetadata {
     public ComplexClassMetadata(String packageName, String className, String typeExtension, String xsiType,
                                 String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList,
                                 boolean generateInterfaces, String interfacePackageName, String baseComplexClass) {
-        super(packageName, className, interfacePackageName);
+        this(packageName, className, typeExtension, xsiType, superWrite, superLoad, superToString, memberMetadataList, generateInterfaces, interfacePackageName, baseComplexClass, false);
+    }
+
+    public ComplexClassMetadata(String packageName, String className, String typeExtension, String xsiType,
+                                String superWrite, String superLoad, String superToString, List<MemberMetadata> memberMetadataList,
+                                boolean generateInterfaces, String interfacePackageName, String baseComplexClass, boolean addDeprecatedAnnotation) {
+        super(packageName, className, interfacePackageName, addDeprecatedAnnotation);
         this.typeExtension = typeExtension;
         this.xsiType = xsiType;
         this.superWrite = superWrite;
