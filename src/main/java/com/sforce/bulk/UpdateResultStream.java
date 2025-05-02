@@ -139,10 +139,8 @@ public class UpdateResultStream {
         waitForNextBatch();
 
         while(handler.shouldContinue()) {
-            try {
-                InputStream resultStream =
-                        bulkConnection.getBatchResultStream(job.getId(), batchList[batchIndex].getId());
-
+            try (InputStream resultStream =
+                         bulkConnection.getBatchResultStream(job.getId(), batchList[batchIndex].getId())) {
                 resultReader = new CSVReader(resultStream);
                 resultReader.nextRecord(); //comsume header
                 break;
