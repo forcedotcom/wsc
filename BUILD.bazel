@@ -5,11 +5,11 @@ package(default_visibility = ["//visibility:public"])
 java_import(
     name = "com_force_api_force_wsc",
     jars = glob(
-        ["target/force-wsc-64.0.2-SNAPSHOT.jar"],
+        ["target/force-wsc-64.0.3-SNAPSHOT.jar"],
         allow_empty = False,
     ),
     srcjar = glob(
-        ["target/force-wsc-64.0.2-SNAPSHOT-sources.jar"],
+        ["target/force-wsc-64.0.3-SNAPSHOT-sources.jar"],
         allow_empty = False,
     )[0],
 )
@@ -17,7 +17,7 @@ java_import(
 java_import(
     name = "com_force_api_force_wsc_uber",
     jars = glob(
-        ["target/force-wsc-64.0.2-SNAPSHOT-uber.jar"],
+        ["target/force-wsc-64.0.3-SNAPSHOT-uber.jar"],
         allow_empty = False,
     ),
 )
