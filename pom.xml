@@ -259,24 +259,24 @@
           <useManifestOnlyJar>false</useManifestOnlyJar>
 	</configuration>
       </plugin>
-<!--      <plugin>-->
-<!--        <groupId>org.owasp</groupId>-->
-<!--        <artifactId>dependency-check-maven</artifactId>-->
-<!--        <version>8.4.1</version>-->
-<!--        <configuration>-->
-<!--          <failBuildOnCVSS>8</failBuildOnCVSS>-->
-<!--          <skipProvidedScope>true</skipProvidedScope>-->
-<!--          <skipRuntimeScope>true</skipRuntimeScope>-->
-<!--        </configuration>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <goals>-->
-<!--              <goal>check</goal>-->
-<!--            </goals>-->
-<!--            <phase>package</phase>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>8.4.1</version>
+        <configuration>
+          <failBuildOnCVSS>8</failBuildOnCVSS>
+          <skipProvidedScope>true</skipProvidedScope>
+          <skipRuntimeScope>true</skipRuntimeScope>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
