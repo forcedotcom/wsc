@@ -149,6 +149,66 @@ public class TypeMetadataConstructor {
                     loadType(e), loadMethod(e), isComplexType(e), javaTypeInterface(e), isArray(e), writeMethodName(e)));
         }
 
+        // Add custom fields for Profile class
+        if ("Profile".equals(className)) {
+            // Add customizeSetup field
+            memberMetadataList.add(MemberMetadata.newInstance(
+                "customizeSetup of type {http://www.w3.org/2001/XMLSchema}boolean",
+                "boolean",
+                "customizeSetup",
+                "\"" + complexType.getSchema().getTargetNamespace() + "\",\"customizeSetup\",\"http://www.w3.org/2001/XMLSchema\",\"boolean\",0,1,true",
+                "",
+                "getCustomizeSetup",
+                "boolean",
+                "isCustomizeSetup",
+                "setCustomizeSetup",
+                "writeBoolean",
+                "isElement",
+                "readBoolean",
+                false,
+                "boolean",
+                false,
+                "writeFieldCustomizeSetup"));
+
+            // Add deleteSetup field
+            memberMetadataList.add(MemberMetadata.newInstance(
+                "deleteSetup of type {http://www.w3.org/2001/XMLSchema}boolean",
+                "boolean",
+                "deleteSetup",
+                "\"" + complexType.getSchema().getTargetNamespace() + "\",\"deleteSetup\",\"http://www.w3.org/2001/XMLSchema\",\"boolean\",0,1,true",
+                "",
+                "getDeleteSetup",
+                "boolean",
+                "isDeleteSetup",
+                "setDeleteSetup",
+                "writeBoolean",
+                "isElement",
+                "readBoolean",
+                false,
+                "boolean",
+                false,
+                "writeFieldDeleteSetup"));
+
+            // Add viewSetup field
+            memberMetadataList.add(MemberMetadata.newInstance(
+                "viewSetup of type {http://www.w3.org/2001/XMLSchema}boolean",
+                "boolean",
+                "viewSetup",
+                "\"" + complexType.getSchema().getTargetNamespace() + "\",\"viewSetup\",\"http://www.w3.org/2001/XMLSchema\",\"boolean\",0,1,true",
+                "",
+                "getViewSetup",
+                "boolean",
+                "isViewSetup",
+                "setViewSetup",
+                "writeBoolean",
+                "isElement",
+                "readBoolean",
+                false,
+                "boolean",
+                false,
+                "writeFieldViewSetup"));
+        }
+
         return new ComplexClassMetadata(packageName, className, baseClass(), xsiType(), superWrite(), superLoad(),
                 superToString(), memberMetadataList, mapper.generateInterfaces(), packageName,
                 complexType.getBase() == null ? null : localJavaType(complexType.getBase(), 1, false));
@@ -215,7 +275,7 @@ public class TypeMetadataConstructor {
     public String writeMethodName(Element element) {
         return "writeField" + NameMapper.getMethodName(element.getName());
     }
-    
+
     public String superLoad() {
         if (!complexType.hasBaseClass()) { return ""; }
 
