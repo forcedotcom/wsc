@@ -1,6 +1,6 @@
 package com.sforce.soap.partner.wsc;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sforce.ws.shade.com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * This is a generated class for the SObject Enterprise API.
