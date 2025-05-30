@@ -1,7 +1,7 @@
 type(gen) ::=<<
 package $gen.packageName$;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sforce.ws.shade.com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * This is a generated class for the SObject Enterprise API.
@@ -28,7 +28,7 @@ public class $gen.className$ $gen.typeExtension$ $gen.interfaceExtension${
      * Constructor
      */
     public $gen.className$() {}
-    
+
     /* Cache the typeInfo instead of declaring static fields throughout*/
     private transient java.util.Map<String, com.sforce.ws.bind.TypeInfo> typeInfoCache = new java.util.HashMap<String, com.sforce.ws.bind.TypeInfo>();
     private com.sforce.ws.bind.TypeInfo _lookupTypeInfo(String fieldName, String namespace, String name, String typeNS, String type, int minOcc, int maxOcc, boolean elementForm) {
@@ -98,7 +98,7 @@ $endif$
       writeFields(__out, __typeMapper);
       __out.writeEndTag(__element.getNamespaceURI(), __element.getLocalPart());
     }
-   
+
     protected void writeFields(com.sforce.ws.parser.XmlOutputStream __out,
          com.sforce.ws.bind.TypeMapper __typeMapper)
          throws java.io.IOException {
@@ -115,7 +115,7 @@ $endif$
       __typeMapper.consumeEndTag(__in);
       this.endLine = __in.getLineNumber();
     \}
-    
+
     protected void loadFields(com.sforce.ws.parser.XmlInputStream __in,
         com.sforce.ws.bind.TypeMapper __typeMapper) throws java.io.IOException, com.sforce.ws.ConnectionException {
         $gen.superLoad$
@@ -152,7 +152,7 @@ $gen.splitMemberMetadataList: { split |
       $split:{ member | toStringHelper(sb, "$member.fieldName$", $member.fieldName$);
 }$    \}
 }$
-    
+
     $if(gen.generateInterfaces && gen.hasArrayField)$
     @SuppressWarnings("unchecked")
     private <T,U> T[] castArray(Class<T> clazz, U[] array) {
@@ -163,7 +163,7 @@ $gen.splitMemberMetadataList: { split |
         for (int i=0; i < array.length; i++) {
             retVal[i] = (T)array[i];
         }
-        	    
+
         return retVal;
 	}
 	$endif$
