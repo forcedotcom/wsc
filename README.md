@@ -5,7 +5,7 @@ The Force.com Web Service Connector (WSC) is a high performing web service clien
 ## Building WSC
     git clone https://github.com/forcedotcom/wsc.git
     mvn clean package
-    
+
 To skip the gpg signing, run the following command
 
     mvn clean package -Dgpg.skip
@@ -29,10 +29,13 @@ The following sample illustrates creating a connection and creating a new Accoun
         config.setUsername("username");
         config.setPassword("password");
 
+        // Optional: Disable schema validation for more lenient XML parsing
+        // This can help when dealing with malformed XML responses
+        // config.setValidateSchema(false);
+
         PartnerConnection connection = Connector.newConnection(config);
         SObject account = new SObject();
         account.setType("Account");
         account.setField("Name", "My Account");
         connection.create(new SObject[]{account});
     }
-

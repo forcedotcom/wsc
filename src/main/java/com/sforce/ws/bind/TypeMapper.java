@@ -217,7 +217,7 @@ public class TypeMapper {
         		 SfdcApiType.Tooling.getSobjectNamespace().equals(namespace))) {
             return true;
         }
-         
+
         if (Generator.EXTENDED_ERROR_DETAILS.equalsIgnoreCase(name) && SfdcApiType.getFromNamespace(namespace) != null) {
         	//We use a custom template to generate source for it for known SfdcApiTypes. For the rest, generate the default classes which won't be able to use getField(...)
         	setGenerateExtendedErrorCodes(true);
@@ -361,7 +361,7 @@ public class TypeMapper {
         strValue = writeDouble(value);
         writeSimpleType(out, info, strValue, isSet, double.class.getName());
     }
-    
+
 
     private void writeBigDecimal(XmlOutputStream out, TypeInfo info,
 			BigDecimal value, boolean isSet) throws IOException {
@@ -470,8 +470,24 @@ public class TypeMapper {
     }
 
     public void consumeEndTag(XmlInputStream in) throws IOException, ConnectionException {
-        if (XmlInputStream.END_TAG != in.nextTag()) {
-            throw new ConnectionException("unable to find end tag at: " + in);
+        if (config != null && !config.isValidateSchema()) {
+            // If schema validation is disabled, be more lenient with missing end tags
+            int tag = in.nextTag();
+            if (XmlInputStream.END_TAG != tag) {
+                // Log the issue but don't throw an exception
+                System.err.println("Warning: expected END_TAG but found " + tag + " at: " + in);
+                // Skip to the next tag if it's not an end tag
+                if (tag == XmlInputStream.START_TAG) {
+                    // We found a start tag instead of an end tag, which means we're missing an end tag
+                    // We'll just continue processing from this point
+                    in.consumePeeked();
+                }
+            }
+        } else {
+            // Original strict behavior
+            if (XmlInputStream.END_TAG != in.nextTag()) {
+                throw new ConnectionException("unable to find end tag at: " + in);
+            }
         }
     }
 
@@ -845,11 +861,11 @@ public class TypeMapper {
     public boolean generateInterfaces() {
         return generateInterfaces;
     }
-    
+
     public void setGenerateExtendedErrorCodes(boolean generateExtendedErrorCodes) {
     	this.generateExtendedErrorCodes = generateExtendedErrorCodes;
     }
-    
+
     public boolean getGenerateExtendedErrorCodes() {
     	return generateExtendedErrorCodes;
     }
