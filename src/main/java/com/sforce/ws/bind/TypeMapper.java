@@ -471,20 +471,14 @@ public class TypeMapper {
 
     public void consumeEndTag(XmlInputStream in) throws IOException, ConnectionException {
         if (config != null && !config.isValidateSchema()) {
-            // If schema validation is disabled, be more lenient with missing end tags
             int tag = in.nextTag();
             if (XmlInputStream.END_TAG != tag) {
-                // Log the issue but don't throw an exception
                 System.err.println("Warning: expected END_TAG but found " + tag + " at: " + in);
-                // Skip to the next tag if it's not an end tag
                 if (tag == XmlInputStream.START_TAG) {
-                    // We found a start tag instead of an end tag, which means we're missing an end tag
-                    // We'll just continue processing from this point
                     in.consumePeeked();
                 }
             }
         } else {
-            // Original strict behavior
             if (XmlInputStream.END_TAG != in.nextTag()) {
                 throw new ConnectionException("unable to find end tag at: " + in);
             }
