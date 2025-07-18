@@ -43,6 +43,8 @@ import com.sforce.ws.util.FileUtil;
 import com.sforce.ws.util.Verbose;
 import com.sforce.ws.wsdl.*;
 
+import static com.sforce.ws.codegen.TypeMetadataConstructor.LAX_MINOCCURS;
+
 /**
  * @author hhildebrand
  * @since 184
@@ -218,7 +220,7 @@ abstract public class Generator {
      */
     protected TypeMetadataConstructor newTypeMetadataConstructor(Types types, Schema schema, ComplexType complexType,
             File dir) {
-        return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper, addDeprecatedAnnotation);
+        return new TypeMetadataConstructor(types, schema, complexType, dir, typeMapper, System.getProperty(LAX_MINOCCURS) != null, addDeprecatedAnnotation);
     }
 
     protected void generateClassFromSimpleType(Schema schema, SimpleType simpleType, File dir) throws IOException {

@@ -70,7 +70,8 @@ public class TypeMetadataConstructor {
         }
     }
 
-    private static final String LAX_MINOCCURS = "lax-minoccurs-checking";
+    protected static final String LAX_MINOCCURS = "lax-minoccurs-checking";
+    protected static final String ADD_DEPRECATION = "add-deprecated-annotation";
     private static final TypeMetadataConstructor.JavaTypeMap javaTypeMap = javaTypeMap();
 
     private static TypeMetadataConstructor.JavaTypeMap javaTypeMap() {
@@ -97,12 +98,12 @@ public class TypeMetadataConstructor {
     protected final boolean addDeprecatedAnnotation;
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir, TypeMapper typeMapper) {
-        this(types,schema, complexType, tempDir, typeMapper, false);
+        this(types,schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null,false);
     }
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
-                                   TypeMapper typeMapper, boolean addDeprecatedAnnotation) {
-        this(types, schema, complexType, tempDir, typeMapper, System.getProperty(LAX_MINOCCURS) != null, addDeprecatedAnnotation);
+                                   TypeMapper typeMapper, boolean laxMinOccursMode) {
+        this(types, schema, complexType, tempDir, typeMapper, laxMinOccursMode, System.getProperty(ADD_DEPRECATION) != null);
     }
 
     public TypeMetadataConstructor(Types types, Schema schema, ComplexType complexType, File tempDir,
