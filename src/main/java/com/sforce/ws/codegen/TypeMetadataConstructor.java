@@ -71,7 +71,7 @@ public class TypeMetadataConstructor {
     }
 
     public static final String LAX_MINOCCURS = "lax-minoccurs-checking";
-    private static final String ADD_DEPRECATION = "add-deprecated-annotation";
+    protected static final String ADD_DEPRECATION = "add-deprecated-annotation";
     private static final TypeMetadataConstructor.JavaTypeMap javaTypeMap = javaTypeMap();
 
     private static TypeMetadataConstructor.JavaTypeMap javaTypeMap() {
