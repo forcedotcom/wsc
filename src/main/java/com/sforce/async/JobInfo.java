@@ -374,21 +374,21 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
     }
 
     /**
-     * element : numberRecordsProcessed of type {http://www.w3.org/2001/XMLSchema}int java type: int
+     * element : numberRecordsProcessed of type {http://www.w3.org/2001/XMLSchema}long java type: long
      */
     private static final com.sforce.ws.bind.TypeInfo numberRecordsProcessed__typeInfo =
             new com.sforce.ws.bind.TypeInfo("http://www.force.com/2009/06/asyncapi/dataload", "numberRecordsProcessed",
-                    "http://www.w3.org/2001/XMLSchema", "int", 0, 1, true);
+                    "http://www.w3.org/2001/XMLSchema", "long", 0, 1, true);
 
     private boolean numberRecordsProcessed__is_set = false;
 
-    private int numberRecordsProcessed;
+    private long numberRecordsProcessed;
 
-    public int getNumberRecordsProcessed() {
+    public long getNumberRecordsProcessed() {
         return numberRecordsProcessed;
     }
 
-    public void setNumberRecordsProcessed(int numberRecordsProcessed) {
+    public void setNumberRecordsProcessed(long numberRecordsProcessed) {
         this.numberRecordsProcessed = numberRecordsProcessed;
         numberRecordsProcessed__is_set = true;
     }
@@ -479,21 +479,21 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
 
     /**
-     * element : numberRecordsFailed of type {http://www.w3.org/2001/XMLSchema}int java type: int
+     * element : numberRecordsFailed of type {http://www.w3.org/2001/XMLSchema}long java type: long
      */
     private static final com.sforce.ws.bind.TypeInfo numberRecordsFailed__typeInfo = new com.sforce.ws.bind.TypeInfo(
             "http://www.force.com/2009/06/asyncapi/dataload", "numberRecordsFailed",
-            "http://www.w3.org/2001/XMLSchema", "int", 0, 1, true);
+            "http://www.w3.org/2001/XMLSchema", "long", 0, 1, true);
 
     private boolean numberRecordsFailed__is_set = false;
 
-    private int numberRecordsFailed;
+    private long numberRecordsFailed;
 
-    public int getNumberRecordsFailed() {
+    public long getNumberRecordsFailed() {
         return numberRecordsFailed;
     }
 
-    public void setNumberRecordsFailed(int numberRecordsFailed) {
+    public void setNumberRecordsFailed(long numberRecordsFailed) {
         this.numberRecordsFailed = numberRecordsFailed;
         numberRecordsFailed__is_set = true;
     }
@@ -592,12 +592,12 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
                 numberBatchesCompleted__is_set);
         __typeMapper.writeInt(__out, numberBatchesFailed__typeInfo, numberBatchesFailed, numberBatchesFailed__is_set);
         __typeMapper.writeInt(__out, numberBatchesTotal__typeInfo, numberBatchesTotal, numberBatchesTotal__is_set);
-        __typeMapper.writeInt(__out, numberRecordsProcessed__typeInfo, numberRecordsProcessed,
+        __typeMapper.writeLong(__out, numberRecordsProcessed__typeInfo, numberRecordsProcessed,
                 numberRecordsProcessed__is_set);
         __typeMapper.writeInt(__out, numberRetries__typeInfo, numberRetries, numberRetries__is_set);
         __typeMapper.writeDouble(__out, apiVersion__typeInfo, apiVersion, apiVersion__is_set);
         __typeMapper.writeString(__out, assignmentRuleId__typeInfo, assignmentRuleId, assignmentRuleId__is_set);
-        __typeMapper.writeInt(__out, numberRecordsFailed__typeInfo, numberRecordsFailed, numberRecordsFailed__is_set);
+        __typeMapper.writeLong(__out, numberRecordsFailed__typeInfo, numberRecordsFailed, numberRecordsFailed__is_set);
         __typeMapper.writeLong(__out, totalProcessingTime__typeInfo, totalProcessingTime, totalProcessingTime__is_set);
         __typeMapper.writeLong(__out, apiActiveProcessingTime__typeInfo, apiActiveProcessingTime,
                 apiActiveProcessingTime__is_set);
@@ -692,7 +692,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         __in.peekTag();
         if (__typeMapper.isElement(__in, numberRecordsProcessed__typeInfo)) {
-            setNumberRecordsProcessed(__typeMapper.readInt(__in, numberRecordsProcessed__typeInfo, int.class));
+            setNumberRecordsProcessed(__typeMapper.readLong(__in, numberRecordsProcessed__typeInfo, long.class));
         }
 
         __in.peekTag();
@@ -712,7 +712,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         __in.peekTag();
         if (__typeMapper.isElement(__in, numberRecordsFailed__typeInfo)) {
-            setNumberRecordsFailed(__typeMapper.readInt(__in, numberRecordsFailed__typeInfo, int.class));
+            setNumberRecordsFailed(__typeMapper.readLong(__in, numberRecordsFailed__typeInfo, long.class));
         }
 
         __in.peekTag();
