@@ -374,7 +374,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
     }
 
     /**
-     * element : numberRecordsProcessed of type {http://www.w3.org/2001/XMLSchema}int java type: long
+     * element : numberRecordsProcessed of type {http://www.w3.org/2001/XMLSchema}long java type: long
      */
     private static final com.sforce.ws.bind.TypeInfo numberRecordsProcessed__typeInfo =
             new com.sforce.ws.bind.TypeInfo("http://www.force.com/2009/06/asyncapi/dataload", "numberRecordsProcessed",
@@ -479,7 +479,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
 
     /**
-     * element : numberRecordsFailed of type {http://www.w3.org/2001/XMLSchema}int java type: int
+     * element : numberRecordsFailed of type {http://www.w3.org/2001/XMLSchema}long java type: long
      */
     private static final com.sforce.ws.bind.TypeInfo numberRecordsFailed__typeInfo = new com.sforce.ws.bind.TypeInfo(
             "http://www.force.com/2009/06/asyncapi/dataload", "numberRecordsFailed",
@@ -692,7 +692,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         __in.peekTag();
         if (__typeMapper.isElement(__in, numberRecordsProcessed__typeInfo)) {
-            setNumberRecordsProcessed(__typeMapper.readInt(__in, numberRecordsProcessed__typeInfo, int.class));
+            setNumberRecordsProcessed(__typeMapper.readLong(__in, numberRecordsProcessed__typeInfo, long.class));
         }
 
         __in.peekTag();
@@ -712,7 +712,7 @@ public class JobInfo implements com.sforce.ws.bind.XMLizable {
 
         __in.peekTag();
         if (__typeMapper.isElement(__in, numberRecordsFailed__typeInfo)) {
-            setNumberRecordsFailed(__typeMapper.readInt(__in, numberRecordsFailed__typeInfo, int.class));
+            setNumberRecordsFailed(__typeMapper.readLong(__in, numberRecordsFailed__typeInfo, long.class));
         }
 
         __in.peekTag();
