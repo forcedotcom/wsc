@@ -168,8 +168,11 @@ public class ConnectorConfig {
     // OAuth fields
     private String clientId;
     private String clientSecret;
+    private String authorizationEndpoint;
     private String tokenEndpoint;
     private String refreshToken;
+    private String redirectUri;
+    private boolean enablePKCE;
     
     public static final ConnectorConfig DEFAULT = new ConnectorConfig();
 
@@ -590,6 +593,14 @@ public class ConnectorConfig {
         this.clientSecret = clientSecret;
     }
 
+    public String getAuthorizationEndpoint() {
+        return authorizationEndpoint;
+    }
+
+    public void setAuthorizationEndpoint(String authorizationEndpoint) {
+        this.authorizationEndpoint = authorizationEndpoint;
+    }
+    
     public String getTokenEndpoint() {
         return tokenEndpoint;
     }
@@ -604,5 +615,21 @@ public class ConnectorConfig {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
+    }
+
+    public boolean isEnablePKCE() {
+        return enablePKCE;
+    }
+
+    public void setEnablePKCE(boolean enablePKCE) {
+        this.enablePKCE = enablePKCE;
     }
 }

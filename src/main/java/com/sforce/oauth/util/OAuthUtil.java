@@ -28,7 +28,10 @@ package com.sforce.oauth.util;
 
 import com.sforce.ws.util.Base64;
 
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OAuthUtil {
 
@@ -52,5 +55,23 @@ public class OAuthUtil {
         String credentials = clientId + ":" + clientSecret;
         byte[] encodedBytes = Base64.encode(credentials.getBytes(StandardCharsets.UTF_8));
         return "Basic " + new String(encodedBytes, StandardCharsets.UTF_8);
+    }
+
+    public static Map<String, String> getQueryParams(String queryString) {
+        if (queryString == null || queryString.trim().isEmpty()) {
+            return new HashMap<>();
+        }
+        Map<String, String> queryParams = new HashMap<>();
+        String[] params = queryString.split("&");
+
+        for (String param : params) {
+            String[] keyValue = param.split("=", 2);
+            if (keyValue.length == 2) {
+                String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
+                String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
+                queryParams.put(key, value);
+            }
+        }
+        return queryParams;
     }
 }
