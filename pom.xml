@@ -4,7 +4,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-wsc</artifactId>
   <packaging>jar</packaging>
-  <version>66.0.0</version>
+  <version>67.0.0</version>
   <name>force-wsc</name>
   <description>Force.com Web Service Connector</description>
   <url>http://www.force.com</url>
