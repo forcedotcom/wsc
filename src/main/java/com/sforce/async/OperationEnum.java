@@ -35,6 +35,7 @@ public enum OperationEnum {
     query,
     queryAll,
     composite,
-    internal
+    internal,
+    refresh
 }
 
