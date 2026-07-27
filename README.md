@@ -23,7 +23,7 @@ In order to build the WSC while including the dependency check, create an accoun
     </server>
 
 ## Generating Stubs From WSDLs
-    java -jar target/force-wsc-67.1.0-uber.jar <inputwsdlfile> <outputjarfile>
+    java -jar target/force-wsc-67.2.0-uber.jar <inputwsdlfile> <outputjarfile>
 
 * `inputwsdlfile` is the name of the WSDL to generate stubs for.
 * `outputjarfile` is the name of the jar file to create from the WSDL.
