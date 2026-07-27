@@ -36,6 +36,7 @@ public enum OperationEnum {
     queryAll,
     composite,
     internal,
-    refresh
+    refresh,
+    consentImport
 }
 
