@@ -48,6 +48,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
 import java.util.*;
@@ -65,6 +66,8 @@ public class TypeMapper {
     private static HashMap<QName, String> nillableJavaMapping = getNillableXmlJavaMapping();
     private static final HashSet<String> keywords = getKeyWords();
     private static HashMap<String, Class<?>> primitiveClassCache = getPrimitiveClassCache();
+
+    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
     // True if interfaces are generated for the WSDL
     private boolean generateInterfaces;
@@ -421,7 +424,7 @@ public class TypeMapper {
             String s = calendarCodec.getValueAsString(value);
             writeSimpleType(out, info, s, true, Calendar.class.getName());
         } else if (value instanceof OffsetDateTime) {
-            writeSimpleType(out, info, value.toString(), true, OffsetDateTime.class.getName());
+            writeSimpleType(out, info, DTF.format((OffsetDateTime)value), true, OffsetDateTime.class.getName());
         } else if (value instanceof OffsetDate) {
             writeSimpleType(out, info, value.toString(), true, OffsetDate.class.getName());
         } else if (value instanceof OffsetTime) {
@@ -445,7 +448,6 @@ public class TypeMapper {
             writeString(out, info, value.toString(), true);
         }
     }
-
 	private void writeNull(XmlOutputStream out, TypeInfo info) throws IOException {
         out.writeStartTag(getNamespace(info), info.getName());
         out.writeAttribute(Constants.SCHEMA_INSTANCE_NS, "nil", "true");
